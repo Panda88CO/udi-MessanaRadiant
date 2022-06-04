@@ -17,10 +17,10 @@ except ImportError:
 from MessanaInfo import messanaInfo
 
 class messanaSystem(messanaInfo):
-    def __init__ (messana, IPaddress, apiKey):
+    def __init__ (self, IPaddress, apiKey):
         super().__init__(IPaddress, apiKey)
-        messana.IPaddress = IPaddress
-        messana.apiKey = apiKey
-        messana.nbrZones = messana.GETsystemData('zoneCount')
+        self.IPaddress = IPaddress
+        self.apiKey = apiKey
+        self.nbr_zones = self.GET_system_data('zoneCount')
         
         #messana.nbrZones = messana.Zones.nbrZones

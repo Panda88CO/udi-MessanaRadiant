@@ -18,7 +18,7 @@ except ImportError:
 
 class messanaInfo(object):
     def __init__(messana, IPAddress, messanaKey):
-        logging.info('Initializing node:{}'.format(messana.nodeType))
+       
         messana.IPaddress = IPAddress
         messana.apiKey = messanaKey
         messana.APIstr = 'apikey=' + messana.apiKey
@@ -68,7 +68,7 @@ class messanaInfo(object):
   
     def GET_node_data(messana, nodeNbr, mKey):
         #logging.debug('GETNodeData: ' + mNodeKey + ' ' + str(nodeNbr)+ ' ' + mKey)
-        GETstr =messana.IP+'/api/'+messana.nodeType+'/'+mKey+'/'+str(nodeNbr)+'?'+ messana.APIStr 
+        GETstr =messana.IP+'/api/'+messana.node_type+'/'+mKey+'/'+str(nodeNbr)+'?'+ messana.APIStr 
         logging.debug('GET_node_data: {} '.format(GETstr) )
         try:
             nTemp = requests.get(GETstr)
