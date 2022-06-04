@@ -5,9 +5,18 @@ import json
 import os 
 import polyinterface
 LOGGER = polyinterface.LOGGER
-from MessanaZoneV2 import messanaZones
+from MessanaZoneOld import messanaZones
 
 
+class messanaSystem(object):
+    def __init__ (messana, IPaddress, apiKey):
+        
+        messana.NaNlist= [-32768 , -3276.8 ]
+        messana.IPaddress = IPaddress
+        messana.apiKey = apiKey
+        messana.Zones = messanaZones(messana.IPaddress, messana.apiKey)
+        #messana.nbrZones = messana.Zones.nbrZones
+'''
 class messanaSys:
     def __init__ (self, IPaddress, ApiKey):
         # Note all xxIDs must be lower case without special characters (ISY requirement)

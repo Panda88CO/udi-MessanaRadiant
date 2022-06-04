@@ -2,7 +2,7 @@
 import requests
 #from subprocess import call
 import json
-import os 
+import os
 import polyinterface
 LOGGER = polyinterface.LOGGER
 

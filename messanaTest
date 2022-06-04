@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 messanaKey = '9bf711fc-54e2-4387-9c7f-991bbb02ab3a'
 messanaIP = '192.168.2.65'
-from MessanaNode import messanaNode 
+from MessanaNode import messanaSystem 
 
-test = messanaNode (messanaIP,messanaKey)
+test = messanaSystem (messanaIP,messanaKey)
+messaneZones = test.addZones()
+
+test.initSystem
 print(test.GETSystemData('zoneCount'))
 print(test.GETSystemData('status'))
 print(test.GETSystemData('tempUnit'))
