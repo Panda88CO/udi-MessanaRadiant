@@ -105,9 +105,32 @@ class messanaInfo(object):
             return(False)
 
 
+    def update_name(self):
+        logging.debug('update_name: atu:{}'.format(self.node_nbr ))
+        temp = self.GET_node_data(self.node_nbr , 'name')
+        if temp:
+            self.name = temp
 
+    def update_status(self):
+        logging.debug('update_status {}'.format(self.node_nbr))    
+        return( self.GET_node_data(self.node_nbr , 'status'))
 
+    def set_status(self, state):
+        if state in self.stateList:
+            self.PUT_node_data(self.node_nbr ,'status', state )
+            time.sleep(0.5)
+            self.status = self.update_status()
+            return(self.status)
+        else:
+            logging.error ('Wrong Status state passed ([0,1]: {}'.format(state))
+            return(False)
+          
 
+    def update_air_temp(self):
+        return(self.GET_node_data(self.node_nbr , 'airTemperature'))
+
+    def update_setpoint(self):
+        return(self.GET_node_data(self.node_nbr , 'setpoint'))
 
         
 
