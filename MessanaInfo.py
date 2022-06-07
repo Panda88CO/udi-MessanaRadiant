@@ -14,23 +14,25 @@ except ImportError:
     logging.basicConfig(level=logging.INFO)
     #logging = logging.getlogging('testLOG')
 
+#class MessanaInit(object):
+
 
 
 class messanaInfo(object):
-    def __init__(messana, IPAddress, messanaKey):
-       
-        messana.IPaddress = IPAddress
-        messana.apiKey = messanaKey
-        messana.APIstr = 'apikey=' + messana.apiKey
-        messana.IP ='http://'+ messana.IPaddress
+    def __init__(messana, IPaddress, messanaKey):
         messana.systemAPI = '/api/system'
         messana.RESPONSE_OK = '<Response [200]>'
         messana.RESPONSE_NO_SUPPORT = '<Response [400]>'
         messana.RESPONSE_NO_RESPONSE = '<Response [404]>'
+        messana.RESPONSE_SERVER_ERROR = '<Response [500]>'
         messana.NaNlist= [-32768 , -3276.8 ]
-
+        messana.IPaddress = IPaddress
+        messana.apiKey = messanaKey
+        messana.apiStr = 'apikey=' + messana.apiKey
+        messana.IPstr ='http://'+ messana.IPaddress
+ 
     def GET_system_data(messana, mKey):
-        GETstr = messana.IP+messana.systemAPI+'/'+ mKey + '?' + messana.APIstr
+        GETstr = messana.IPstr +messana.systemAPI+'/'+ mKey + '?' + messana.apiStr
         logging.debug('GET_system_data: {} '.format(GETstr) )
 
         #logging.debug( GETStr)
@@ -48,14 +50,14 @@ class messanaInfo(object):
                 return(data) #No data for given keyword - remove from list 
         except Exception as e:
             logging.error('System GET_system_data operation failed for {}: {}'.format(mKey, e))
-            return(None)
+            return
 
 
 
     def PUT_system_data(messana, mKey, value):
         mData = {}
-        PUTstr = messana.IP+messana.systemAPI+'/'+ mKey
-        mData = {'value':value, 'apikey': messana.APIkey}
+        PUTstr = messana.IPstr + messana.systemAPI+'/'+ mKey
+        mData = {'value':value, 'apikey': messana.apiKey}
         logging.debug('PUT_system_data :{} {}'.format(PUTstr, mData) )
         try:
             resp = requests.put(PUTstr, json=mData)
@@ -64,11 +66,11 @@ class messanaInfo(object):
 
         except Exception as e:
             logging.error('Error PUT_system_data {}: {}'.format(PUTstr, e))
-            return(None)
+            return
   
     def GET_node_data(messana, nodeNbr, mKey):
         #logging.debug('GETNodeData: ' + mNodeKey + ' ' + str(nodeNbr)+ ' ' + mKey)
-        GETstr =messana.IP+'/api/'+messana.node_type+'/'+mKey+'/'+str(nodeNbr)+'?'+ messana.APIStr 
+        GETstr =messana.IPstr +'/api/'+messana.node_type+'/'+mKey+'/'+str(nodeNbr)+'?'+ messana.apiStr 
         logging.debug('GET_node_data: {} '.format(GETstr) )
         try:
             nTemp = requests.get(GETstr)
@@ -76,21 +78,21 @@ class messanaInfo(object):
                 nData = nTemp.json()
                 data   = nData[str(list(nData.keys())[0])]
                 if data in messana.NaNlist:
-                    return(None)
+                    return
                 else:
                     return(data)
 
             else:
                 logging.error('GETNodeData: {} {} {}'.format(nodeNbr, mKey, str(nTemp)))
-                return(None)
+                return
         except Exception as e:
             logging.error ('Error GETNodeData:{} : {}'.format(GETstr, e))
-            return(None)
+            return
 
     def PUT_node_data(messana, nodeNbr, mKey, value):
         mData = {}
-        PUTstr = messana.IP + +'/api/'+messana.nodeType+'/'+mKey+'/'+str(nodeNbr)
-        mData = {'id':nodeNbr, 'value': value, 'apikey' : messana.APIkey }
+        PUTstr = messana.IPstr + +'/api/'+messana.nodeType+'/'+mKey+'/'+str(nodeNbr)
+        mData = {'id':nodeNbr, 'value': value, 'apikey' : messana.apiKey }
         logging.debug('PUT_node_data :{} {}'.format(PUTstr, mData) )
         try:
             resp = requests.put(PUTstr, json=mData)

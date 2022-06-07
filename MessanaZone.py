@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 
 try:
     import udi_interface
@@ -13,154 +14,153 @@ except ImportError:
 #from subprocess import call
 from MessanaInfo import messanaInfo
 
-#self, controller, primary, address, name, nodeType, nodeNbr, self
+#messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messanaZone(messanaInfo):
-    def __init__(self, IPaddress, apiKey):
-        super().__init__(IPaddress, apiKey)
+    def __init__(self, messanaIP, messanaKey, zoneNbr):
+        super().__init__(messanaIP, messanaKey)
         logging.info('init Zone:' )
+        
         self.node_type = 'zone'
-        self.IPaddress = IPaddress
-        self.apiKey = apiKey
-        self.nbr_zones = self.GET_system_data('zoneCount')
+        #self.IPaddress = IPaddress
+        #self.apiKey = messanaKey
+        self.zone_nbr = zoneNbr
+        self.stateList = [0,1]
 
-        
-    def get_name(self, zone_nbr):
-        logging.debug('get_name {}'.format(zone_nbr))
-        val = self.GET_node_data(zone_nbr, 'name')
-        return(val)
-
-
-    def get_temp(self, zone_nbr):
-        logging.debug('get_temp {}'.format(zone_nbr))
-        val = self.GET_node_data(zone_nbr, 'temperature')
-        return(val)
-
-    def get_air_temp(self, zone_nbr):
-        logging.debug('get_air_temp {}'.format(zone_nbr))    
-        val = self.GET_node_data(zone_nbr, 'airTemperature')
-        return(val)
-    
-    def get_humidity(self, zone_nbr):
-        logging.debug('get_humidity {}'.format(zone_nbr))    
-        val = self.GET_node_data(zone_nbr, 'humidity')
-        return(val)
-
-    def get_set_point(self, zone_nbr):
-        logging.debug('get_set_point {}'.format(zone_nbr))    
-        val = self.GET_node_data(zone_nbr, 'setPoint')
-        return(val)
-
-    def get_status(self, zone_nbr):
-        logging.debug('get_status {}'.format(zone_nbr))    
-        val = self.GET_node_data(zone_nbr, 'status')
-        return(val)
-
-    def get_dewpoint(self, zone_nbr):
-        logging.debug('get_dewpoint {}'.format(zone_nbr))    
-        val = self.GET_node_data(zone_nbr, 'dewpoint')
-        return(val)
-
-    def get_energy_saving(self, zone_nbr):
-        logging.debug('get_energy_saving {}'.format(zone_nbr))    
-        val = self.GET_node_data(zone_nbr, 'energySaving')
-        return(val)
-
-    def get_co2(self, zone_nbr):
-        logging.debug('get_co2 {}'.format(zone_nbr))    
-        val = self.GET_node_data(zone_nbr, 'co2')
-        return(val)
+        self.update_all()
 
 
 
-        
-    '''
 
-    def setEnergySave(self, command):
-        #logging.debug('setEnergySave Called')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setEnergySave Received:' + str(value))
-        if self.self.zoneSetEnergySave(value, self.zone_nbr):
-            ISYdriver = self.self.getEnergySaveISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
-
-
-    def setSetpoint(self, command):
-        #logging.debug('setSetpoint Called')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setSetpoint Received:' + str(value))
-        if self.self.zoneSetSetpoint(value, self.zone_nbr):
-            ISYdriver = self.self.getSetPointISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
+    def update_active(self):
+        self.temp = self.update_temp()
+        self.air_temp = self.update_air_temp()
+        self.humidity = self.update_humidity()
+        self.air_quality = self.update_air_quality()
+        self.status = self.update_status()
+        self.co2 = self.update_co2()
+        self.thermalStatus = self.update_thermal_status()
 
 
-    def enableSchedule(self, command):
-        #logging.debug('EnSchedule Called')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' EnSchedule Reeived:' + str(value))      
-        if self.self.zoneEnableSchedule(value, self.zone_nbr):
-            ISYdriver = self.self.getEnableScheduleISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)     
-        
-    def ISYupdate(self, command):
-        #logging.info('ISY-update called - zone' + str(self.zone_nbr))
-        self.self.updateZoneData('all', self.zone_nbr)
-        self.updateISYdrivers('all')
-        self.reportDrivers()
-
-    def setCurrentDewPt(self, command):
-        #logging.debug('setCurrentDP Not tested yet')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setCurrentDewPt Received:' + str(value))
-        if self.self.zonesetCurrentDPt(value, self.zone_nbr):
-            ISYdriver = self.self.getsetCurrentDPtISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
-
-    def setCurRelHum(self, command):
-        #logging.debug('setCurRelHum Not tested yet')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setCurrentDewPt Received:' + str(value))
-        if self.self.zonesetCurrentRH(value, self.zone_nbr):
-            ISYdriver = self.self.getsetCurrentRHISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
-
-    def setDewTempDehum(self, command):
-        #logging.debug('setDewTempDehum Not tested yet')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setCurrentDewPt Received:' + str(value))
-        if self.self.zonesetDehumDpt(value, self.zone_nbr):
-            ISYdriver = self.self.getsetDehumDPtISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
-
-    def setRelDehum(self, command):
-        #logging.debug('setRelDehum Not tested yet')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setCurrentDewPt Received:' + str(value))
-        if self.self.zonesetDehumRH(value, self.zone_nbr):
-            ISYdriver = self.self.getsetDehumRHISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
-
-    def setDewTempHum(self, command):
-        #logging.debug('setDewTempHum Not tested yet')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setCurrentDewPt Received:' + str(value))
-        if self.self.zonesetHumDpt(value, self.zone_nbr):
-            ISYdriver = self.self.getsetHumDPtISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
+    def update_all(self):
+        self.update_active()
+        self.update_name()
+        self.update_setpointCO2
+        self.setpoint = self.update_setpoint
+        self.energy_saving = self.update_energy_saving()
+        self.scheduleOn = self.update_scheduleOn()
+        self.status = self.update_status()
 
 
-    def setRelHum(self, command):
-        #logging.debug('setRelHum Not tested yet')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setCurrentDewPt Received:' + str(value))
-        if self.self.zonesetHumRH(value, self.zone_nbr):
-            ISYdriver = self.self.getsetHumRHISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
 
-    def setCO2(self, command):
-        #logging.debug('setCO2 Not tested yet')
-        value = int(command.get('value'))
-        #logging.debug('Zone'+str(self.zone_nbr)+' setCurrentDewPt Received:' + str(value))
-        if self.self.zonesetCO2(value, self.zone_nbr):
-            ISYdriver = self.self.getsetCO2ISYdriver(self.zone_nbr)
-            self.setDriver(ISYdriver, value, report = True)
-    '''
+    def update_name(self):
+         temp = self.GET_node_data(self.zone_nbr, 'name')
+         if temp:
+             self.name = temp
+
+    def update_energy_saving(self):
+        temp = self.GET_node_data(self.zone_nbr, 'energySaving')
+        if temp:
+            self.energy_saving = temp
+
+
+    def update_scheduleOn(self):
+        temp =  self.GET_node_data(self.zone_nbr, 'scheduleOn')
+        if temp:
+            self.scheduleOn = temp
+
+
+    def update_scheduleOn(self):
+        temp = self.GET_node_data(self.zone_nbr, 'scheduleOn'):
+        if temp:
+            self.scheduleOn = temp
+
+
+
+    def set_scheduleOn(self, state):
+        if self.PUT_node_data(self.zone_nbr, 'scheduleOn', state):
+            time.sleep(0.5)
+            self.scheduleOn = self.update_scheduleOn()
+            return(True)
+        else:
+            return(False)
+
+
+
+    def update_thermal_status(self):
+        return( self.GET_node_data(self.zone_nbr, 'thermalStatus'))
+
+    def update_temp(self):
+        return(self.GET_node_data(self.zone_nbr, 'temperature'))
+  
+
+    def update_air_temp(self):
+        return(self.GET_node_data(self.zone_nbr, 'airTemperature'))
+
+    def update_setpoint(self):
+        return(self.GET_node_data(self.zone_nbr, 'setpoint'))
+
+    def set_setpoint(self, setpoint):
+        if self.PUT_node_data(self.zone_nbr, 'setpoint'):
+            time.sleep(0.5)
+            self.setpoint = self.update_setpoint()
+            return(self.setpoint)
+        else:
+            return
+
+
+
+
+    def update_humidity(self):
+        return( self.GET_node_data(self.zone_nbr, 'humidity'))
+
+
+    def update_air_quality(self):
+        val = self.GET_node_data(self.zone_nbr, 'airQuality')
+        if val not in self.NaNlist:
+            return(val['category'])
+        else:
+            return
+
+
+    def update_setpointCO2(self):
+        return( self.GET_node_data(self.zone_nbr, 'setpointCO2'))
+
+    def set_setpointCO2(self):
+        if self.PUT_node_data(self.zone_nbr, 'setpointCO2'):
+            time.sleep(0.5)
+            self.setpointCO2 = self.update_setpointCO2()
+            return(self.setpointCO2)
+        else:
+            return
+
+    def update_status(self):
+        logging.debug('update_status {}'.format(zone_nbr))    
+        return( self.GET_node_data(self.zone_nbr, 'status'))
+
+    def set_status(self, state):
+        if state in self.stateList:
+            self.PUT_node_data(self.zone_nbr,'status', state )
+            time.sleep(0.5)
+            self.status = self.update_status()
+            return(self.status)
+        else:
+            logging.error ('Wrong Status state passed ([0,1]: {}'.format(state))
+            return(False)
+          
+    def update_dewpoint(self):
+        return( self.GET_node_data(self.zone_nbr, 'dewpoint'))
+  
+    def update_energy_saving(self):
+        return( self.GET_node_data(self.zone_nbr, 'energySaving'))
+
+    def set_energy_save(self, state):
+        if state in self.stateList:
+            self.PUT_node_data(self.zone_nbr,'energySaving', state )
+            self.energy_saving = self.update_energy_saving()
+            return(self.energy_saving)
+        else:
+            logging.error ('Wrong enerySaving state passed ([0,1]: {}'.format(state))
+            return(False)
+
+    def update_co2(self):
+        return(self.GET_node_data(self.zone_nbr, 'co2'))
