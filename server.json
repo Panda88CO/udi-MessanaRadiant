@@ -1,22 +1,22 @@
 {
     "name": "MessanaControl",
-    "docs": "https://github.com/Panda88CO/udi-Messana.git",
+    "docs": "https://github.com/Panda88CO/udi-MessanaRadiant.git",
     "type": "python3",
-    "executable": "MessanaController.py",
+    "executable": "udiMessanaSystem.py",
     "install": "install.sh",
     "description": "Nodeserver to allow integration of Messana Radiant heating/cooling",
     "notice": "My current system only supports heat, so cooling is not tested yet.  No Fan Coils in my system, and DHW is not integrated.",
     "shortPoll": "120",
     "longPoll": "600",
     "testMode": false,
-    "profile_version": "0.2.6",
+    "profile_version": "0.1.0",
     "credits": [
         {
             "title": "A NodeServer to integrate Messana Radiant Heat/Cool system",
             "author": "Panda88CO",
-            "version": "0.2.6",
-            "date": "Nov 14, 2021",
-            "source": "https://github.com/Panda88CO/udi-Messana.git",
+            "version": "0.1.0",
+            "date": "June 10, 2021",
+            "source": "https://github.com/Panda88CO/udi-MessanaRadiant.git",
             "license": "https://github.com/Panda88CO/udi-Messana/blob/master/LICENSE"
         }
     ]
