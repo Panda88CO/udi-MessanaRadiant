@@ -224,7 +224,6 @@ class YoLinkSetup (udi_interface.Node):
                         logging.debug('delete node {}'.format(nde))
         # checking params
         '''
-
     def stop(self):
         logging.info('Stop Called:')
         #self.yoAccess.writeTtsFile() #save current TTS messages
@@ -239,7 +238,6 @@ class YoLinkSetup (udi_interface.Node):
             self.yoAccess.shut_down()
         self.poly.stop()
         exit()
- 
 
     def heartbeat(self):
         logging.debug('heartbeat: ' + str(self.hb))

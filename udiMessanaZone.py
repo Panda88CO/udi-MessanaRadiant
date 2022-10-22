@@ -2,8 +2,8 @@
 
 import time
 
-from MessanaInfo import messanaInfo
-from MessanaZone import messanaZone
+from MessanaInfo import messana_info
+from MessanaZone import messana_zone
 
 try:
     import udi_interface
@@ -33,22 +33,21 @@ class udiMessanaZone(udi_interface.Node):
             {'driver': 'ST', 'value': 0, 'uom': 25},
             ]
 
-    def __init__(self, polyglot, primary, address, name, IPaddress, apiKey, zone_nbr):
+    def __init__(self, polyglot, primary, address, name, zone_nbr):
         super().__init__(polyglot, primary, address, name)
-        logging.info('init Messana Zones:' )
+        logging.info('init Messana Zone {}:'.format(zone_nbr) )
         #self.node_type = 'zone'
         self.parent = primary
-		self.name = name
-		self.address = address
-		self.poly = polyglot
-        self.IPaddress = IPaddress
-        self.apiKey = apiKey
+        self.name = name
+        self.address = address
+        self.poly = polyglot
         self.zone_nbr = zone_nbr
-
+        
+        self.n_queue = []
         polyglot.subscribe(polyglot.START, self.start, self.address)
         polyglot.subscribe(polyglot.STOP, self.stop)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        self.n_queue = []
+        
 
         polyglot.ready()
         self.poly.addNode(self)
@@ -65,6 +64,6 @@ class udiMessanaZone(udi_interface.Node):
      
     def start(self):
         logging.info('Start - adding zone {}'.format(self.zone_nbr))
-        self.zone = messanaZone(self.IPaddress, self.apiKey, self.zone_nbr)
+        self.zone = messana_zone( self.zone_nbr)
 
 
