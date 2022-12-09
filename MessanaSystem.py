@@ -16,13 +16,13 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 
-from MessanaInfo import messanaInfo
-from MessanaZone import messanaZone
+from MessanaInfo import messana_info
 
-class messanaSystem(messanaInfo):
-    def __init__(self, IPaddress, messanaKey):
-        super().__init__(IPaddress, messanaKey)
-        #self.Sys = messanaInfo(IPaddress, messanaKey)
+
+class messanaSystem(messana_info):
+    def __init__(self):
+        super().__init__()
+        #self.Sys = messana_info(IPaddress, messanaKey)
         self.status = self.get_status()
         self.temp_unit = self.GET_system_data('tempUnit')
         self.nbr_zones = self.GET_system_data('zoneCount')

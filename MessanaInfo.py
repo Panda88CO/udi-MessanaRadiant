@@ -28,96 +28,35 @@ except ImportError:
 
 
 class messana_info(object):
-    def __init__(self,  IPaddress, messanaKey):
+    def __init__(self):
         self.systemAPI = '/api/system'
         self.RESPONSE_OK = '<Response [200]>'
         self.RESPONSE_NO_SUPPORT = '<Response [400]>'
         self.RESPONSE_NO_RESPONSE = '<Response [404]>'
         self.RESPONSE_SERVER_ERROR = '<Response [500]>'
         self.NaNlist= [-32768 , -3276.8 ]
-        self.IPaddress = IPaddress
-        self.Key = messanaKey
+        self.IPaddress = ''
+        self.Key = ''
+        self.apiStr = ''
+        self.IPstr =''
+        
+    def init_system(self, ip_address, api_key):
+        self.IPaddress = ip_address
+        self.Key = api_key
         self.apiStr = 'apikey=' + self.Key
         self.IPstr ='http://'+ self.IPaddress
 
+    def get_name(self, type, instance):
+        logging.debug('get_name')
 
 
 
+    #pretty bad solution - just checking if a value can be extracted
+    def checkMessanaConnection(messana):
+        sysData = self.GETSystemData('mApiVer') 
+        return (sysData['statusOK'])
+    
 
-
-    def GET_system_data(self, mKey):
-        GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
-        logging.debug('GET_system_data: {} '.format(mKey) )
-
-        #logging.debug( GETStr)
-        try:
-            systemTemp = requests.get(GETstr)
-            #logging.debug(str(systemTemp))
-            if str(systemTemp) == self.RESPONSE_OK:
-                systemTemp = systemTemp.json()
-                data = systemTemp[str(list(systemTemp.keys())[0])]
-            else:
-                logging.error('GET_system_data error {} {}'.format(mKey,str(systemTemp) ))
-            if data in self.NaNlist:
-                return (None)
-            else:
-                return(data) #No data for given keyword - remove from list
-
-        except Exception as e:
-            logging.error('System GET_system_data operation failed for {}: {}'.format(mKey, e))
-            return
-
-
-
-    def PUT_system_data(self, mKey, value):
-        mData = {}
-        PUTstr = self.IPstr + self.systemAPI+'/'+ mKey
-        mData = {'value':value, 'apikey': self.apiKey}
-        logging.debug('PUT_system_data :{} {}'.format(PUTstr, value) )
-        try:
-            resp = requests.put(PUTstr, json=mData)
-            return( str(resp) == self.RESPONSE_OK)
-
-        except Exception as e:
-            logging.error('Error PUT_system_data {}: {}'.format(PUTstr, e))
-            return
-  
-
-    def GET_node_data(self, mApiKey):
-        #logging.debug('GETNodeData: ' + mNodeKey + ' ' + str(nodeNbr)+ ' ' + mKey)
-        GETstr =self.IPstr +'/api/'+self.node_type+'/'+mApiKey+'/'+str(self.node_nbr)+'?'+ self.apiStr
-        logging.debug('GET_node_data: {}-{}-{} '.format(self.node_type, self.node_nbr, mApiKey ) )
-        try:
-            nTemp = requests.get(GETstr)
-            if str(nTemp) == self.RESPONSE_OK:
-                nData = nTemp.json()
-                data   = nData[str(list(nData.keys())[0])]
-                if data in self.NaNlist:
-                    return
-                else:
-                    return(data)
-
-            else:
-                logging.error('GET_node_data: {} {} {}'.format(self.node_nbr, mApiKey, str(nTemp)))
-                return
-        except Exception as e:
-            logging.error ('Error GET_node_data:{} : {}'.format(GETstr, e))
-            return
-
-
-    def PUT_node_data(self,  mKey, value):
-        mData = {}
-        PUTstr = self.IPstr + +'/api/'+ self.node_type +'/'+mKey+'/'+str(self.node_nbr)
-        mData = {'id':self.node_nbr, 'value': value, 'apikey' : self.apiKey }
-        logging.debug('PUT_node_data :{} {}'.format(PUTstr, mData) )
-        try:
-            resp = requests.put(PUTstr, json=mData)
-            logging.debug('PUT_node_data  respomse:{} {}'.format(PUTstr, resp) )
-            return(str(resp) == self.RESPONSE_OK)
-
-        except Exception as e:
-            logging.error('Error PUT_node_data try/cartch {}:{}'.format(PUTstr, e))
-            return(False)
 
 
 ###############################
@@ -132,43 +71,125 @@ class messana_info(object):
             return(None)
 
 
-    
-    class zone:
-        def __init__(self, zoneNbr):
-            super().__init__()
-            logging.info('init Zone:' )
-            self.node_type = 'zone'
-            self.node_nbr = zoneNbr
-            self.stateList = [0,1]
-
-        def get_name(self):
-            logging.debug('get_name {}: {}'.format(self.node_type, self.node_nbr ))
-            return(self.GET_node_data('name'))
-
-        def get_status(self):
-            logging.debug('get_status {}:  {}'.format(self.node_type, self.node_nbr))    
-            return(self.GET_node_data('status'))
+class mess_system(object):
+    def __init__ (self):
+        super().__init__()
 
 
-        def set_status(self, state):
-            if state in self.stateList:
-                self.PUT_node_data('status', state )
-                time.sleep(0.5)
-    
-                return(self.get_status())
+    def GET_data(self, mKey):
+        GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
+        logging.debug('GET_system_data: {}'.format(mKey))
+
+        #logging.debug( GETStr)
+        try:
+            systemTemp = requests.get(GETstr)
+            #logging.debug(str(systemTemp))
+            if str(systemTemp) == self.RESPONSE_OK:
+                systemTemp = systemTemp.json()
+                data = systemTemp[str(list(systemTemp.keys())[0])]
             else:
-                logging.error ('Wrong Status state passed ([0,1]: {}'.format(state))
-                return(False)
+                logging.error('GET_system_data error {} {}'.format(mKey,str(systemTemp)))
+            if data in self.NaNlist:
+                return (None)
+            else:
+                return(data) #No data for given keyword - remove from list
+
+        except Exception as e:
+            logging.error('System GET_system_data operation failed for {}: {}'.format(mKey, e))
+            return
+
+
+
+    def PUT_data(self, mKey, value):
+        mData = {}
+        PUTstr = self.IPstr + self.systemAPI+'/'+ mKey
+        mData = {'value':value, 'apikey': self.apiStr}
+        logging.debug('PUT_system_data :{} {}'.format(PUTstr, value) )
+        try:
+            resp = requests.put(PUTstr, json=mData)
+            return( str(resp) == self.RESPONSE_OK)
+
+        except Exception as e:
+            logging.error('Error PUT_system_data {}: {}'.format(PUTstr, e))
+            return
+  
+
+
+class mess_node (object):
+    def __init__ (self, node_nbr):
+        super().__init__()
+
+    def GET_data(self, node_type, node_nbr):
+        #logging.debug('GETNodeData: ' + mNodeKey + ' ' + str(nodeNbr)+ ' ' + mKey)
+        GETstr =self.IPstr +'/api/'+self.node_type+'/'+mApiKey+'/'+str(self.node_nbr)+'?'+ self.apiStr
+        logging.debug('GET_node_data: {}-{}-{} '.format(self.node_type, self.node_nbr, mApiKey ) )
+        try:
+            nTemp = requests.get(GETstr)
+            if str(nTemp) == self.RESPONSE_OK:
+                nData = nTemp.json()
+                data   = nData[str(list(nData.keys())[0])]
+                if data in self.NaNlist:
+                    return(None)
+                else:
+                    return(data)
+
+            else:
+                logging.error('GET_node_data: {} {} {}'.format(self.node_nbr, mApiKey, str(nTemp)))
+                return(None)
+        except Exception as e:
+            logging.error ('Error GET_node_data:{} : {}'.format(GETstr, e))
+            return(None)
+
+
+    def PUT_data(self,  mKey, value):
+        mData = {}
+        PUTstr = self.IPstr + +'/api/'+ self.node_type +'/'+mKey+'/'+str(self.node_nbr)
+        mData = {'id':self.node_nbr, 'value': value, 'apikey' : self.apiKey }
+        logging.debug('PUT_node_data :{} {}'.format(PUTstr, mData) )
+        try:
+            resp = requests.put(PUTstr, json=mData)
+            logging.debug('PUT_node_data  respomse:{} {}'.format(PUTstr, resp) )
+            return(str(resp) == self.RESPONSE_OK)
+
+        except Exception as e:
+            logging.error('Error PUT_node_data try/cartch {}:{}'.format(PUTstr, e))
+            return(False)
+
+
+            
+
+class zone(mess_node):
+    def __init__(self, zone_nbr):
+        super().__init__()
+        logging.info('init Zone:' )
+        self.node_type = 'zone'
+        self.node_nbr = zone_nbr
+        self.stateList = [0,1]
+
+    def get_name(self):
+        logging.debug('get_name {}: {}'.format(self.node_type, self.node_nbr ))
+        return(self.GET_node_data('name'))
+
+    def get_status(self):
+        logging.debug('get_status {}:  {}'.format(self.node_type, self.node_nbr))    
+        return(self.GET_node_data('status'))
+
+
+    def set_status(self, state):
+        if state in self.stateList:
+            self.PUT_node_data('status', state )
+            time.sleep(0.5)
+
+            return(self.get_status())
+        else:
+            logging.error ('Wrong Status state passed ([0,1]: {}'.format(state))
+            return(False)
           
 
 
 
  
-    #pretty bad solution - just checking if a value can be extracted
-    def checkMessanaConnection(messana):
-        sysData = self.GETSystemData('mApiVer') 
-        return (sysData['statusOK'])
-    
+
 
 
 #

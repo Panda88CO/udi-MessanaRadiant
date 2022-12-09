@@ -33,7 +33,7 @@ class udiMessanaZone(udi_interface.Node):
             {'driver': 'ST', 'value': 0, 'uom': 25},
             ]
 
-    def __init__(self, polyglot, primary, address, name, zone_nbr):
+    def __init__(self, polyglot, primary, address, name, system, zone_nbr):
         super().__init__(polyglot, primary, address, name)
         logging.info('init Messana Zone {}:'.format(zone_nbr) )
         #self.node_type = 'zone'
@@ -41,7 +41,9 @@ class udiMessanaZone(udi_interface.Node):
         self.name = name
         self.address = address
         self.poly = polyglot
+        self.system = system
         self.zone_nbr = zone_nbr
+
         
         self.n_queue = []
         polyglot.subscribe(polyglot.START, self.start, self.address)

@@ -2,6 +2,7 @@
 
 try:
     import udi_interface
+    
     logging = udi_interface.LOGGER
     Custom = udi_interface.Custom
 
@@ -11,36 +12,31 @@ except ImportError:
 
 
 from MessanaSystem import messanaSystem
+from udiMessanaSystem import udi_messana_system
 #from MessanaZone import messanaZone
 from udiMessanaZone import udiMessanaZone
 import time
+import re
 
-class udi_messana_system (udi_interface.Node):
+class messana (udi_interface.Node):
     def  __init__(self, polyglot, primary, address, name):
         super().__init__( polyglot, primary, address, name)  
-        
-
-
         self.hb = 0
         self.poly=polyglot
         self.nodeDefineDone = False
         self.handleParamsDone = False
         self.address = address
         self.name = name
+        self.primary = primary
 
         self.n_queue = []
         #logging.setLevel(30)
-        self.poly.subscribe(self.poly.STOP, self.stop)
-        self.poly.subscribe(self.poly.START, self.start, address)
-        self.poly.subscribe(self.poly.LOGLEVEL, self.handleLevelChange)
-        self.poly.subscribe(self.poly.CUSTOMPARAMS, self.handleParams)
-        self.poly.subscribe(self.poly.POLL, self.systemPoll)
-        self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        self.poly.subscribe(self.poly.CONFIGDONE, self.validate_params)
+
+        
 
         self.Parameters = Custom(self.poly, 'customparams')
         self.Notices = Custom(self.poly, 'notices')
-        logging.debug('Messana System Init ')
+        logging.debug('YoLinkSetup init')
         logging.debug('self.address : ' + str(self.address))
         logging.debug('self.name :' + str(self.name))
         self.poly.updateProfile()
@@ -62,6 +58,15 @@ class udi_messana_system (udi_interface.Node):
             time.sleep(0.1)
         self.n_queue.pop()
 
+    def getValidName(self, name):
+        name = bytes(name, 'utf-8').decode('utf-8','ignore')
+        return re.sub(r"[^A-Za-z0-9_ ]", "", name)
+
+    # remove all illegal characters from node address
+    def getValidAddress(self, name):
+        name = bytes(name, 'utf-8').decode('utf-8','ignore')
+        return re.sub(r"[^A-Za-z0-9_]", "", name.lower()[:14])
+    
 
     def start (self):
         logging.info('Executing start - Messana System')
@@ -71,19 +76,22 @@ class udi_messana_system (udi_interface.Node):
             logging.debug ('waiting for inital node to get created')
         
 
-        if self.ip_address == None or self.ip_address == '' or self.messana_key == None or self.messana_key == '':
+        if self.ip_address == None or self.ip_address == '' or self.messana_key ==None or self.messana_key == '':
             logging.error('IP address and Messana Key must be provided to start node server')
             exit()
 
-        self.system  = messanaSystem()
-        self.system.init_system(self.ip_address,  self.messana_key)
+        self.messana  = messanaSystem()
+        self.messana.init_system(self.ip_address,  self.messana_key)
+        name = self.messana.name
+        self.sys_addr = self.getValidAddress(self.messana.name)
+        sys_name = self.getValidName(self.messana.name)
+        self.m_sys = udi_messana_system(self.poly, self.sys_addr, self.sys_addr, name )
 
-
-        if self.system.nbr_zones > 0:
+        if self.messana.nbr_zones > 0:
             self.zones = {}
-            for zoneNbr in range(0, self.system.nbr_zones):
-                zone_name = self.system.get_name('zone', zoneNbr)
-                self.zones[zoneNbr] =  udiMessanaZone(self.poly, self.system, zoneNbr)
+            for zoneNbr in range(0, self.messana.nbr_zones):
+                zone_name = self.messana.get_name('zone', zoneNbr)
+                self.zones[zoneNbr] =  udiMessanaZone(self.poly, self.messana, zoneNbr)
 
         self.update_drivers()
         
@@ -123,7 +131,7 @@ class udi_messana_system (udi_interface.Node):
                     logging.info('Adding device {} ({}) as {}'.format( self.deviceList[dev]['name'], self.deviceList[dev]['type'], str(name) ))                                        
                     #udiYoHub(self.poly, name, name, self.deviceList[dev]['name'], self.yoAccess, self.deviceList[dev] )
                     #self.Parameters[name]  =  self.deviceList[dev]['name']
-                
+              
                 elif self.deviceList[dev]['type'] == 'LeakSensor': 
                     name = self.deviceList[dev]['deviceId'][-14:] #14 last characters - hopefully there is no repeats (first charas seems the same for all)
                     logging.info('Adding device {} ({}) as {}'.format( self.deviceList[dev]['name'], self.deviceList[dev]['type'], str(name) ))                                        
@@ -273,7 +281,7 @@ if __name__ == "__main__":
     try:
         polyglot = udi_interface.Interface([])
         polyglot.start('0.1.0')
-        YoLinkSetup(polyglot, 'setup', 'setup', 'MessanaSystem')
+        messana(polyglot, 'setup', 'setup', 'Messana')
 
         # Just sit and wait for events
         polyglot.runForever()
