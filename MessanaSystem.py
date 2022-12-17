@@ -16,13 +16,26 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 
-from MessanaInfo import messana_info
+from MessanaInfo import messana_system
 
 
-class messanaSystem(messana_info):
-    def __init__(self):
-        super().__init__()
-        #self.Sys = messana_info(IPaddress, messanaKey)
+class messana_system(messana_system):
+    def __init__(self, ip_address, api_key ) :
+        self.systemAPI = '/api/system'
+        self.RESPONSE_OK = '<Response [200]>'
+        self.RESPONSE_NO_SUPPORT = '<Response [400]>'
+        self.RESPONSE_NO_RESPONSE = '<Response [404]>'
+        self.RESPONSE_SERVER_ERROR = '<Response [500]>'
+        self.NaNlist= [-32768 , -3276.8 ]
+        self.IPaddress = ''
+        self.Key = ''
+        self.apiStr = ''
+        self.IPstr =''        
+        self.IPaddress = ip_address
+        self.Key = api_key
+        self.apiStr = 'apikey=' + self.Key
+        self.IPstr ='http://'+ self.IPaddress
+
         self.status = self.get_status()
         self.temp_unit = self.GET_system_data('tempUnit')
         self.nbr_zones = self.GET_system_data('zoneCount')
@@ -34,6 +47,50 @@ class messanaSystem(messana_info):
         self.nbr_macrozone = self.GET_system_data('macroZoneCount')
         self.name = self.GET_system_data('name')
 
+    ###############################
+    #pretty bad solution - just checking if a value can be extracted
+    def connected(self):
+        try:
+            sysData = self.GET_system_data('mApiVer')
+            return(sysData['statusOK'])
+        except:
+            return(False)
+
+    def GET_system_data(self, mKey):
+        GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
+        logging.debug('GET_system_data: {}'.format(mKey))
+
+        #logging.debug( GETStr)
+        try:
+            systemTemp = requests.get(GETstr)
+            #logging.debug(str(systemTemp))
+            if str(systemTemp) == self.RESPONSE_OK:
+                systemTemp = systemTemp.json()
+                data = systemTemp[str(list(systemTemp.keys())[0])]
+            else:
+                logging.error('GET_system_data error {} {}'.format(mKey, str(systemTemp)))
+            if data in self.NaNlist:
+                return(None)
+            else:
+                return(data) #No data for given keyword - remove from list
+        except Exception as e:
+            logging.error('System GET_system_data operation failed for {}: {}'.format(mKey, e))
+            return(None)
+
+
+    def PUT_system_data(self, mKey, value):
+        mData = {}
+        PUTstr = self.IPstr + self.systemAPI+'/'+ mKey
+        mData = {'value':value, 'apikey': self.apiStr}
+        logging.debug('PUT_system_data :{} {}'.format(PUTstr, value) )
+        try:
+            resp = requests.put(PUTstr, json=mData)
+            return( str(resp) == self.RESPONSE_OK)
+
+        except Exception as e:
+            logging.error('Error PUT_system_data {}: {}'.format(PUTstr, e))
+            return(None)
+  
     def get_status(self):
         return(self.GET_system_data('status'))
 

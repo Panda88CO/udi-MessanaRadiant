@@ -2,8 +2,8 @@
 
 
 import sys
-from MessanaInfo import messana_info
-#from MessanaZoneV2 import messanaZone
+from MessanaInfo import messana_system
+from udiMessanaZone import udi_messana_zone
 #from MessanaMacrozoneV2 import messanaMacrozone
 #from MessanaATUV2 import messanaAtu
 #from MessanaBufTankV2 import messanaBufTank
@@ -42,6 +42,7 @@ class MessanaController(udi_interface.Controller):
         self.ISYTempUnit = 0
         self.drivers = []
         self.nodeDefineDone = False
+        self.zones = {}
 
 
         self.poly.subscribe(self.poly.STOP, self.stop)
@@ -86,24 +87,7 @@ class MessanaController(udi_interface.Controller):
 
     def start(self):
         self.removeNoticesAll()
-
         #check params are ok 
-
-        self.messanaSys = messana_info(self.IPAddress, self.MessanaKey)
-        #self.nbrZones = self.messanaSys.messanaZones(self.IPAddress, self.MessanaKey)
-        #self.messanaZones = messanaSys.createZones()
-        #self.messanaMacroZones = messanaSys.createMacroZones()
-        #self.messanaAtus = messanaSys.createAtus()
-        #self.messanaEnergySources = messanaSys.createEnegrgySpurces()
-        #self.messanaFanCoils = messanaSys.createFanCoils()
-        #self.messanaHotWater = messanaSys.createHotWater()
-        #self.messanaHotColdCtrl = messanaSys.createHotColdCtrl()
-        #self.messanaSys.installMacroZones()
-        #self.messanaSys.installAtus(  )
-
-
-
-
         logging.info('Start Messana Main NEW')
         self.IPAddress = self.getCustomParam('IP_ADDRESS')
         if self.IPAddress == None:
@@ -122,9 +106,14 @@ class MessanaController(udi_interface.Controller):
 
         else:
             logging.info('Retrieving info from Messana System')
-            self.messana = messana_info( self.IPAddress, self.MessanaKey)
-            if self.messana == False:
+            self.messana = messana_system( self.IPAddress, self.MessanaKey)
+            if not self.messana.connected():
                 self.stop()
+        
+        for zone in range(0, self.messana):
+            self.zones[zone] = udi_messana_zone(self.poly, 'system', self.messana, zone)
+
+            '''
             self.id = self.messana.getSystemAddress()
             #self.address = self.messana.getSystemAddress()
             self.messana.updateSystemData('all')
@@ -142,8 +131,9 @@ class MessanaController(udi_interface.Controller):
             logging.info ('Install Profile')
             self.poly.installprofile()
             #logging.debug('Install Profile done')
+            '''
         self.updateISYdrivers('all')
-        self.messanaImportOK = 1
+        #self.messanaImportOK = 1
         self.discover()
 
 

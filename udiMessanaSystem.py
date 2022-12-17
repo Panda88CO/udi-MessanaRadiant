@@ -11,6 +11,7 @@ except ImportError:
 
 
 from MessanaSystem import messanaSystem
+from MessanaInfo import messana_system
 #from MessanaZone import messanaZone
 from udiMessanaZone import udiMessanaZone
 import time
@@ -75,22 +76,24 @@ class udi_messana_system (udi_interface.Node):
             logging.error('IP address and Messana Key must be provided to start node server')
             exit()
 
-        self.system  = messanaSystem()
-        self.system.init_system(self.ip_address,  self.messana_key)
+        self.messana = messana_system( self.IPAddress, self.MessanaKey)
+        if not self.messana.connected():
+            self.stop()
+            
 
 
-        if self.system.nbr_zones > 0:
+        if self.messana.nbr_zones > 0:
             self.zones = {}
-            for zoneNbr in range(0, self.system.nbr_zones):
-                zone_name = self.system.get_name('zone', zoneNbr)
-                self.zones[zoneNbr] =  udiMessanaZone(self.poly, self.system, zoneNbr)
+            for zoneNbr in range(0, self.messana.nbr_zones):
+                zone_name = self.messana.get_node_name('zone', zoneNbr)
+                self.zones[zoneNbr] =  udiMessanaZone(self.poly, 'setup', zoneNbr)
 
         self.update_drivers()
         
         
-        self.addNodes(self.deviceList)
+        #self.addNodes(self.deviceList)
 
-        #self.poly.updateProfile()
+        self.poly.updateProfile()
 
     def update_drivers(self):
         self.node.setDriver('ST', 1, True, True)

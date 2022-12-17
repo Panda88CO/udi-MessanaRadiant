@@ -27,8 +27,8 @@ except ImportError:
 
 
 
-class messana_info(object):
-    def __init__(self):
+class messana_system(object):
+    def __init__(self, ip_address, api_key ) :
         self.systemAPI = '/api/system'
         self.RESPONSE_OK = '<Response [200]>'
         self.RESPONSE_NO_SUPPORT = '<Response [400]>'
@@ -38,28 +38,30 @@ class messana_info(object):
         self.IPaddress = ''
         self.Key = ''
         self.apiStr = ''
-        self.IPstr =''
-        
-    def init_system(self, ip_address, api_key):
+        self.IPstr =''        
         self.IPaddress = ip_address
         self.Key = api_key
         self.apiStr = 'apikey=' + self.Key
         self.IPstr ='http://'+ self.IPaddress
 
-    def get_name(self, type, instance):
-        logging.debug('get_name')
+        self.status = self.get_status()
+        self.temp_unit = self.GET_system_data('tempUnit')
+        self.nbr_zones = self.GET_system_data('zoneCount')
+        self.nbr_atus = self.GET_system_data('atuCount')
+        self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
+        self.nbr_energy_source = self.GET_system_data('energySourceCount')
+        self.nbr_fancoil = self.GET_system_data('fancoilCount')
+        self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
+        self.nbr_macrozone = self.GET_system_data('macroZoneCount')
+        self.name = self.GET_system_data('name')
 
-
-
+    ###############################
     #pretty bad solution - just checking if a value can be extracted
-    def checkMessanaConnection(messana):
-        sysData = self.GETSystemData('mApiVer') 
+    def connected(self):
+        sysData = self.GET_system_data('mApiVer') 
         return (sysData['statusOK'])
     
 
-
-
-###############################
 
 
     def get_data(self,apiKey):
@@ -71,12 +73,7 @@ class messana_info(object):
             return(None)
 
 
-class mess_system(object):
-    def __init__ (self):
-        super().__init__()
-
-
-    def GET_data(self, mKey):
+    def GET_system_data(self, mKey):
         GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
         logging.debug('GET_system_data: {}'.format(mKey))
 
@@ -88,7 +85,7 @@ class mess_system(object):
                 systemTemp = systemTemp.json()
                 data = systemTemp[str(list(systemTemp.keys())[0])]
             else:
-                logging.error('GET_system_data error {} {}'.format(mKey,str(systemTemp)))
+                logging.error('GET_system_data error {} {}'.format(mKey, str(systemTemp)))
             if data in self.NaNlist:
                 return (None)
             else:
@@ -100,7 +97,7 @@ class mess_system(object):
 
 
 
-    def PUT_data(self, mKey, value):
+    def PUT_system_data(self, mKey, value):
         mData = {}
         PUTstr = self.IPstr + self.systemAPI+'/'+ mKey
         mData = {'value':value, 'apikey': self.apiStr}
@@ -115,14 +112,11 @@ class mess_system(object):
   
 
 
-class mess_node (object):
-    def __init__ (self, node_nbr):
-        super().__init__()
 
-    def GET_data(self, node_type, node_nbr):
+    def GET_node_data(self, mKey):
         #logging.debug('GETNodeData: ' + mNodeKey + ' ' + str(nodeNbr)+ ' ' + mKey)
-        GETstr =self.IPstr +'/api/'+self.node_type+'/'+mApiKey+'/'+str(self.node_nbr)+'?'+ self.apiStr
-        logging.debug('GET_node_data: {}-{}-{} '.format(self.node_type, self.node_nbr, mApiKey ) )
+        GETstr =self.IPstr +'/api/'+ self.node_type+'/'+mKey+'/'+str(self.node_nbr)+'?'+ self.apiStr
+        logging.debug('GET_node_data: {}-{}-{} '.format(node_type, node_nbr, mKey ))
         try:
             nTemp = requests.get(GETstr)
             if str(nTemp) == self.RESPONSE_OK:
@@ -134,14 +128,14 @@ class mess_node (object):
                     return(data)
 
             else:
-                logging.error('GET_node_data: {} {} {}'.format(self.node_nbr, mApiKey, str(nTemp)))
+                logging.error('GET_node_data: {} {} {}'.format(node_nbr, mKey, str(nTemp)))
                 return(None)
         except Exception as e:
             logging.error ('Error GET_node_data:{} : {}'.format(GETstr, e))
             return(None)
 
 
-    def PUT_data(self,  mKey, value):
+    def PUT_node_data(self, mKey, value):
         mData = {}
         PUTstr = self.IPstr + +'/api/'+ self.node_type +'/'+mKey+'/'+str(self.node_nbr)
         mData = {'id':self.node_nbr, 'value': value, 'apikey' : self.apiKey }
