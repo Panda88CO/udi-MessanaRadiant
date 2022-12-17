@@ -111,7 +111,7 @@ class MessanaController(udi_interface.Controller):
                 self.stop()
         
         for zone in range(0, self.messana):
-            self.zones[zone] = udi_messana_zone(self.poly, 'system', self.messana, zone)
+            self.zones[zone] = udi_messana_zone(self.poly, 'system', zone)
 
             '''
             self.id = self.messana.getSystemAddress()

@@ -23,8 +23,7 @@ from MessanaInfo import messana_system
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messana_zone(messana_system):
-    def __init__(self,messana_sys, zoneNbr):
-        super().__init__()
+    def __init__(self, zoneNbr):
         logging.info('init Zone:' )
         self.node_type = 'zone'
         self.node_nbr = zoneNbr

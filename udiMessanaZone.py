@@ -34,7 +34,7 @@ class udi_messana_zone(udi_interface.Node):
             {'driver': 'ST', 'value': 0, 'uom': 25},
             ]
 
-    def __init__(self, polyglot, primary, messana, zone_nbr):
+    def __init__(self, polyglot, primary, zone_nbr):
         super().__init__(polyglot)
         logging.info('init Messana Zone {}:'.format(zone_nbr) )
         #self.node_type = 'zone'
@@ -42,7 +42,7 @@ class udi_messana_zone(udi_interface.Node):
         #self.messana = system
         #self.zone_nbr = zone_nbr
 
-        self.zone = messana_zone(messana, zone_nbr)
+        self.zone = messana_zone(zone_nbr)
         tmp_name = self.zone.name
         self.address = self.getValidAddress(tmp_name)
         self.name = self.getValidName(tmp_name)
