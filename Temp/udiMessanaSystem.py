@@ -10,10 +10,10 @@ except ImportError:
     logging.basicConfig(level=logging.INFO)
 
 
-from MessanaSystem import messanaSystem
-from MessanaInfo import messana_system
+from MessanaSystem import messana_system
+from MessanaInfo import messana_control
 #from MessanaZone import messanaZone
-from udiMessanaZone import udiMessanaZone
+from udiMessanaZone import udi_messana_zone
 import time
 
 class udi_messana_system (udi_interface.Node):
@@ -123,7 +123,7 @@ class udi_messana_system (udi_interface.Node):
             self.zones = {}
             for zoneNbr in range(0, self.messana.nbr_zones):
                 zone_name = self.messana.get_node_name('zone', zoneNbr)
-                self.zones[zoneNbr] =  udiMessanaZone(self.poly, 'setup', zoneNbr)
+                self.zones[zoneNbr] =  udi_messana_zone(self.poly, 'setup', zoneNbr)
 
         self.update_drivers()
         

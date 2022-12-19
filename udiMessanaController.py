@@ -2,7 +2,7 @@
 
 
 import sys
-from MessanaInfo import messana_system
+from MessanaSystem import messana_system
 from udiMessanaZone import udi_messana_zone
 #from MessanaMacrozoneV2 import messanaMacrozone
 #from MessanaATUV2 import messanaAtu
@@ -62,27 +62,6 @@ class MessanaController(udi_interface.Controller):
             time.sleep(0.1)
         self.n_queue.pop()
 
-    '''
-    Add to init files
-    def defineInputParams(self):
-        self.IPAddress = self.getCustomParam('IP_ADDRESS')
-        if self.IPAddress is None:
-            self.addNotice('Please Set IP address of Messana system (IP_ADDRESS)')
-            self.addNotice('E.g. 192.168.1.2')
-            logging.error('IP address not set')
-            self.addCustomParam({'IP_ADDRESS': '192.168.1.2'})
-
-        
-        self.IPAddress = self.getCustomParam('MESSANA_KEY')
-        if self.MessanaKey is None:
-            self.addNotice('Please Set Messana API access Key (MESSANA_KEY)')
-            self.addNotice('E.g. 12345678-90ab-cdef-1234-567890abcdef')
-            logging.error('check_params: Messana Key not specified')
-            self.addCustomParam({'MESSANA_KEY': '12345678-90ab-cdef-1234-567890abcdef'})
-    
-
-        self.addNotice('Please restart Node server after setting the parameters')
-    '''
 
 
     def start(self):
@@ -198,6 +177,8 @@ class MessanaController(udi_interface.Controller):
     def updateISYdrivers(self, level):
         #logging.debug('System updateISYdrivers')
         try:
+            logging.debug('updateISYdrivers')
+            '''
             for ISYdriver in self.drivers:
                 ISYkey = ISYdriver['driver']
                 if level == 'active':
@@ -227,6 +208,7 @@ class MessanaController(udi_interface.Controller):
                         logging.error('Error getting ' + ISYdriver['driver'])
                 else:
                     logging.error('Error!  Unknown level passed: ' + level)
+            '''
         except Exception as e:
             logging.error('Exception updateISYdrivers: '+  str(e))       
 
@@ -369,7 +351,7 @@ if __name__ == "__main__":
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
         polyglot.start('0.1.0')
-        MessanaController(polyglot, 'system', 'system', 'MessanaRadiant')
+        MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
         polyglot.runForever()

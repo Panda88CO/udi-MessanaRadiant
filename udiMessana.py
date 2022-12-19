@@ -12,7 +12,7 @@ except ImportError:
 
 
 from MessanaSystem import messanaSystem
-from udiMessanaSystem import udi_messana_system
+from Temp.udiMessanaSystem import udi_messana_system
 #from MessanaZone import messanaZone
 from udiMessanaZone import udiMessanaZone
 import time

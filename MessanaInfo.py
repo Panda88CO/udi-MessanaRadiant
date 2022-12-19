@@ -27,7 +27,7 @@ except ImportError:
 
 
 
-class messana_system(object):
+class messana_control(object):
     def __init__(self, ip_address, api_key ) :
         self.systemAPI = '/api/system'
         self.RESPONSE_OK = '<Response [200]>'
@@ -44,7 +44,7 @@ class messana_system(object):
         self.apiStr = 'apikey=' + self.Key
         self.IPstr ='http://'+ self.IPaddress
 
-        self.status = self.get_status()
+        #self.status = self.get_status()
         self.temp_unit = self.GET_system_data('tempUnit')
         self.nbr_zones = self.GET_system_data('zoneCount')
         self.nbr_atus = self.GET_system_data('atuCount')

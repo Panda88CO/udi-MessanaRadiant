@@ -4,7 +4,7 @@ import requests
 import json
 import os
 
-from MessanaZone import messanaZone
+#from MessanaZone import messanaZone
 try:
     import udi_interface
     logging = udi_interface.logging
@@ -16,10 +16,10 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 
-from MessanaInfo import messana_system
+from MessanaInfo import messana_control
 
 
-class messana_system(messana_system):
+class messana_system(messana_control):
     def __init__(self, ip_address, api_key ) :
         self.systemAPI = '/api/system'
         self.RESPONSE_OK = '<Response [200]>'
