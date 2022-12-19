@@ -34,118 +34,109 @@ class messana_zone(messana_system):
 
 
     def get_name(self):
-        logging.debug('get_name {}: {}'.format(self.node_type, self.node_nbr ))
+        logging.debug('{} {} get_name'.format(self.node_type, self.node_nbr ))
         return(self.GET_node_data('name'))
 
     def get_status(self):
-        logging.debug('get_status {}:  {}'.format(self.node_type, self.node_nbr))    
+        logging.debug('{} {} get_status'.format(self.node_type, self.node_nbr))    
         return(self.GET_node_data('status'))
 
-
     def set_status(self, state):
-        if state in self.stateList:
-            self.PUT_node_data('status', state )
+        logging.debug('{} {} - set_status {}'.format(self.node_type, self.node_nbr, state ))
+        if self.PUT_node_data('status', state ):
             time.sleep(0.5)
-   
-            return(self.get_status())
-        else:
-            logging.error ('Wrong Status state passed ([0,1]: {}'.format(state))
-            return(False)
-          
-    '''
+        return(self.get_status())
+
     def get_air_temp(self):
-        return(self.GET_node_data(self.node_nbr , 'airTemperature'))
+        logging.debug('{} {} - get_air_temp'.format(self.node_type, self.node_nbr))
+        return(self.GET_node_data('airTemperature'))
 
     def get_setpoint(self):
-        temp = self.GET_node_data(self.node_nbr , 'setpoint')
-        if temp:
-            self.setpint = temp
-
+        logging.debug('{} {} - get_setpoint'.format(self.node_type, self.node_nbr))
+        return(self.GET_node_data( 'setpoint'))
 
 
     def set_setpoint(self, setpoint):
-        if self.PUT_node_data(self.node_nbr , 'setpoint'):
+        logging.debug('{} {} set_setpoint: {}'.format(self.node_type, self.node_nbr, setpoint ))
+        if self.PUT_node_data('setpoint', setpoint):
             time.sleep(0.5)
-            self.get_setpoint()
-            return(self.setpoint)
-        else:
-            return   
+        return(self.get_setpoint())
+
 
     def get_temp(self):
-        return(self.GET_node_data(self.node_nbr , 'temperature'))
-
-
+        logging.debug('{} {} - get_temp'.format(self.node_type, self.node_nbr))
+        return(self.GET_node_data('temperature'))
 
 
     def get_scheduleOn(self):
-        temp =  self.GET_node_data(self.node_nbr , 'scheduleOn')
-        if temp:
-            self.schedule_on = temp
+        logging.debug('{} {} - get_scheduleOn'.format(self.node_type, self.node_nbr))
+        return(self.GET_node_data('scheduleOn'))
+
 
 
     def set_scheduleOn(self, state):
-        if self.PUT_node_data(self.node_nbr , 'scheduleOn', state):
+        logging.debug('{} {} set_scheduleOn {}'.format(self.node_type, self.node_nbr, state ))
+        if self.PUT_node_data('scheduleOn', state):
             time.sleep(0.5)
-            self.get_scheduleOn()
-            return(True)
-        else:
-            return(False)
+        return(self.get_scheduleOn())
 
 
 
     def get_thermal_status(self):
-        return( self.GET_node_data(self.node_nbr , 'thermalStatus'))
+        logging.debug('{} {} - get_thermal_status'.format(self.node_type, self.node_nbr))
+        return( self.GET_node_data('thermalStatus'))
 
 
 
     def get_humidity(self):
-        return( self.GET_node_data(self.node_nbr , 'humidity'))
+        logging.debug('{} {} - get_humidity'.format(self.node_type, self.node_nbr))
+        return( self.GET_node_data('humidity'))
 
 
     def get_air_quality(self):
-        val = self.GET_node_data(self.node_nbr , 'airQuality')
+        logging.debug('{} {} - get_air_quality'.format(self.node_type, self.node_nbr))
+        val = self.GET_node_data('airQuality')
         if val not in self.NaNlist:
             return(val['category'])
         else:
-            return
-
+            return None
 
     def get_setpointCO2(self):
-        return( self.GET_node_data(self.node_nbr , 'setpointCO2'))
+        logging.debug('{} {} - get_setpointCO2'.format(self.node_type, self.node_nbr))
+        return( self.GET_node_data('setpointCO2'))
 
-    def set_setpointCO2(self):
-        if self.PUT_node_data(self.node_nbr , 'setpointCO2'):
+    def set_setpointCO2(self, set_co2):
+        logging.debug('{} {} set_setpointCO2: {}'.format(self.node_type, self.node_nbr, set_co2 ))
+        if self.PUT_node_data('setpointCO2', set_co2):
             time.sleep(0.5)
-            self.get_setpointCO2()
-            return(self.setpointCO2)
-        else:
-            return
+        return(self.get_setpointCO2())
 
 
     def get_dewpoint(self):
-        return( self.GET_node_data(self.node_nbr , 'dewpoint'))
+        logging.debug('{} {} - get_dewpoint'.format(self.node_type, self.node_nbr))
+        return( self.GET_node_data( 'dewpoint'))
   
 
     def get_energy_saving(self):
-        temp = self.GET_node_data(self.node_nbr , 'energySaving')
-        if temp:
-            self.energy_saving = temp
+        logging.debug('{} {} - get_energy_saving'.format(self.node_type, self.node_nbr))
+        return(self.GET_node_data('energySaving'))
+
        
 
-    def set_energy_saving(self, state):
-        if state in self.stateList:
-            self.PUT_node_data(self.node_nbr ,'energySaving', state )
-            self.get_energy_saving()
-            return(self.energy_saving)
-        else:
-            logging.error ('Wrong enerySaving state passed ([0,1]: {}'.format(state))
-            return(False)
+    def set_energy_saving(self, energy_save):
+        logging.debug('{} {} set_setpointCO2: {}'.format(self.node_type, self.node_nbr, energy_save ))
+        if self.PUT_node_data('energySaving', energy_save ):
+            time.sleep(0.5)
+        return(self.get_energy_saving())
 
     def get_co2(self):
-        return(self.GET_node_data(self.node_nbr , 'co2'))
+        logging.debug('{} {} - get_co2'.format(self.node_type, self.node_nbr))
+        return(self.GET_node_data('co2'))
 
 
-
+    def get_alarmOn(self):
+        logging.debug('{} {} -get_alarmOn'.format(self.node_type, self.node_nbr))
+        return(self.GET_node_data('alarmOn')) 
 
 
     def get_active(self):
@@ -169,4 +160,4 @@ class messana_zone(messana_system):
         self.get_scheduleOn()
         self.get_status()
 
-    '''
+    

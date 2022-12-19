@@ -17,6 +17,43 @@ from udiMessanaZone import udiMessanaZone
 import time
 
 class udi_messana_system (udi_interface.Node):
+
+    id = 'system'
+
+    '''
+       drivers = [
+            'GV0' = System status
+            'GV1' = Setback
+            'GV2' = energy saving
+            'GV3' = zone count
+            'GV4' = macrozone count
+            'GV5' = atu couon
+            'GV6' = hotcoldgroup count
+            'GV7' = fancoil count
+            'GV8' = dhw count
+            'GV9' = buffertank count
+            'GV10' = AlarmOn
+            'ST' = node statsStatus
+            ]
+    '''
+
+    drivers = [        
+        {'driver': 'GV0', 'value': 99, 'uom': 25},
+        {'driver': 'GV1', 'value': 99, 'uom': 4},
+        {'driver': 'GV2', 'value': 99, 'uom': 25},
+        {'driver': 'GV3', 'value': 99, 'uom': 0},
+        {'driver': 'GV4', 'value': 99, 'uom': 0},
+        {'driver': 'GV5', 'value': 99, 'uom': 0},
+        {'driver': 'GV6', 'value': 99, 'uom': 0},
+        {'driver': 'GV7', 'value': 99, 'uom': 0},
+        {'driver': 'GV8', 'value': 99, 'uom': 0},
+        {'driver': 'GV9', 'value': 99, 'uom': 0},
+        {'driver': 'GV10', 'value': 99, 'uom': 25},
+        {'driver': 'ST', 'value': 0, 'uom': 25},
+        ]
+
+
+
     def  __init__(self, polyglot, primary, address, name):
         super().__init__( polyglot, primary, address, name)  
         
@@ -262,7 +299,7 @@ class udi_messana_system (udi_interface.Node):
                 ,'SET_SETBACK' : setSetback 
                 }
    
-    id = 'setup'
+
 
 
     drivers = [
