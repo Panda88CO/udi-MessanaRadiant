@@ -63,15 +63,15 @@ class messana_control(object):
     
 
 
-
+    '''
     def get_data(self,apiKey):
-        logging.debug('get_name {}}: {}'.format(self.node_type, self.node_nbr ))
+        logging.debug('get_name {} {}'.format(self.node_type, self.node_nbr ))
         temp = self.GET_node_data(self.node_nbr , apiKey)
         if temp:
             return(temp)
         else:
             return(None)
-
+    '''
 
     def GET_system_data(self, mKey):
         GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
@@ -116,7 +116,7 @@ class messana_control(object):
     def GET_node_data(self, mKey):
         #logging.debug('GETNodeData: ' + mNodeKey + ' ' + str(nodeNbr)+ ' ' + mKey)
         GETstr =self.IPstr +'/api/'+ self.node_type+'/'+mKey+'/'+str(self.node_nbr)+'?'+ self.apiStr
-        logging.debug('GET_node_data: {}-{}-{} '.format(node_type, node_nbr, mKey ))
+        logging.debug('GET_node_data: {}-{}-{} '.format(self.node_type, self.node_nbr, mKey ))
         try:
             nTemp = requests.get(GETstr)
             if str(nTemp) == self.RESPONSE_OK:
@@ -128,7 +128,7 @@ class messana_control(object):
                     return(data)
 
             else:
-                logging.error('GET_node_data: {} {} {}'.format(node_nbr, mKey, str(nTemp)))
+                logging.error('GET_node_data: {} {} {}'.format(self.node_nbr, mKey, str(nTemp)))
                 return(None)
         except Exception as e:
             logging.error ('Error GET_node_data:{} : {}'.format(GETstr, e))
@@ -149,9 +149,7 @@ class messana_control(object):
             logging.error('Error PUT_node_data try/cartch {}:{}'.format(PUTstr, e))
             return(False)
 
-
-            
-
+'''
 class zone(mess_node):
     def __init__(self, zone_nbr):
         super().__init__()
@@ -180,7 +178,7 @@ class zone(mess_node):
             return(False)
           
 
-
+'''
 
  
 

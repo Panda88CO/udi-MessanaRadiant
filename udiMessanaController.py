@@ -80,7 +80,7 @@ class MessanaController(udi_interface.Controller):
             logging.debug('MESSANA_KEY retrieved: ')
 
         if (self.IPAddress is None) or (self.MessanaKey is None):
-            self.defineInputParams()
+            #self.defineInputParams()
             self.stop()
 
         else:
@@ -211,7 +211,7 @@ class MessanaController(udi_interface.Controller):
             '''
         except Exception as e:
             logging.error('Exception updateISYdrivers: '+  str(e))       
-
+    '''
     def query(self, command=None):
         logging.debug('TOP querry')
         self.messana.updateSystemData('all')
@@ -306,37 +306,37 @@ class MessanaController(udi_interface.Controller):
 
     def check_params(self, command=None):
         logging.debug('Check Params')
- 
+    '''
     def setStatus(self, command):
         #logging.debug('set Status Called')
         value = int(command.get('value'))
         #logging.debug('set Status Recived:' + str(value))
-        if self.messana.systemSetStatus(value):
-            ISYdriver = self.messana.getSystemStatusISYdriver()
-            self.setDriver(ISYdriver, value, report = True)
-
+        #if self.messana.systemSetStatus(value):
+        #    ISYdriver = self.messana.getSystemStatusISYdriver()
+        #    self.setDriver(ISYdriver, value, report = True)
+    
     def setEnergySave(self, command):
         #logging.debug('setEnergySave Called')
         value = int(command.get('value'))
         #logging.debug('SetEnergySave Recived:' + str(value))
-        if self.messana.systemSetEnergySave(value):
-            ISYdriver = self.messana.getSystemEnergySaveISYdriver()
-            self.setDriver(ISYdriver, value, report = True)
+        #if self.messana.systemSetEnergySave(value):
+        #    ISYdriver = self.messana.getSystemEnergySaveISYdriver()
+        #    self.setDriver(ISYdriver, value, report = True)
 
     def setSetback(self, command):
         #logging.debug('setSetback Called')
         value = int(command.get('value'))
         #logging.debug('setSetback Reeived:' + str(value))
-        if self.messana.systemSetback(value):
-            ISYdriver = self.messana.getSystemSetbackISYdriver()
-            self.setDriver(ISYdriver, value, report = True)
+        #if self.messana.systemSetback(value):
+        #    ISYdriver = self.messana.getSystemSetbackISYdriver()
+        #    self.setDriver(ISYdriver, value, report = True)
 
     def ISYupdate (self, command):
         #logging.info('ISY-update called')
-        self.messana.updateSystemData('all')
+        #self.messana.updateSystemData('all')
         self.updateISYdrivers('all')
         self.reportDrivers()
- 
+    
 
     commands = { 'UPDATE': ISYupdate
                 ,'SET_STATUS': setStatus
