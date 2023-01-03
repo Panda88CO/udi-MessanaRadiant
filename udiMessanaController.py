@@ -341,7 +341,7 @@ class MessanaController(udi_interface.Controller):
     commands = { 'UPDATE': ISYupdate
                 ,'SET_STATUS': setStatus
                 ,'SET_ENERGYSAVE': setEnergySave
-                ,'SET_SETBACK' : setSetback 
+                ,'SET_SETBACK' : setSetback
                 }
 
     id = 'system'
