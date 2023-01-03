@@ -22,7 +22,7 @@ except ImportError:
 from MessanaInfo import messana_control
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
-class messana_zone(messana_system):
+class messana_zone(messana_control):
     def __init__(self, zoneNbr):
         logging.info('init Zone:' )
         self.node_type = 'zone'
