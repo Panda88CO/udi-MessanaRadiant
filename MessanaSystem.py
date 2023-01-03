@@ -7,7 +7,7 @@ import os
 #from MessanaZone import messanaZone
 try:
     import udi_interface
-    logging = udi_interface.logging
+    logging = udi_interface.LOGGER
     Custom = udi_interface.Custom
 
 except ImportError:
