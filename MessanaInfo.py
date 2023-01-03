@@ -90,7 +90,6 @@ class messana_control(object):
                 return (None)
             else:
                 return(data) #No data for given keyword - remove from list
-
         except Exception as e:
             logging.error('System GET_system_data operation failed for {}: {}'.format(mKey, e))
             return
