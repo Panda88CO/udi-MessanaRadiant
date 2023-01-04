@@ -43,7 +43,8 @@ class MessanaController(udi_interface.Node):
         self.drivers = []
         self.nodeDefineDone = False
         self.zones = {}
-
+        self.poll_start = False
+        self.temp_unit = 1
 
         self.poly.subscribe(self.poly.STOP, self.stop)
         self.poly.subscribe(self.poly.START, self.start, address)
@@ -62,7 +63,13 @@ class MessanaController(udi_interface.Node):
             time.sleep(0.1)
         self.n_queue.pop()
 
-
+    def convert_temp_unit(self, tempStr):
+        if tempStr.capitalize()[:1] == 'F':
+            return(1)
+        elif tempStr.capitalize()[:1] == 'K':
+            return(2)
+        else:
+            return(0)
 
     def start(self):
         self.removeNoticesAll()
@@ -82,6 +89,8 @@ class MessanaController(udi_interface.Node):
         if (self.IPAddress is None) or (self.MessanaKey is None):
             #self.defineInputParams()
             self.stop()
+    
+        self.temp_unit = self.convert_temp_unit(self.getCustomParam('TEMP_UNIT'))
 
         else:
             logging.info('Retrieving info from Messana System')
@@ -113,6 +122,7 @@ class MessanaController(udi_interface.Node):
             '''
         self.updateISYdrivers('all')
         #self.messanaImportOK = 1
+        self.poll_start = True
         self.discover()
 
 
@@ -122,6 +132,53 @@ class MessanaController(udi_interface.Node):
     def stop(self):
         #self.removeNoticesAll()
         logging.info('stop - Cleaning up')
+
+    def handleLevelChange(self, level):
+        logging.info('New log level: {}'.format(level))
+        logging.setLevel(level['level'])
+
+
+
+    def handleParams (self, userParam ):
+        logging.debug('handleParams')
+        supportParams = ['IP_ADDRESS', 'MESSANA_KEY', 'TEMP_UNIT' ]
+        self.temp_unit = self.convert_temp_unit(userParam['TEMP_UNIT'])
+        self.Parameters.load(userParam)
+        self.poly.Notices.clear()
+
+
+
+    def systemPoll (self, polltype):
+        if self.poll_start:
+            logging.debug('System Poll executing: {}'.format(polltype))
+
+            if 'longPoll' in polltype:
+                #Keep token current
+                #self.node.setDriver('GV0', self.temp_unit, True, True)
+                try:
+                    #if not self.yoAccess.refresh_token(): #refresh failed
+                    #    while not self.yoAccess.request_new_token():
+                    #            time.sleep(60)
+                    #logging.info('Updating device status')
+                    nodes = self.poly.getNodes()
+                    for nde in nodes:
+                        if nde != 'setup':   # but not the controller node
+                            nodes[nde].checkOnline()
+                except Exception as e:
+                    logging.debug('Exeption occcured during systemPoll : {}'.format(e))
+                    #self.yoAccess = YoLinkInitPAC (self.uaid, self.secretKey)
+                    #self.deviceList = self.yoAccess.getDeviceList()           
+                
+            if 'shortPoll' in polltype:
+                self.heartbeat()
+                nodes = self.poly.getNodes()
+                for nde in nodes:
+                    if nde != 'setup':   # but not the controller node
+                        nodes[nde].checkDataUpdate()
+
+
+
+    def handleParams(self):
 
     def heartbeat(self):
         #logging.debug('heartbeat: hb={}'.format(self.hb))
