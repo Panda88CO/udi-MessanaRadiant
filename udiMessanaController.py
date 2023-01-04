@@ -84,14 +84,13 @@ class MessanaController(udi_interface.Node):
         if self.MessanaKey == None:
             logging.error('No MESSANA_KEY retrieved:')
         else:
-            logging.debug('MESSANA_KEY retrieved: ')
+            logging.debug('MESSANA_KEY retrieved:')
+
+        self.temp_unit = self.convert_temp_unit(self.getCustomParam('TEMP_UNIT'))
 
         if (self.IPAddress is None) or (self.MessanaKey is None):
             #self.defineInputParams()
             self.stop()
-    
-        self.temp_unit = self.convert_temp_unit(self.getCustomParam('TEMP_UNIT'))
-
         else:
             logging.info('Retrieving info from Messana System')
             self.messana = messana_system( self.IPAddress, self.MessanaKey)
