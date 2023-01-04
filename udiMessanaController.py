@@ -54,6 +54,9 @@ class MessanaController(udi_interface.Node):
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.n_queue = []
 
+        self.Parameters = Custom(self.poly, 'customparams')
+        self.Notices = Custom(self.poly, 'notices')
+
         self.poly.updateProfile()
         self.poly.ready()
         self.poly.addNode(self)
@@ -84,17 +87,30 @@ class MessanaController(udi_interface.Node):
         self.removeNoticesAll()
         #check params are ok 
         logging.info('Start Messana Main NEW')
-        self.IPAddress = self.getCustomParam('IP_ADDRESS')
-        if self.IPAddress == None:
-            logging.error('No IPaddress retrieved:' )
+        if 'IP_ADDRESS' in self.Parameters:
+            self.IPAddress = self.Parameters['IP_ADDRESS']
+            if self.IPAddress is None:
+                logging.error('IP_ADDRESS must be specified in configuration:' )
+            else:
+                logging.debug('IPaddress retrieved: {}'.format(self.IPAddress))
         else:
-            logging.debug('IPaddress retrieved: ' + self.IPAddress)
-        self.MessanaKey = self.getCustomParam('MESSANA_KEY')
-        if self.MessanaKey == None:
-            logging.error('No MESSANA_KEY retrieved:')
-        else:
-            logging.debug('MESSANA_KEY retrieved:')
+            logging.error('IP_ADDRESS must be specified in configuration:' )
 
+        if 'MESSANA_KEY' in self.Parameters:
+            self.MessanaKey = self.Parameters['MESSANA_KEY']
+            if self.MessanaKey is None:
+                logging.error('MESSANA_KEY must be provided in configuration:' )
+            else:
+                logging.debug('MESSANA_KEY retrieved: {}'.format(self.IPAddress))
+        else:
+            logging.error('MESSANA_KEY must be provided in configuration:' )
+
+        if 'TEMP_UNIT' in self.Parameters:
+            self.temp_unit = self.convert_temp_unit(self.Parameters['TEMP_UNIT'])
+        else:
+            self.temp_unit = 0  
+            self.Parameters['TEMP_UNIT'] = 'C'
+            logging.debug('TEMP_UNIT: {}'.format(self.temp_unit ))
         self.temp_unit = self.convert_temp_unit(self.getCustomParam('TEMP_UNIT'))
 
         if (self.IPAddress is None) or (self.MessanaKey is None):
@@ -407,7 +423,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.10')
+        polyglot.start('0.0.11')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
