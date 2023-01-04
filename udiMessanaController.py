@@ -11,7 +11,7 @@ from udiMessanaZone import udi_messana_zone
 #from MessanaFanCoilV2 import  messanaFanCoil
 #from MessanaHotColdCOV2 import messanaHcCo
 #from MessanaHotWaterV2 import messanaHotWater
-import time 
+import time
 
 try:
     import udi_interface
@@ -26,7 +26,7 @@ except ImportError:
 
 class MessanaController(udi_interface.Node):
 
-    def  __init__(self, polyglot, primary, address, name):
+    def __init__(self, polyglot, primary, address, name):
         super().__init__( polyglot, primary, address, name)
         logging.info('_init_ Messsana Controller')
         self.messanaImportOK = 0
@@ -99,7 +99,6 @@ class MessanaController(udi_interface.Node):
         
         for zone in range(0, self.messana):
             self.zones[zone] = udi_messana_zone(self.poly, 'system', zone)
-
             '''
             self.id = self.messana.getSystemAddress()
             #self.address = self.messana.getSystemAddress()
@@ -175,9 +174,6 @@ class MessanaController(udi_interface.Node):
                     if nde != 'setup':   # but not the controller node
                         nodes[nde].checkDataUpdate()
 
-
-
-    def handleParams(self):
 
     def heartbeat(self):
         #logging.debug('heartbeat: hb={}'.format(self.hb))
