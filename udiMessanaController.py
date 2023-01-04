@@ -125,9 +125,6 @@ class MessanaController(udi_interface.Node):
         self.discover()
 
 
-              
-
-
     def stop(self):
         #self.removeNoticesAll()
         logging.info('stop - Cleaning up')
@@ -140,7 +137,7 @@ class MessanaController(udi_interface.Node):
 
     def handleParams (self, userParam ):
         logging.debug('handleParams')
-        supportParams = ['IP_ADDRESS', 'MESSANA_KEY', 'TEMP_UNIT' ]
+        #supportParams = ['IP_ADDRESS', 'MESSANA_KEY', 'TEMP_UNIT' ]
         self.temp_unit = self.convert_temp_unit(userParam['TEMP_UNIT'])
         self.Parameters.load(userParam)
         self.poly.Notices.clear()
@@ -177,7 +174,6 @@ class MessanaController(udi_interface.Node):
 
 
 
-    def handleParams(self):
 
     def heartbeat(self):
         #logging.debug('heartbeat: hb={}'.format(self.hb))
@@ -188,7 +184,7 @@ class MessanaController(udi_interface.Node):
             self.reportCmd('DOF',2)
             self.hb = 0
 
-    
+
     def shortPoll(self):
         #logging.debug('Messana Controller shortPoll')
         try:
@@ -406,7 +402,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.7')
+        polyglot.start('0.0.8')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
