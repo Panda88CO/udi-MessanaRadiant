@@ -123,7 +123,7 @@ class MessanaController(udi_interface.Node):
             if not self.messana.connected():
                 self.stop()
         
-        for zone in range(0, self.messana):
+        for zone in range(0, self.messana.nbr_zones ):
             self.zones[zone] = udi_messana_zone(self.poly, 'system', zone)
             '''
             self.id = self.messana.getSystemAddress()

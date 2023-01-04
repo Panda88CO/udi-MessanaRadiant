@@ -35,17 +35,27 @@ class messana_system(messana_control):
         self.Key = api_key
         self.apiStr = 'apikey=' + self.Key
         self.IPstr ='http://'+ self.IPaddress
-
+        logging.debug('Getting System Data')
         self.status = self.get_status()
+        logging.debug('Getting Status: {}'.format(self.status ))
         self.temp_unit = self.GET_system_data('tempUnit')
+        logging.debug('Getting Temp Unit: {}'.format(self.temp_unit))
         self.nbr_zones = self.GET_system_data('zoneCount')
+        logging.debug('Getting nbr zones: {}'.format(self.nbr_zones   ))
         self.nbr_atus = self.GET_system_data('atuCount')
+        logging.debug('Getting nbr atu Units: {}'.format( self.nbr_atus ))
         self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
+        logging.debug('Getting nbr buffertanl Units: {}'.format(self.nbr_buffer_tank   ))
         self.nbr_energy_source = self.GET_system_data('energySourceCount')
+        logging.debug('Getting nbr energy source Units: {}'.format( self.nbr_energy_source   ))
         self.nbr_fancoil = self.GET_system_data('fancoilCount')
+        logging.debug('Getting nbr fancoil Units: {}'.format(self.nbr_fancoil  ))
         self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
+        logging.debug('Getting nbr hot cold Units: {}'.format( self.nbr_HCgroup ))
         self.nbr_macrozone = self.GET_system_data('macroZoneCount')
+        logging.debug('Getting nbr mazon zones: {}'.format( self.nbr_macrozone  ))
         self.name = self.GET_system_data('name')
+        logging.debug('Getting  system name: {}'.format(self.name ))
 
     ###############################
     #pretty bad solution - just checking if a value can be extracted
