@@ -45,6 +45,8 @@ class MessanaController(udi_interface.Node):
         self.zones = {}
         self.poll_start = False
         self.temp_unit = 1
+        self.Parameters = Custom(self.poly, 'customparams')
+        self.Notices = Custom(self.poly, 'notices')
 
         self.poly.subscribe(self.poly.STOP, self.stop)
         self.poly.subscribe(self.poly.START, self.start, address)
@@ -53,9 +55,8 @@ class MessanaController(udi_interface.Node):
         self.poly.subscribe(self.poly.POLL, self.systemPoll)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.n_queue = []
-
-        self.Parameters = Custom(self.poly, 'customparams')
-        self.Notices = Custom(self.poly, 'notices')
+        #self.Parameters = Custom(self.poly, 'customparams')
+        #self.Notices = Custom(self.poly, 'notices')
 
         self.poly.updateProfile()
         self.poly.ready()
@@ -101,7 +102,7 @@ class MessanaController(udi_interface.Node):
             if self.MessanaKey is None:
                 logging.error('MESSANA_KEY must be provided in configuration:' )
             else:
-                logging.debug('MESSANA_KEY retrieved: {}'.format(self.IPAddress))
+                logging.debug('MESSANA_KEY retrieved: {}'.format(self.MessanaKey))
         else:
             logging.error('MESSANA_KEY must be provided in configuration:' )
 
@@ -161,7 +162,6 @@ class MessanaController(udi_interface.Node):
 
     def handleParams (self, userParam ):
         logging.debug('handleParams')
-        #supportParams = ['IP_ADDRESS', 'MESSANA_KEY', 'TEMP_UNIT' ]
         self.Parameters.load(userParam)
         self.poly.Notices.clear()
 
@@ -423,7 +423,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.11')
+        polyglot.start('0.0.13')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
