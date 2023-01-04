@@ -146,7 +146,6 @@ class MessanaController(udi_interface.Node):
     def handleParams (self, userParam ):
         logging.debug('handleParams')
         #supportParams = ['IP_ADDRESS', 'MESSANA_KEY', 'TEMP_UNIT' ]
-        self.temp_unit = self.convert_temp_unit(userParam['TEMP_UNIT'])
         self.Parameters.load(userParam)
         self.poly.Notices.clear()
 
@@ -408,7 +407,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.9')
+        polyglot.start('0.0.10')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
