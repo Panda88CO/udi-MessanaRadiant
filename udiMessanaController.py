@@ -112,7 +112,7 @@ class MessanaController(udi_interface.Node):
             self.temp_unit = 0  
             self.Parameters['TEMP_UNIT'] = 'C'
             logging.debug('TEMP_UNIT: {}'.format(self.temp_unit ))
-        self.temp_unit = self.convert_temp_unit(self.getCustomParam('TEMP_UNIT'))
+       
 
         if (self.IPAddress is None) or (self.MessanaKey is None):
             #self.defineInputParams()
@@ -423,7 +423,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.14')
+        polyglot.start('0.0.15')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
