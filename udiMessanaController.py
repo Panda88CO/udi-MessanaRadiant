@@ -85,7 +85,7 @@ class MessanaController(udi_interface.Node):
             return(0)
 
     def start(self):
-        self.removeNoticesAll()
+        self.poly.Notices.clear()
         #check params are ok 
         logging.info('Start Messana Main NEW')
         if 'IP_ADDRESS' in self.Parameters:
