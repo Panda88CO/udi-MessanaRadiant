@@ -3,6 +3,7 @@
 
 import sys
 from MessanaSystem import messana_system
+from MessanaZone import messana_zone
 from udiMessanaZone import udi_messana_zone
 #from MessanaMacrozoneV2 import messanaMacrozone
 #from MessanaATUV2 import messanaAtu
@@ -12,6 +13,7 @@ from udiMessanaZone import udi_messana_zone
 #from MessanaHotColdCOV2 import messanaHcCo
 #from MessanaHotWaterV2 import messanaHotWater
 import time
+import re
 
 try:
     import udi_interface
@@ -84,6 +86,17 @@ class MessanaController(udi_interface.Node):
         else:
             return(0)
 
+
+    def getValidName(self, name):
+        name = bytes(name, 'utf-8').decode('utf-8','ignore')
+        return re.sub(r"[^A-Za-z0-9_ ]", "", name)
+
+    # remove all illegal characters from node address
+    def getValidAddress(self, name):
+        name = bytes(name, 'utf-8').decode('utf-8','ignore')
+        return re.sub(r"[^A-Za-z0-9_]", "", name.lower()[:14])
+    
+
     def start(self):
         self.poly.Notices.clear()
         #check params are ok 
@@ -124,7 +137,12 @@ class MessanaController(udi_interface.Node):
                 self.stop()
         
         for zone in range(0, self.messana.nbr_zones ):
-            self.zones[zone] = udi_messana_zone(self.poly, 'system', zone)
+            temp = messana_zone(zone)
+            tmp_name = temp.get_name()
+            address = self.getValidAddress(tmp_name)
+            name = self.getValidName(tmp_name)
+            self.zones[zone] = udi_messana_zone(self.poly, self.primary, address, name, zone)
+
             '''
             self.id = self.messana.getSystemAddress()
             #self.address = self.messana.getSystemAddress()
