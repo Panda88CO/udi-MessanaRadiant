@@ -106,7 +106,14 @@ class messana_control(object):
 
     def GET_node_data(self, mKey):
         #logging.debug('GETNodeData: ' + mNodeKey + ' ' + str(nodeNbr)+ ' ' + mKey)
-        GETstr =self.IPstr +'/api/'+ self.node_type+'/'+mKey+'/'+str(self.node_nbr)+'?'+ self.apiStr
+        logging.debug('mkey: {}'.format(mKey))
+        logging.debug('self.IPstr: {}'.format(self.IPstr))
+        logging.debug('self.node_type: {}'.format(self.node_type))
+        logging.debug('self.apiStr: {}'.format(self.apiStr))
+        logging.debug('self.node_nbr): {}'.format(self.node_nbr))
+
+   
+        GETstr = self.IPstr +'/api/'+ self.node_type+'/'+mKey+'/'+str(self.node_nbr)+'?'+ self.apiStr
         logging.debug('GET_node_data: {}-{}-{} '.format(self.node_type, self.node_nbr, mKey ))
         try:
             nTemp = requests.get(GETstr)
