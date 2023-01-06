@@ -11,7 +11,7 @@ except ImportError:
 
 
 from MessanaSystem import messana_system
-from MessanaInfo import messana_control
+from MessanaControl import messana_control
 #from MessanaZone import messanaZone
 from udiMessanaZone import udi_messana_zone
 import time

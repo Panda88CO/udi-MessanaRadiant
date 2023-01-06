@@ -38,7 +38,7 @@ class messana_control(object):
         self.IPaddress = ''
         self.Key = ''
         self.apiStr = ''
-        self.IPstr =''        
+        self.IPstr =''  
         self.IPaddress = ip_address
         self.Key = api_key
         self.apiStr = 'apikey=' + self.Key
@@ -58,20 +58,12 @@ class messana_control(object):
     ###############################
     #pretty bad solution - just checking if a value can be extracted
     def connected(self):
-        sysData = self.GET_system_data('mApiVer') 
+        sysData = self.GET_system_data('apiVersion')
         return (sysData['statusOK'])
     
 
 
-    '''
-    def get_data(self,apiKey):
-        logging.debug('get_name {} {}'.format(self.node_type, self.node_nbr ))
-        temp = self.GET_node_data(self.node_nbr , apiKey)
-        if temp:
-            return(temp)
-        else:
-            return(None)
-    '''
+
 
     def GET_system_data(self, mKey):
         GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
@@ -178,9 +170,4 @@ class zone(mess_node):
           
 
 '''
-
- 
-
-
-
 #

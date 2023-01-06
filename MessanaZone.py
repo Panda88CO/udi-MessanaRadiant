@@ -19,7 +19,7 @@ except ImportError:
         logging.StreamHandler(sys.stdout) ]
     )
 
-from MessanaInfo import messana_control
+from MessanaControl import messana_control
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messana_zone(messana_control):

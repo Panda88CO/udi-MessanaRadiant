@@ -16,7 +16,7 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 
-from MessanaInfo import messana_control
+from MessanaControl import messana_control
 
 
 class messana_system(messana_control):
@@ -61,7 +61,7 @@ class messana_system(messana_control):
     #pretty bad solution - just checking if a value can be extracted
     def connected(self):
         try:
-            sysData = self.GET_system_data('mApiVer')
+            sysData = self.GET_system_data('apiVersion')
             return(sysData['statusOK'])
         except:
             return(False)
