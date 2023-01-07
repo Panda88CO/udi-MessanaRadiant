@@ -11,7 +11,7 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 #from subprocess import call
-from MessanaControl import messanaInfo
+from MessanaInfo import messanaInfo
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messanaZone(messanaInfo):

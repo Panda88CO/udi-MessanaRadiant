@@ -16,11 +16,11 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 
-from MessanaControl import messana_control
+#from MessanaControl import messana_control
 
 
-class messana_system(messana_control):
-    def __init__(self, ip_address, api_key ) :
+class messana_system(object):
+    def __init__(self, messana ):
         self.systemAPI = '/api/system'
         self.RESPONSE_OK = '<Response [200]>'
         self.RESPONSE_NO_SUPPORT = '<Response [400]>'
@@ -30,9 +30,9 @@ class messana_system(messana_control):
         self.IPaddress = ''
         self.Key = ''
         self.apiStr = ''
-        self.IPstr =''        
-        self.IPaddress = ip_address
-        self.Key = api_key
+        self.IPstr =''
+        self.IPaddress = messana.IPaddress
+        self.Key = messana.Key
         self.apiStr = 'apikey=' + self.Key
         self.IPstr ='http://'+ self.IPaddress
         logging.debug('Getting System Data')

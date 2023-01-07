@@ -3,6 +3,7 @@
 
 import sys
 from MessanaSystem import messana_system
+from MessanaInfo import messana_control
 from MessanaZone import messana_zone
 from udiMessanaZone import udi_messana_zone
 #from MessanaMacrozoneV2 import messanaMacrozone
@@ -132,16 +133,17 @@ class MessanaController(udi_interface.Node):
             self.stop()
         else:
             logging.info('Retrieving info from Messana System')
-            self.messana = messana_system( self.IPAddress, self.MessanaKey)
+            self.messana = messana_control(self.IPAddress, self.MessanaKey)
+            self.messana_system = messana_system(self.messana)
             if not self.messana.connected():
                 self.stop()
         
-        for zone in range(0, self.messana.nbr_zones ):
-            temp = messana_zone(zone)
+        for zone in range(0, self.messana_system.nbr_zones ):
+            temp = messana_zone(zone, self.messana)
+            address = 'zone'+str(zone)
             tmp_name = temp.get_name()
-            address = self.getValidAddress(tmp_name)
             name = self.getValidName(tmp_name)
-            self.zones[zone] = udi_messana_zone(self.poly, self.primary, address, name, zone)
+            self.zones[zone] = udi_messana_zone(self.poly, self.primary, address, name, zone, self.messana)
 
             '''
             self.id = self.messana.getSystemAddress()

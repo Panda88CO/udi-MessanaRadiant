@@ -19,128 +19,137 @@ except ImportError:
         logging.StreamHandler(sys.stdout) ]
     )
 
-from MessanaControl import messana_control
+from MessanaInfo import messana_control
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
-class messana_zone(messana_control):
-    def __init__(self, zoneNbr):
+class messana_zone(object):
+    def __init__(self, zone_nbr, messana):
         logging.info('init Zone:' )
-        self.node_type = 'zone'
-        self.node_nbr = zoneNbr
+        self.messana = messana
+        self.type = 'zone'
+        self.nbr = zone_nbr
         self.name = self.get_name()
         self.stateList = [0,1]
 
         #self.get_all()
 
 
+    def __get_zone_data(self, mKey):
+        logging.debug('{} {} get_zone_data'.format(self.type, self.nbr ))
+        return(self.messana.GET_node_data(mKey, self.type, self.nbr))
+
+    def __put_zone_data(self, mKey, value):
+        logging.debug('{} {} get_name'.format(self.type, self.nbr ))
+        return(self.messana.PUT_node_data(mKey, value, self.type, self.nbr))
+
     def get_name(self):
-        logging.debug('{} {} get_name'.format(self.node_type, self.node_nbr ))
-        return(self.GET_node_data('name'))
+        logging.debug('{} {} get_name'.format(self.type, self.nbr ))
+        return(self.__get_zone_data('name'))
 
     def get_status(self):
-        logging.debug('{} {} get_status'.format(self.node_type, self.node_nbr))    
-        return(self.GET_node_data('status'))
+        logging.debug('{} {} get_status'.format(self.type, self.nbr))    
+        return(self.__get_zone_data('status'))
 
     def set_status(self, state):
-        logging.debug('{} {} - set_status {}'.format(self.node_type, self.node_nbr, state ))
-        if self.PUT_node_data('status', state ):
+        logging.debug('{} {} - set_status {}'.format(self.type, self.nbr, state ))
+        if self.__put_zone_data('status', state ):
             time.sleep(0.5)
         return(self.get_status())
 
     def get_air_temp(self):
-        logging.debug('{} {} - get_air_temp'.format(self.node_type, self.node_nbr))
-        return(self.GET_node_data('airTemperature'))
+        logging.debug('{} {} - get_air_temp'.format(self.type, self.nbr))
+        return(self.__get_zone_data('airTemperature'))
 
     def get_setpoint(self):
-        logging.debug('{} {} - get_setpoint'.format(self.node_type, self.node_nbr))
-        return(self.GET_node_data( 'setpoint'))
+        logging.debug('{} {} - get_setpoint'.format(self.type, self.nbr))
+        return(self.__get_zone_data( 'setpoint'))
 
 
     def set_setpoint(self, setpoint):
-        logging.debug('{} {} set_setpoint: {}'.format(self.node_type, self.node_nbr, setpoint ))
-        if self.PUT_node_data('setpoint', setpoint):
+        logging.debug('{} {} set_setpoint: {}'.format(self.type, self.nbr, setpoint ))
+        if self.__put_zone_data('setpoint', setpoint):
             time.sleep(0.5)
         return(self.get_setpoint())
 
 
     def get_temp(self):
-        logging.debug('{} {} - get_temp'.format(self.node_type, self.node_nbr))
-        return(self.GET_node_data('temperature'))
+        logging.debug('{} {} - get_temp'.format(self.type, self.nbr))
+        return(self.__get_zone_data('temperature'))
 
 
     def get_scheduleOn(self):
-        logging.debug('{} {} - get_scheduleOn'.format(self.node_type, self.node_nbr))
-        return(self.GET_node_data('scheduleOn'))
+        logging.debug('{} {} - get_scheduleOn'.format(self.type, self.nbr))
+        return(self.__get_zone_data('scheduleOn'))
 
 
 
     def set_scheduleOn(self, state):
-        logging.debug('{} {} set_scheduleOn {}'.format(self.node_type, self.node_nbr, state ))
-        if self.PUT_node_data('scheduleOn', state):
+        logging.debug('{} {} set_scheduleOn {}'.format(self.type, self.nbr, state ))
+        if self.__put_zone_data('scheduleOn', state):
             time.sleep(0.5)
         return(self.get_scheduleOn())
 
 
 
     def get_thermal_status(self):
-        logging.debug('{} {} - get_thermal_status'.format(self.node_type, self.node_nbr))
-        return( self.GET_node_data('thermalStatus'))
+        logging.debug('{} {} - get_thermal_status'.format(self.type, self.nbr))
+        return( self.__get_zone_data('thermalStatus'))
 
 
 
     def get_humidity(self):
-        logging.debug('{} {} - get_humidity'.format(self.node_type, self.node_nbr))
-        return( self.GET_node_data('humidity'))
+        logging.debug('{} {} - get_humidity'.format(self.type, self.nbr))
+        return(self.__get_zone_data('humidity'))
 
 
     def get_air_quality(self):
-        logging.debug('{} {} - get_air_quality'.format(self.node_type, self.node_nbr))
-        val = self.GET_node_data('airQuality')
-        if val not in self.NaNlist:
+        logging.debug('{} {} - get_air_quality'.format(self.type, self.nbr))
+        val = self.__get_zone_data('airQuality')
+        if val not in self.messana.NaNlist:
             return(val['category'])
         else:
             return None
 
     def get_setpointCO2(self):
-        logging.debug('{} {} - get_setpointCO2'.format(self.node_type, self.node_nbr))
-        return( self.GET_node_data('setpointCO2'))
+        logging.debug('{} {} - get_setpointCO2'.format(self.type, self.nbr))
+        return( self.__get_zone_data('setpointCO2'))
 
     def set_setpointCO2(self, set_co2):
-        logging.debug('{} {} set_setpointCO2: {}'.format(self.node_type, self.node_nbr, set_co2 ))
-        if self.PUT_node_data('setpointCO2', set_co2):
+        logging.debug('{} {} set_setpointCO2: {}'.format(self.type, self.nbr, set_co2 ))
+        if self.__put_zone_data('setpointCO2', set_co2):
             time.sleep(0.5)
         return(self.get_setpointCO2())
 
 
     def get_dewpoint(self):
-        logging.debug('{} {} - get_dewpoint'.format(self.node_type, self.node_nbr))
-        return( self.GET_node_data( 'dewpoint'))
+        logging.debug('{} {} - get_dewpoint'.format(self.type, self.nbr))
+        return( self.__get_zone_data( 'dewpoint'))
   
 
     def get_energy_saving(self):
-        logging.debug('{} {} - get_energy_saving'.format(self.node_type, self.node_nbr))
-        return(self.GET_node_data('energySaving'))
+        logging.debug('{} {} - get_energy_saving'.format(self.type, self.nbr))
+        return(self.__get_zone_data('energySaving'))
 
        
 
     def set_energy_saving(self, energy_save):
-        logging.debug('{} {} set_setpointCO2: {}'.format(self.node_type, self.node_nbr, energy_save ))
-        if self.PUT_node_data('energySaving', energy_save ):
+        logging.debug('{} {} set_setpointCO2: {}'.format(self.type, self.nbr, energy_save ))
+        if self.__put_zone_data('energySaving', energy_save ):
             time.sleep(0.5)
         return(self.get_energy_saving())
 
     def get_co2(self):
-        logging.debug('{} {} - get_co2'.format(self.node_type, self.node_nbr))
-        return(self.GET_node_data('co2'))
+        logging.debug('{} {} - get_co2'.format(self.type, self.nbr))
+        return(self.__get_zone_data('co2'))
 
 
     def get_alarmOn(self):
-        logging.debug('{} {} -get_alarmOn'.format(self.node_type, self.node_nbr))
-        return(self.GET_node_data('alarmOn')) 
+        logging.debug('{} {} -get_alarmOn'.format(self.type, self.nbr))
+        return(self.__get_zone_data('alarmOn'))
 
 
     def get_active(self):
-        logging.debug('get_active: zone:{}'.format(self.node_nbr ))
+        logging.debug('get_active: zone:{}'.format(self.nbr ))
         self.get_temp()
         self.get_air_temp()
         self.get_humidity()
@@ -151,7 +160,7 @@ class messana_zone(messana_control):
 
 
     def get_all(self):
-        logging.debug('get_all: zone:{}'.format(self.node_nbr ))
+        logging.debug('get_all: zone:{}'.format(self.nbr ))
         self.get_active()
         self.get_name()
         self.get_setpointCO2()

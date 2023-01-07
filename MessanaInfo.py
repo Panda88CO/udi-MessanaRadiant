@@ -35,25 +35,26 @@ class messana_control(object):
         self.RESPONSE_NO_RESPONSE = '<Response [404]>'
         self.RESPONSE_SERVER_ERROR = '<Response [500]>'
         self.NaNlist= [-32768 , -3276.8 ]
-        self.IPaddress = ''
-        self.Key = ''
         self.apiStr = ''
-        self.IPstr =''  
+        self.IPstr =''
         self.IPaddress = ip_address
-        self.Key = api_key
-        self.apiStr = 'apikey=' + self.Key
+        self.apiKey = api_key
+        self.apiStr = 'apikey=' + self.apiKey
         self.IPstr ='http://'+ self.IPaddress
 
         #self.status = self.get_status()
-        self.temp_unit = self.GET_system_data('tempUnit')
-        self.nbr_zones = self.GET_system_data('zoneCount')
-        self.nbr_atus = self.GET_system_data('atuCount')
-        self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
-        self.nbr_energy_source = self.GET_system_data('energySourceCount')
-        self.nbr_fancoil = self.GET_system_data('fancoilCount')
-        self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
-        self.nbr_macrozone = self.GET_system_data('macroZoneCount')
-        self.name = self.GET_system_data('name')
+        #self.temp_unit = self.GET_system_data('tempUnit')
+        #self.nbr_zones = self.GET_system_data('zoneCount')
+        #self.nbr_atus = self.GET_system_data('atuCount')
+        #self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
+        #self.nbr_energy_source = self.GET_system_data('energySourceCount')
+        #self.nbr_fancoil = self.GET_system_data('fancoilCount')
+        #self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
+        #self.nbr_macrozone = self.GET_system_data('macroZoneCount')
+        #self.name = self.GET_system_data('name')
+
+
+
 
     ###############################
     #pretty bad solution - just checking if a value can be extracted
@@ -61,7 +62,6 @@ class messana_control(object):
         sysData = self.GET_system_data('apiVersion')
         return (sysData['statusOK'])
     
-
 
 
 
@@ -104,17 +104,10 @@ class messana_control(object):
 
 
 
-    def GET_node_data(self, mKey):
-        #logging.debug('GETNodeData: ' + mNodeKey + ' ' + str(nodeNbr)+ ' ' + mKey)
-        logging.debug('mkey: {}'.format(mKey))
-        logging.debug('self.IPstr: {}'.format(self.IPstr))
-        logging.debug('self.node_type: {}'.format(self.node_type))
-        logging.debug('self.apiStr: {}'.format(self.apiStr))
-        logging.debug('self.node_nbr): {}'.format(self.node_nbr))
-
-   
-        GETstr = self.IPstr +'/api/'+ self.node_type+'/'+mKey+'/'+str(self.node_nbr)+'?'+ self.apiStr
-        logging.debug('GET_node_data: {}-{}-{} '.format(self.node_type, self.node_nbr, mKey ))
+    def GET_node_data(self, mKey, node_type, node_nbr):
+        logging.debug('GETNodeData: ' + mKey + ' ' + str(node_nbr)+ ' ' + mKey)
+        GETstr = self.IPstr +'/api/'+ node_type+'/'+mKey+'/'+str(node_nbr)+'?'+ self.apiStr
+        logging.debug('GET_node_data: {}-{}-{} '.format(node_type, node_nbr, mKey ))
         try:
             nTemp = requests.get(GETstr)
             if str(nTemp) == self.RESPONSE_OK:
@@ -124,19 +117,18 @@ class messana_control(object):
                     return(None)
                 else:
                     return(data)
-
             else:
-                logging.error('GET_node_data: {} {} {}'.format(self.node_nbr, mKey, str(nTemp)))
+                logging.error('GET_node_data: {} {} {}'.format(node_nbr, mKey, str(nTemp)))
                 return(None)
         except Exception as e:
             logging.error ('Error GET_node_data:{} : {}'.format(GETstr, e))
             return(None)
 
 
-    def PUT_node_data(self, mKey, value):
+    def PUT_node_data(self, mKey, value, node_type, node_nbr):
         mData = {}
-        PUTstr = self.IPstr + +'/api/'+ self.node_type +'/'+mKey+'/'+str(self.node_nbr)
-        mData = {'id':self.node_nbr, 'value': value, 'apikey' : self.apiKey }
+        PUTstr = self.IPstr +'/api/'+ node_type +'/'+mKey+'/'+str(node_nbr)
+        mData = {'id':node_nbr, 'value': value, 'apikey' : self.apiKey }
         logging.debug('PUT_node_data :{} {}'.format(PUTstr, mData) )
         try:
             resp = requests.put(PUTstr, json=mData)
@@ -146,35 +138,3 @@ class messana_control(object):
         except Exception as e:
             logging.error('Error PUT_node_data try/cartch {}:{}'.format(PUTstr, e))
             return(False)
-
-'''
-class zone(mess_node):
-    def __init__(self, zone_nbr):
-        super().__init__()
-        logging.info('init Zone:' )
-        self.node_type = 'zone'
-        self.node_nbr = zone_nbr
-        self.stateList = [0,1]
-
-    def get_name(self):
-        logging.debug('get_name {}: {}'.format(self.node_type, self.node_nbr ))
-        return(self.GET_node_data('name'))
-
-    def get_status(self):
-        logging.debug('get_status {}:  {}'.format(self.node_type, self.node_nbr))    
-        return(self.GET_node_data('status'))
-
-
-    def set_status(self, state):
-        if state in self.stateList:
-            self.PUT_node_data('status', state )
-            time.sleep(0.5)
-
-            return(self.get_status())
-        else:
-            logging.error ('Wrong Status state passed ([0,1]: {}'.format(state))
-            return(False)
-          
-
-'''
-#
