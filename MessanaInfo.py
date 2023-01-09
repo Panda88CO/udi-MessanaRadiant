@@ -60,6 +60,7 @@ class messana_control(object):
     #pretty bad solution - just checking if a value can be extracted
     def connected(self):
         sysData = self.GET_system_data('apiVersion')
+        logging.debug('sysdata: {}'.format(sysData))
         return (sysData['statusOK'])
     
 
