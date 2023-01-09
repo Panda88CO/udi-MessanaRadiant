@@ -60,8 +60,9 @@ class udi_messana_zone(udi_interface.Node):
         self.parent = primary
         self.zone_nbr = zone_nbr
         self.zone = messana_zone(self.zone_nbr, messana_info)
+        
+        self.address = self.address
         tmp_name = self.zone.name
-        self.address = self.getValidAddress(tmp_name)
         self.name = self.getValidName(tmp_name)
         self.poly = polyglot
 
@@ -100,7 +101,25 @@ class udi_messana_zone(udi_interface.Node):
     def stop(self):
         logging.info('udiMessanaZone Stop ')
 
-    def update_system(self):
+    def updateISY_shortpoll(self):
+        Val = self.zone.get_status()
+        logging.debug('Zone Status (GV0): {}'.format(Val))
+        self.setDriver('GV0', Val, True, True)
+
+        Val = self.zone.get_air_temp()
+        logging.debug('get_air_temp(GV4): {}'.format(Val))
+        self.setDriver('GV4', Val, True, True)
+
+        Val = self.zone.get_humidity()
+        logging.debug('Humidity(GV5): {}'.format(Val))
+        self.setDriver('GV5', Val, True, True)
+
+        Val = self.zone.get_air_quality()
+        logging.debug('get_air_quality (GV6): {}'.format(Val))
+        self.setDriver('GV6', Val, True, True)
+
+
+    def updateISY_longpoll(self):
         logging.debug('update_system - zone {} Status:'.format(self.zone_nbr))
 
         Val = self.zone.get_status()
@@ -109,18 +128,18 @@ class udi_messana_zone(udi_interface.Node):
 
         Val = self.zone.get_thermal_status()
         logging.debug('Thermal Mode(GV1): {}'.format(Val))
-        self.setDriver('GV1', Val, True, True)     
+        self.setDriver('GV1', Val, True, True)
 
         Val = self.zone.get_scheduleOn()
         logging.debug('Schedule Mode(GV2): {}'.format(Val))
         self.setDriver('GV2', Val, True, True)
 
         Val = self.zone.get_setpoint()
-        logging.debug('Set pointe (GV3): {}'.format(Val))
+        logging.debug('Set point (GV3): {}'.format(Val))
         self.setDriver('GV3', Val, True, True)
 
         Val = self.zone.get_air_temp()
-        logging.debug('Schedule Mode(GV4): {}'.format(Val))
+        logging.debug('get_air_temp(GV4): {}'.format(Val))
         self.setDriver('GV4', Val, True, True)
 
         Val = self.zone.get_humidity()
@@ -128,7 +147,7 @@ class udi_messana_zone(udi_interface.Node):
         self.setDriver('GV5', Val, True, True)
 
         Val = self.zone.get_air_quality()
-        logging.debug('Energy_saving (GV6): {}'.format(Val))
+        logging.debug('get_air_quality (GV6): {}'.format(Val))
         self.setDriver('GV6', Val, True, True)
 
         Val = self.zone.get_co2()
@@ -136,16 +155,16 @@ class udi_messana_zone(udi_interface.Node):
         self.setDriver('GV7', Val, True, True)
 
         Val = self.zone.get_energy_saving()
-        logging.debug('Alarm On (GV8): {}'.format(Val))
+        logging.debug('get_energy_saving On (GV8): {}'.format(Val))
         self.setDriver('GV8', Val, True, True)
 
         Val = self.zone.get_air_quality()
-        logging.debug('Alarm On (GV9): {}'.format(Val))
-        self.setDriver('GV9', Val, True, True)        
+        logging.debug('get_air_quality(GV9): {}'.format(Val))
+        self.setDriver('GV9', Val, True, True)
 
         Val = self.zone.get_temp()
         logging.debug('System Temp (GV10): {}'.format(Val))
-        self.setDriver('GV10', Val, True, True)              
+        self.setDriver('GV10', Val, True, True)
 
 
         #Val = self.zone.system_online

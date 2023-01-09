@@ -140,10 +140,8 @@ class MessanaController(udi_interface.Node):
         
         for zone in range(0, self.messana_system.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone))
-            temp = messana_zone(zone, self.messana)
             address = 'zone'+str(zone)
-            tmp_name = temp.get_name()
-            name = self.getValidName(tmp_name)
+            name = 'dummy_name'
             self.zones[zone] = udi_messana_zone(self.poly, self.primary, address, name, zone, self.messana)
 
             '''
@@ -165,7 +163,7 @@ class MessanaController(udi_interface.Node):
             self.poly.installprofile()
             #logging.debug('Install Profile done')
             '''
-            
+
         self.updateISYdrivers('all')
         #self.messanaImportOK = 1
         self.poll_start = True
@@ -203,8 +201,9 @@ class MessanaController(udi_interface.Node):
                     #logging.info('Updating device status')
                     nodes = self.poly.getNodes()
                     for nde in nodes:
-                        if nde != 'setup':   # but not the controller node
-                            nodes[nde].checkOnline()
+                        logging.debug('Longpoll update nodes {}'.formt(nde))
+                        if nde != 'controller':   # but not the controller node
+                            nodes[nde].updateISY_longpoll()
                 except Exception as e:
                     logging.debug('Exeption occcured during systemPoll : {}'.format(e))
                     #self.yoAccess = YoLinkInitPAC (self.uaid, self.secretKey)
@@ -214,8 +213,9 @@ class MessanaController(udi_interface.Node):
                 self.heartbeat()
                 nodes = self.poly.getNodes()
                 for nde in nodes:
-                    if nde != 'setup':   # but not the controller node
-                        nodes[nde].checkDataUpdate()
+                    logging.debug('short poll update nodes {}'.formt(nde))
+                    if nde != 'controller':   # but not the controller node
+                        nodes[nde].updateISY_shortpoll()
 
 
     def heartbeat(self):
