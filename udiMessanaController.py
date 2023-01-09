@@ -267,7 +267,7 @@ class MessanaController(udi_interface.Node):
                         self.nodes[node].longPoll()
         except Exception as e:
             logging.error('Exception longPoll: '+  str(e))
-            
+
 
     def updateISY_longpoll(self):
         logging.debug('updateISY_longpoll')
@@ -451,7 +451,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.26')
+        polyglot.start('0.0.28')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
