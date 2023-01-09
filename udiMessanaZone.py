@@ -96,6 +96,7 @@ class udi_messana_zone(udi_interface.Node):
 
     def start(self):
         logging.info('udiMessanaZone Start ')
+        self.updateISY_longpoll()
         
 
     def stop(self):

@@ -201,7 +201,7 @@ class MessanaController(udi_interface.Node):
                     #logging.info('Updating device status')
                     nodes = self.poly.getNodes()
                     for nde in nodes:
-                        logging.debug('Longpoll update nodes {}'.formt(nde))
+                        logging.debug('Longpoll update nodes {}'.format(nde))
                         if nde != 'controller':   # but not the controller node
                             nodes[nde].updateISY_longpoll()
                 except Exception as e:
@@ -213,7 +213,7 @@ class MessanaController(udi_interface.Node):
                 self.heartbeat()
                 nodes = self.poly.getNodes()
                 for nde in nodes:
-                    logging.debug('short poll update nodes {}'.formt(nde))
+                    logging.debug('short poll update nodes {}'.format(nde))
                     if nde != 'controller':   # but not the controller node
                         nodes[nde].updateISY_shortpoll()
 
