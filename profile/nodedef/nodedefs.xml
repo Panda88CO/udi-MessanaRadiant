@@ -1,0 +1,209 @@
+<nodeDefs> 
+   <nodeDef id="system" nls="nlssystem">
+      <editors />
+      <sts>
+         <st id="GV0" editor="status" />
+         <st id="GV1" editor="temp" />
+         <st id="GV2" editor="enable" />
+         <st id="GV3" editor="count" />         
+         <st id="GV4" editor="count" />
+         <st id="GV5" editor="count" />
+         <st id="GV6" editor="count" />
+         <st id="GV7" editor="count" />
+         <st id="GV8" editor="count" />
+         <st id="GV9" editor="count" />
+         <st id="GV10" editor="alarm" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+            <cmd id="DON" /> 
+            <cmd id="DOF" /> 
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SET_STATUS" > 
+               <p id="" editor="SYSTEM_1" init="GV0" /> 
+            </cmd> 
+            <cmd id="SET_ENERGYSAVE" > 
+               <p id="" editor="SYSTEM_9" init="GV2" /> 
+            </cmd> 
+            <cmd id="SET_SETBACK" > 
+               <p id="" editor="SYSTEM_10" init="GV1" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+
+   <nodeDef id="messana_zone" nls="nlszones">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="thermalmode" />
+         <st id="GV2" editor="status" />
+         <st id="GV3" editor="temp"/>
+         <st id="GV4" editor="temp" />
+         <st id="GV4" editor="humidity" />
+         <st id="GV6" editor="airq" />
+         <st id="GV7" editor="co2" />
+         <st id="GV8" editor="enable" />
+         <st id="GV9" editor="alarm" />
+         <st id="GV10" editor="temp" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SET_SETPOINT" > 
+               <p id="" editor="set_setpt" init="GV3" /> 
+            </cmd> 
+            <cmd id="SET_STATUS" > 
+               <p id="" editor="set_statue" init="GV0" /> 
+            </cmd> 
+            <cmd id="SET_ENERGYSAVE" > 
+               <p id="" editor="control" init="GV8" /> 
+            </cmd> 
+            <cmd id="SET_SCHEDULEON" > 
+               <p id="" editor="control" init="GV2" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+    
+   <nodeDef id="macrozones0" nls="nlsmacrozones0">
+      <editors />
+      <sts>
+         <st id="GV1" editor="MACROZONES0_1" />
+         <st id="GV2" editor="MACROZONES0_2" />
+         <st id="GV3" editor="MACROZONES0_3" />
+         <st id="GV4" editor="MACROZONES0_4" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+         </accepts>
+      </cmds>
+   </nodeDef> 
+   <nodeDef id="macrozones1" nls="nlsmacrozones1">
+      <editors />
+      <sts>
+         <st id="GV1" editor="MACROZONES1_1" />
+         <st id="GV2" editor="MACROZONES1_2" />
+         <st id="GV3" editor="MACROZONES1_3" />
+         <st id="GV4" editor="MACROZONES1_4" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SET_SETPOINT" > 
+               <p id="" editor="MACROZONES1_1" init="GV1" /> 
+            </cmd> 
+            <cmd id="SET_STATUS" > 
+               <p id="" editor="MACROZONES1_2" init="GV2" /> 
+            </cmd> 
+            <cmd id="SET_SCHEDULEON" > 
+               <p id="" editor="MACROZONES1_3" init="GV3" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef> 
+  
+   <nodeDef id="atus0" nls="nlsatus0">
+      <editors />
+      <sts>
+         <st id="GV1" editor="ATUS0_1" />
+         <st id="GV2" editor="ATUS0_2" />
+         <st id="GV3" editor="ATUS0_3" />
+         <st id="GV4" editor="ATUS0_4" />
+         <st id="GV5" editor="ATUS0_5" />
+         <st id="GV6" editor="ATUS0_6" />
+         <st id="GV7" editor="ATUS0_7" />
+         <st id="GV8" editor="ATUS0_8" />
+         <st id="GV9" editor="ATUS0_9" />
+         <st id="GV10" editor="ATUS0_10" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="SET_STATUS" > 
+               <p id="" editor="ATUS0_1" init="GV1" /> 
+            </cmd> 
+            <cmd id="UPDATE" /> 
+            <cmd id="SET_HRVON" > 
+               <p id="" editor="ATUS0_2" init="GV2" /> 
+            </cmd> 
+            <cmd id="SET_NTDON" > 
+               <p id="" editor="ATUS0_3" init="GV3" /> 
+            </cmd> 
+            <cmd id="SET_INTON" > 
+               <p id="" editor="ATUS0_4" init="GV4" /> 
+            </cmd> 
+            <cmd id="SET_DEHUM_SP_RH" > 
+               <p id="" editor="ATUS0_10" init="GV10" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef> 
+   <nodeDef id="EnergyS0" nls="nlsEnergyS0">
+      <editors />
+      <sts>
+         <st id="GV1" editor="ENERGYS0_1" />
+         <st id="GV2" editor="ENERGYS0_2" />
+         <st id="GV3" editor="ENERGYS0_3" />
+         <st id="GV4" editor="ENERGYS0_4" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="SET_STATUS" /> 
+            <cmd id="UPDATE" /> 
+         </accepts>
+      </cmds>
+   </nodeDef> 
+   <nodeDef id="HcCo0" nls="nlsHcCo0">
+      <editors />
+      <sts>
+         <st id="GV1" editor="HCCO0_1" />
+         <st id="GV2" editor="HCCO0_2" />
+         <st id="GV3" editor="HCCO0_3" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SET_ADAPTIVE_COMFORT" > 
+               <p id="" editor="HCCO0_3" init="GV3" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef> 
+   <nodeDef id="BufTanks0" nls="nlsBufTanks0">
+      <editors />
+      <sts>
+         <st id="GV1" editor="BUFTANKS0_1" />
+         <st id="GV2" editor="BUFTANKS0_2" />
+         <st id="GV3" editor="BUFTANKS0_3" />
+         <st id="GV4" editor="BUFTANKS0_4" />
+         <st id="GV5" editor="BUFTANKS0_5" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="SET_STATUS" /> 
+            <cmd id="UPDATE" /> 
+            <cmd id="SET_MODE" /> 
+            <cmd id="SET_TEMPMODE" /> 
+         </accepts>
+      </cmds>
+   </nodeDef> 
+</nodeDefs>  
