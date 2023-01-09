@@ -97,6 +97,8 @@ class udi_messana_zone(udi_interface.Node):
         logging.info('udiMessanaZone Start ')
         
 
+    def stop(self):
+        logging.info('udiMessanaZone Stop ')
 
     def update_system(self):
         logging.debug('update_system - zone {} Status:'.format(self.zone_nbr))
