@@ -32,7 +32,7 @@ class messana_system(object):
         self.apiStr = ''
         self.IPstr =''
         self.IPaddress = messana.IPaddress
-        self.Key = messana.Key
+        self.Key = messana.apiKey
         self.apiStr = 'apikey=' + self.Key
         self.IPstr ='http://'+ self.IPaddress
         logging.debug('Getting System Data')
