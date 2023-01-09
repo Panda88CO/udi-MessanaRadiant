@@ -243,9 +243,9 @@ class MessanaController(udi_interface.Node):
                 #logging.debug('Short POll controller: ' )
                 if self.nodeDefineDone == True:
                     for node in self.nodes:
-                        if node != self.address and node != 'controller':
+                        #if node != self.address and node != 'system':
                             #logging.debug('Calling SHORT POLL for node : ' + node )
-                            self.nodes[node].shortPoll()     
+                        self.nodes[node].shortPoll()
         except Exception as e:
             logging.error('Exception shortPoll: '+  str(e))     
 
@@ -262,12 +262,18 @@ class MessanaController(udi_interface.Node):
                 self.ISYforced = True   
                 if self.nodeDefineDone == True:       
                     for node in self.nodes:
-                        if node != self.address and node != 'controller':
+                        #if node != self.address and node != 'system':
                             #logging.debug('Calling LONG POLL for node : ' + node )
-                            self.nodes[node].longPoll()
+                        self.nodes[node].longPoll()
         except Exception as e:
-            logging.error('Exception longPoll: '+  str(e))         
+            logging.error('Exception longPoll: '+  str(e))
+            
 
+    def updateISY_longpoll(self):
+        logging.debug('updateISY_longpoll')
+
+    def updateISY_shortpoll(self):
+        logging.debug('updateISY_shortpoll')
 
     def updateISYdrivers(self, level):
         #logging.debug('System updateISYdrivers')
@@ -305,7 +311,7 @@ class MessanaController(udi_interface.Node):
                     logging.error('Error!  Unknown level passed: ' + level)
             '''
         except Exception as e:
-            logging.error('Exception updateISYdrivers: '+  str(e))       
+            logging.error('Exception updateISYdrivers: '+  str(e))
     '''
     def query(self, command=None):
         logging.debug('TOP querry')
