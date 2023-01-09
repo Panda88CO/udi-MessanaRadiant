@@ -139,6 +139,7 @@ class MessanaController(udi_interface.Node):
                 self.stop()
         
         for zone in range(0, self.messana_system.nbr_zones ):
+            logging.debug('Creating zone {}'.format(zone))
             temp = messana_zone(zone, self.messana)
             address = 'zone'+str(zone)
             tmp_name = temp.get_name()
