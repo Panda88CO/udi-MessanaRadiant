@@ -48,6 +48,7 @@ class udi_messana_zone(udi_interface.Node):
         {'driver': 'GV6', 'value': 99, 'uom': 0},
         {'driver': 'GV7', 'value': 99, 'uom': 0},                                                         
         {'driver': 'GV8', 'value': 99, 'uom': 25},
+        {'driver': 'GV9', 'value': 99, 'uom': 25},        
         {'driver': 'GV10', 'value': 99, 'uom': 4},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
@@ -105,70 +106,73 @@ class udi_messana_zone(udi_interface.Node):
     def updateISY_shortpoll(self):
         Val = self.zone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
-        self.setDriver('GV0', Val, True, True)
+        self.node.setDriver('GV0', Val, True, True)
 
         Val = self.zone.get_air_temp()
         logging.debug('get_air_temp(GV4): {}'.format(Val))
-        self.setDriver('GV4', Val, True, True)
+        self.node.setDriver('GV4', Val, True, True)
 
         Val = self.zone.get_humidity()
         logging.debug('Humidity(GV5): {}'.format(Val))
-        self.setDriver('GV5', Val, True, True)
+        self.node.setDriver('GV5', Val, True, True)
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.setDriver('GV6', Val, True, True)
-
+        self.node.setDriver('GV6', Val, True, True)
+        
+        Val = self.zone.get_alarmOn()
+        logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
+        self.node.setDriver('GV9', Val, True, True)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - zone {} Status:'.format(self.zone_nbr))
 
         Val = self.zone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
-        self.setDriver('GV0', Val, True, True)
+        self.node.setDriver('GV0', Val, True, True)
 
         Val = self.zone.get_thermal_status()
         logging.debug('Thermal Mode(GV1): {}'.format(Val))
-        self.setDriver('GV1', Val, True, True)
+        self.node.setDriver('GV1', Val, True, True)
 
         Val = self.zone.get_scheduleOn()
         logging.debug('Schedule Mode(GV2): {}'.format(Val))
-        self.setDriver('GV2', Val, True, True)
+        self.node.setDriver('GV2', Val, True, True)
 
         Val = self.zone.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
-        self.setDriver('GV3', Val, True, True)
+        self.node.setDriver('GV3', Val, True, True)
 
         Val = self.zone.get_air_temp()
         logging.debug('get_air_temp(GV4): {}'.format(Val))
-        self.setDriver('GV4', Val, True, True)
+        self.node.setDriver('GV4', Val, True, True)
 
         Val = self.zone.get_humidity()
         logging.debug('Humidity(GV5): {}'.format(Val))
-        self.setDriver('GV5', Val, True, True)
+        self.node.setDriver('GV5', Val, True, True)
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.setDriver('GV6', Val, True, True)
+        self.node.setDriver('GV6', Val, True, True)
 
         Val = self.zone.get_co2()
         logging.debug('Alarm On (GV7): {}'.format(Val))
-        self.setDriver('GV7', Val, True, True)
+        self.node.setDriver('GV7', Val, True, True)
 
         Val = self.zone.get_energy_saving()
         logging.debug('get_energy_saving On (GV8): {}'.format(Val))
-        self.setDriver('GV8', Val, True, True)
+        self.node.setDriver('GV8', Val, True, True)
 
-        Val = self.zone.get_air_quality()
-        logging.debug('get_air_quality(GV9): {}'.format(Val))
-        self.setDriver('GV9', Val, True, True)
+        Val = self.zone.get_alarmOn()
+        logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
+        self.node.setDriver('GV9', Val, True, True)
 
         Val = self.zone.get_temp()
         logging.debug('System Temp (GV10): {}'.format(Val))
-        self.setDriver('GV10', Val, True, True)
+        self.node.setDriver('GV10', Val, True, True)
 
 
         #Val = self.zone.system_online
         #logging.debug('System Status: {}'.format(Val))
-        #self.setDriver('ST', Val, True, True)    
+        #self.node.setDriver('ST', Val, True, True)    
         

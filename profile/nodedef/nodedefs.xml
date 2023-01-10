@@ -12,7 +12,8 @@
          <st id="GV7" editor="count" />
          <st id="GV8" editor="count" />
          <st id="GV9" editor="count" />
-         <st id="GV10" editor="alarm" />
+         <st id="GV10" editor="count" />         
+         <st id="GV11" editor="alarm" />
          <st id="ST" editor="running" />
       </sts>
       <cmds>

@@ -39,7 +39,7 @@
      <range  uom="25" subset="0-1,99" nls="running"/>
   </editor>
   <editor id = "count" > 
-     <range  uom="25" subset="0-64,99" nls="count"/>
+     <range  uom="25" subset="0-20,98,99" nls="count"/>
   </editor>
 
 </editors> 

@@ -53,7 +53,10 @@ class messana_system(object):
         self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
         logging.debug('Getting nbr hot cold Units: {}'.format( self.nbr_HCgroup ))
         self.nbr_macrozone = self.GET_system_data('macroZoneCount')
-        logging.debug('Getting nbr mazon zones: {}'.format( self.nbr_macrozone  ))
+        logging.debug('Getting nbr macon zones: {}'.format( self.nbr_macrozone  ))
+        self.nbr_dhwater = self.GET_system_data('dhwCount')
+        logging.debug('Getting nbr domestic hot water: {}'.format( self.nbr_dhwater  ))
+
         self.name = self.GET_system_data('name')
         logging.debug('Getting  system name: {}'.format(self.name ))
 
@@ -108,7 +111,7 @@ class messana_system(object):
         return(self.PUT_system_data('status', status))
 
     def get_energySaving(self):
-        return(self.GET_system_data('status'))
+        return(self.GET_system_data('energySaving'))
 
     def set_energySaving(self, status):
         return(self.PUT_system_data('status', status))
@@ -120,7 +123,10 @@ class messana_system(object):
         return(self.PUT_system_data('setback', status))
 
     def get_setback_diff(self):
-        return(self.GET_system_data("setbackDiff"))
+        return(self.GET_system_data('setbackDiff'))
 
     def set_setback_diff(self, diff):
-        return(self.PUT_system_data("setbackDiff", diff))
+        return(self.PUT_system_data('setbackDiff', diff))
+
+    def get_external_alarm(self):
+        return(self.GET_system_data('externalAlarm'))

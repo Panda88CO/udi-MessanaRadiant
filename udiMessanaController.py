@@ -173,6 +173,8 @@ class MessanaController(udi_interface.Node):
     def stop(self):
         #self.removeNoticesAll()
         logging.info('stop - Cleaning up')
+        self.node.setDriver('ST', 0, True, True)
+
 
     def handleLevelChange(self, level):
         logging.info('New log level: {}'.format(level))
@@ -195,10 +197,6 @@ class MessanaController(udi_interface.Node):
                 #Keep token current
                 #self.node.setDriver('GV0', self.temp_unit, True, True)
                 try:
-                    #if not self.yoAccess.refresh_token(): #refresh failed
-                    #    while not self.yoAccess.request_new_token():
-                    #            time.sleep(60)
-                    #logging.info('Updating device status')
                     nodes = self.poly.getNodes()
                     for nde in nodes:
                         logging.debug('Longpoll update nodes {}'.format(nde))
@@ -227,53 +225,62 @@ class MessanaController(udi_interface.Node):
             self.reportCmd('DOF',2)
             self.hb = 0
 
-
-    def shortPoll(self):
-        #logging.debug('Messana Controller shortPoll')
-        try:
-            if self.messanaImportOK == 1:
-                #logging.debug('Short Poll System Up')
-                if self.ISYforced:
-                    #self.messana.updateSystemData('active')
-                    self.updateISYdrivers('active')
-                else:
-                    #self.messana.updateSystemData('all')
-                    self.updateISYdrivers('all')
-                self.ISYforced = True
-                #logging.debug('Short POll controller: ' )
-                if self.nodeDefineDone == True:
-                    for node in self.nodes:
-                        #if node != self.address and node != 'system':
-                            #logging.debug('Calling SHORT POLL for node : ' + node )
-                        self.nodes[node].shortPoll()
-        except Exception as e:
-            logging.error('Exception shortPoll: '+  str(e))     
-
-
-    def longPoll(self):
-        #logging.debug('Messana Controller longPoll')
-        try:
-            if self.messanaImportOK == 1:
-                self.heartbeat()
-                self.messana.updateSystemData('all')
-                #logging.debug( self.drivers)
-                self.updateISYdrivers('all')
-                self.reportDrivers()
-                self.ISYforced = True   
-                if self.nodeDefineDone == True:       
-                    for node in self.nodes:
-                        #if node != self.address and node != 'system':
-                            #logging.debug('Calling LONG POLL for node : ' + node )
-                        self.nodes[node].longPoll()
-        except Exception as e:
-            logging.error('Exception longPoll: '+  str(e))
-
-
+   
     def updateISY_longpoll(self):
         logging.debug('updateISY_longpoll')
+        tmp = self.messana_system.get_status()
+        logging.debug('System State {}'.format(tmp))
+        self.node.setDriver('GV0', tmp)
+
+        tmp = self.messana_system.get_setback_diff()
+        logging.debug('Setback Offset {}'.format(tmp))
+        self.node.setDriver('GV1', tmp)        
+
+        tmp = self.messana_system.get_setback()
+        logging.debug('Setback Enabled {}'.format(tmp))
+        self.node.setDriver('GV2', tmp)
+
+        logging.debug('Nbr Zones{}'.format(self.messana_system.nbr_zones))
+        self.node.setDriver('GV3', self.messana_system.nbr_zones)
+
+        logging.debug('Nbr Zones{}'.format(self.messana_system.nbr_macrozone))
+        self.node.setDriver('GV4', self.messana_system.nbr_macrozone)
+
+        logging.debug('Nbr macrozones{}'.format(self.messana_system.nbr_macrozone))
+        self.node.setDriver('GV5', self.messana_system.nbr_macrozone)
+
+        logging.debug('Nbr Hot Cold{}'.format(self.messana_system.nbr_HCgroup))
+        self.node.setDriver('GV6', self.messana_system.nbr_HCgroup)
+
+        logging.debug('Nbr fan coil{}'.format(self.messana_system.nbr_fancoil))
+        self.node.setDriver('GV7', self.messana_system.nbr_fancoil)
+
+        logging.debug('Nbr domestic Hot Water{}'.format(self.messana_system.nbr_dhwater))
+        self.node.setDriver('GV8', self.messana_system.nbr_dhwater)
+
+
+        logging.debug('Nbr buffer Tank {}'.format(self.messana_system.nbr_buffer_tank))
+        self.node.setDriver('GV9', self.messana_system.nbr_buffer_tank)
+
+        logging.debug('Nbr energy source{}'.format(self.messana_system.nbr_energy_source))
+        self.node.setDriver('GV10', self.messana_system.nbr_energy_source)
+
+        tmp = self.messana_system.get_external_alarm()
+        logging.debug('Alarm Status{}'.format(tmp))
+        self.node.setDriver('GV11', tmp)                
 
     def updateISY_shortpoll(self):
         logging.debug('updateISY_shortpoll')
+        self.heartbeat()
+
+        tmp = self.messana_system.get_status()
+        logging.debug('System State {}'.format(tmp))
+        self.node.setDriver('GV0', tmp)
+
+        tmp = self.messana_system.get_external_alarm()
+        logging.debug('Alarm Status{}'.format(tmp))
+        self.node.setDriver('GV11', tmp)         
+
 
     def updateISYdrivers(self, level):
         #logging.debug('System updateISYdrivers')
@@ -438,6 +445,22 @@ class MessanaController(udi_interface.Node):
         self.updateISYdrivers('all')
         self.reportDrivers()
     
+    drivers = [
+            {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
+            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
+            {'driver': 'GV2', 'value':99, 'uom':25 }, # Energy Saving
+            {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count        
+            {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
+            {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
+            {'driver': 'GV6', 'value':99, 'uom':25 }, # HotCold count
+            {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
+            {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
+            {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
+            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count            
+            {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
+            {'driver': 'ST', 'value':99, 'uom':25 }, #state
+            ]
+
 
     commands = { 'UPDATE': ISYupdate
                 ,'SET_STATUS': setStatus

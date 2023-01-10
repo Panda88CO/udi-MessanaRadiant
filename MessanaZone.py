@@ -106,6 +106,7 @@ class messana_zone(object):
         logging.debug('{} {} - get_air_quality'.format(self.type, self.nbr))
         val = self.__get_zone_data('airQuality')
         logging.debug('Airquality;{}'.format(val))
+        return( 0)
         #if val not in self.messana.NaNlist:
         #    return(val['category'])
         #else:
