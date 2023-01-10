@@ -265,49 +265,6 @@ class MessanaController(udi_interface.Node):
         self.node.setDriver('GV11', tmp)         
 
     '''
-    def updateISYdrivers(self, level):
-        #logging.debug('System updateISYdrivers')
-        try:
-            logging.debug('updateISYdrivers')
-            
-            for ISYdriver in self.drivers:
-                ISYkey = ISYdriver['driver']
-                if level == 'active':
-                    temp = self.messana.getMessanaSystemKey(ISYkey)
-                    if temp in self.systemActiveKeys:
-                        #logging.debug('MessanaController ISYdrivers ACTIVE ' + temp)
-                        status, value = self.messana.getSystemISYValue(ISYkey)
-                        if status:
-                            if self.ISYforced:
-                                self.setDriver(ISYdriver['driver'], value, report = True, force = False)
-                            else:
-                                self.setDriver(ISYdriver['driver'], value, report = True, force = True)
-                            #logging.debug('driver updated :' + ISYdriver['driver'] + ' =  '+str(value))
-                        else:
-                            logging.error('Error getting ' + ISYdriver['driver'])
-                elif level == 'all':
-                    temp = self.messana.getMessanaSystemKey(ISYkey)
-                    #logging.debug('MessanaController ISYdrivers ACTIVE ' + temp)
-                    status, value = self.messana.getSystemISYValue(ISYkey)
-                    if status:
-                        if self.ISYforced:
-                            self.setDriver(ISYdriver['driver'], value, report = True, force = False)
-                        else:
-                            self.setDriver(ISYdriver['driver'], value, report = True, force = True)
-                        #logging.debug('driver updated :' + ISYdriver['driver'] + ' =  '+str(value))
-                    else:
-                        logging.error('Error getting ' + ISYdriver['driver'])
-                else:
-                    logging.error('Error!  Unknown level passed: ' + level)
-            
-        except Exception as e:
-            logging.error('Exception updateISYdrivers: '+  str(e))
-    
-    def query(self, command=None):
-        logging.debug('TOP querry')
-        self.messana.updateSystemData('all')
-        self.reportDrivers()
-
     def discover(self, command=None):
 
         logging.info('discover zones')
@@ -393,10 +350,6 @@ class MessanaController(udi_interface.Node):
 
         self.nodeDefineDone = True
   
-    
-
-    def check_params(self, command=None):
-        logging.debug('Check Params')
     '''
     def setStatus(self, command):
         #logging.debug('set Status Called')
@@ -425,7 +378,7 @@ class MessanaController(udi_interface.Node):
     def ISYupdate (self, command):
         #logging.info('ISY-update called')
         #self.messana.updateSystemData('all')
-        self.updateISYdrivers('all')
+        self.updateISY_longpoll()
         self.reportDrivers()
 
     drivers = [

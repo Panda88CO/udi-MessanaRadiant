@@ -46,9 +46,9 @@ class udi_messana_zone(udi_interface.Node):
         {'driver': 'GV4', 'value': 99, 'uom': 4},
         {'driver': 'GV5', 'value': 99, 'uom': 21},
         {'driver': 'GV6', 'value': 99, 'uom': 0},
-        {'driver': 'GV7', 'value': 99, 'uom': 0},                                                         
+        {'driver': 'GV7', 'value': 99, 'uom': 0},
         {'driver': 'GV8', 'value': 99, 'uom': 25},
-        {'driver': 'GV9', 'value': 99, 'uom': 25},        
+        {'driver': 'GV9', 'value': 99, 'uom': 25},
         {'driver': 'GV10', 'value': 99, 'uom': 4},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
