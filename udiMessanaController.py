@@ -29,27 +29,10 @@ except ImportError:
 
 class MessanaController(udi_interface.Node):
 
-
-
     def __init__(self, polyglot, primary, address, name):
         super().__init__( polyglot, primary, address, name)
 
 
-        self.drivers = [
-            {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
-            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
-            {'driver': 'GV2', 'value':99, 'uom':25 }, # Energy Saving
-            {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
-            {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
-            {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
-            {'driver': 'GV6', 'value':99, 'uom':25 }, # HotCold count
-            {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
-            {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
-            {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
-            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count            
-            {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
-            {'driver': 'ST', 'value':0, 'uom':25 }, #state
-            ]
 
 
 
@@ -66,7 +49,6 @@ class MessanaController(udi_interface.Node):
         self.hb = 0
         self.ISYdrivers=[]
         self.ISYTempUnit = 0
-        self.drivers = []
         self.nodeDefineDone = False
         self.nodeConfigDone = False
         self.zones = {}
@@ -174,13 +156,13 @@ class MessanaController(udi_interface.Node):
             self.messana_system = messana_system(self.messana)
             if not self.messana.connected():
                 self.stop()
-        '''
+        
         for zone in range(0, self.messana_system.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone))
             address = 'zone'+str(zone)
             name = 'dummy_name'
             self.zones[zone] = udi_messana_zone(self.poly, self.primary, address, name, zone, self.messana)
-        '''
+        
 
 
         self.updateISY_longpoll()
@@ -418,6 +400,21 @@ class MessanaController(udi_interface.Node):
         self.updateISY_longpoll()
         #self.reportDrivers()
 
+    drivers = [
+            {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
+            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
+            {'driver': 'GV2', 'value':99, 'uom':25 }, # Energy Saving
+            {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
+            {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
+            {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
+            {'driver': 'GV6', 'value':99, 'uom':25 }, # HotCold count
+            {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
+            {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
+            {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
+            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count            
+            {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
+            {'driver': 'ST', 'value':0, 'uom':25 }, #state
+            ]
 
     commands = { 'UPDATE': ISYupdate
                 ,'SET_STATUS': setStatus
@@ -431,7 +428,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.41')
+        polyglot.start('0.0.42')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
