@@ -157,11 +157,11 @@ class MessanaController(udi_interface.Node):
             if not self.messana.connected():
                 self.stop()
         
-        for zone in range(0, self.messana_system.nbr_zones ):
-            logging.debug('Creating zone {}'.format(zone))
-            address = 'zone'+str(zone)
+        for zone_nbr in range(0, self.messana_system.nbr_zones ):
+            logging.debug('Creating zone {}'.format(zone_nbr))
+            address = 'zone'+str(zone_nbr)
             name = 'dummy_name'
-            self.zones[zone] = udi_messana_zone(self.poly, self.primary, address, name, zone, self.messana)
+            self.zones[zone_nbr] = udi_messana_zone(self.poly, self.primary, address, name, zone_nbr, self.messana)
         
 
 
@@ -428,7 +428,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.42')
+        polyglot.start('0.0.44')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

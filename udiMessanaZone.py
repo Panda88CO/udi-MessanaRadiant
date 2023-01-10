@@ -33,7 +33,7 @@ class udi_messana_zone(udi_interface.Node):
             'GV8' = get_energy_saving()
             'GV9' = AlarmOn
             'GV10' = system_temperature
-            'ST' = System Status               
+            'ST' = System Status
             ]
     ''' 
     drivers = [
@@ -50,13 +50,13 @@ class udi_messana_zone(udi_interface.Node):
         {'driver': 'GV10', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
-        
 
     def __init__(self, polyglot, primary, address, name, zone_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
         logging.info('init Messana Zone {}:'.format(zone_nbr) )
         #self.node_type = 'zone'
         self.parent = primary
+        self.primary = primary
         self.zone_nbr = zone_nbr
         self.zone = messana_zone(self.zone_nbr, messana_info)
         self.address = self.address
@@ -71,6 +71,7 @@ class udi_messana_zone(udi_interface.Node):
         polyglot.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()
+
         logging.debug(self.drivers)
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
@@ -175,7 +176,31 @@ class udi_messana_zone(udi_interface.Node):
         Val = self.zone.get_temp()
         logging.debug('System Temp (GV10): {}'.format(Val))
         self.node.setDriver('GV10', self.isy_value(Val), True, True)
+    
 
+    def set_status(self, val):
+        logging.debug('set_status')
+
+
+
+    def set_energy_save(self, val):
+        logging.debug('set_energy_save')
+
+
+    def set_setpoint(self, val):
+        logging.debug('set_setpoint')
+
+
+    def set_schedule(self, val):
+        logging.debug('set_schedule')                
+
+    commands = { 'UPDATE': updateISY_longpoll
+                ,'SET_STATUS': set_status
+                ,'SET_ENERGYSAVE': set_energy_save
+                ,'SET_SETPOINT' : set_setpoint
+                ,'SET_SCHEDULEON' : set_schedule
+                
+                }
 
         #Val = self.zone.system_online
         #logging.debug('System Status: {}'.format(Val))
