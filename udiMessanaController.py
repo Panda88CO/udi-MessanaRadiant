@@ -38,7 +38,7 @@ class MessanaController(udi_interface.Node):
         #self.address ='msystem'
         #self.id = 'system'
         #logging.debug('Name/address: '+ self.name + ' ' + self.address)
-        self.primary = address
+        self.primary = primary
         self.address = address
         self.poly = polyglot
         self.hb = 0
@@ -48,7 +48,7 @@ class MessanaController(udi_interface.Node):
         self.nodeDefineDone = False
         self.zones = {}
         self.poll_start = False
-        self.temp_unit = 1
+        
         self.Parameters = Custom(self.poly, 'customparams')
         self.Notices = Custom(self.poly, 'notices')
 
@@ -59,10 +59,8 @@ class MessanaController(udi_interface.Node):
         self.poly.subscribe(self.poly.POLL, self.systemPoll)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.n_queue = []
-        #self.Parameters = Custom(self.poly, 'customparams')
-        #self.Notices = Custom(self.poly, 'notices')
 
-        self.poly.updateProfile()
+        
         self.poly.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()
@@ -70,7 +68,7 @@ class MessanaController(udi_interface.Node):
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
         logging.debug('MessanaRadiant init DONE')
-
+        self.poly.updateProfile()
 
     def node_queue(self, data):
         self.n_queue.append(data['address'])
@@ -411,7 +409,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.35')
+        polyglot.start('0.0.36')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

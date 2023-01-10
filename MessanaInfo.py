@@ -121,7 +121,7 @@ class messana_control(object):
                 else:
                     return(data)
             else:
-                logging.error('GET_node_data: {} {} {}'.format(node_nbr, mKey, str(nTemp)))
+                logging.info('GET_node_data: {} {} {}'.format(node_nbr, mKey, str(nTemp)))
                 return(None)
         except Exception as e:
             logging.error ('Error GET_node_data:{} : {}'.format(GETstr, e))
