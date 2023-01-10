@@ -42,7 +42,6 @@ class MessanaController(udi_interface.Node):
         self.address = address
         self.hb = 0
         self.ISYdrivers=[]
-        #self.ISYcommands = {}
         self.ISYTempUnit = 0
         self.drivers = []
         self.nodeDefineDone = False
