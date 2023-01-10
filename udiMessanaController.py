@@ -36,9 +36,10 @@ class MessanaController(udi_interface.Node):
         self.ISYforced = False
         self.name = 'Messana Main'
         #self.address ='msystem'
-        self.id = 'system'
+        #self.id = 'system'
         #logging.debug('Name/address: '+ self.name + ' ' + self.address)
-        self.primary = self.address
+        self.primary = address
+        self.address = address
         self.hb = 0
         self.ISYdrivers=[]
         #self.ISYcommands = {}
