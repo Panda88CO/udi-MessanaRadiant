@@ -394,7 +394,7 @@ class MessanaController(udi_interface.Node):
             {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
             {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count            
             {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
-            {'driver': 'ST', 'value':99, 'uom':25 }, #state
+            {'driver': 'ST', 'value':0, 'uom':25 }, #state
             ]
 
 

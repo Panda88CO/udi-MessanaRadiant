@@ -28,6 +28,7 @@
   </editor>
   <editor id = "airq" > 
      <range uom="0" min="0" max="1000" step="1" prec="0" />
+     <range uom="25" subset="98-99" nls="UNKNOWN"/>
   </editor>
   <editor id = "co2" > 
      <range uom="0" min="0" max="1000" step="1" prec="0" />
