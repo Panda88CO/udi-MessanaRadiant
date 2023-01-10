@@ -58,8 +58,7 @@ class MessanaController(udi_interface.Node):
         self.messanaImportOK = 0
         self.ISYforced = False
         self.name = 'Messana Main'
-        #self.address ='msystem'
-        #self.id = 'system'
+
         #logging.debug('Name/address: '+ self.name + ' ' + self.address)
         self.primary = primary
         self.address = address
@@ -90,8 +89,9 @@ class MessanaController(udi_interface.Node):
         self.wait_for_node_done()
 
         self.poly.updateProfile()
-
         self.node = self.poly.getNode(self.address)
+        logging.debug('Node is {}'.format(self.node))
+        logging.debug('drivers: {}'.format(self.drivers))
 
         logging.debug('MessanaRadiant init DONE')
         self.nodeDefineDone = True
@@ -431,7 +431,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.40')
+        polyglot.start('0.0.41')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
