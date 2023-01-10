@@ -74,6 +74,7 @@ class MessanaController(udi_interface.Node):
         
         self.Parameters = Custom(self.poly, 'customparams')
         self.Notices = Custom(self.poly, 'notices')
+        self.n_queue = []
 
         self.poly.subscribe(self.poly.STOP, self.stop)
         self.poly.subscribe(self.poly.START, self.start, address)
@@ -81,18 +82,23 @@ class MessanaController(udi_interface.Node):
         self.poly.subscribe(self.poly.CUSTOMPARAMS, self.handleParams)
         self.poly.subscribe(self.poly.POLL, self.systemPoll)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        self.n_queue = []
+        self.poly.subscribe(self.poly.CONFIGDONE, self._configdone_handler)
         
         self.poly.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()
-
 
         self.poly.updateProfile()
 
         self.node = self.poly.getNode(self.address)
 
         logging.debug('MessanaRadiant init DONE')
+        self.nodeDefineDone = True
+
+    def _configdone_handler(self):
+        logging.debug('config done')
+        self.nodeDefineDone = True
+
 
     def node_queue(self, data):
         self.n_queue.append(data['address'])
@@ -124,6 +130,11 @@ class MessanaController(udi_interface.Node):
     def start(self):
         logging.info('Start Messana Main NEW')
         self.poly.Notices.clear()
+        while not self.nodeDefineDone:
+            time.sleep(2)
+            logging.debug('Waiting for stuff to initialize')
+
+
         self.node.setDriver('ST', 1, True, True)
         #check params are ok 
 
