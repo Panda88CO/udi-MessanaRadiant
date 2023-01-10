@@ -136,13 +136,13 @@ class MessanaController(udi_interface.Node):
             self.messana_system = messana_system(self.messana)
             if not self.messana.connected():
                 self.stop()
-        
+        '''
         for zone in range(0, self.messana_system.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone))
             address = 'zone'+str(zone)
             name = 'dummy_name'
             self.zones[zone] = udi_messana_zone(self.poly, self.primary, address, name, zone, self.messana)
-
+        '''
 
 
         self.updateISY_longpoll()
