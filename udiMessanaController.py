@@ -245,11 +245,11 @@ class MessanaController(udi_interface.Node):
         logging.debug('Nbr Zones{}'.format(self.messana_system.nbr_zones))
         self.node.setDriver('GV3', self.messana_system.nbr_zones)
 
-        logging.debug('Nbr Zones{}'.format(self.messana_system.nbr_macrozone))
+        logging.debug('Nbr macrozones{}'.format(self.messana_system.nbr_macrozone))
         self.node.setDriver('GV4', self.messana_system.nbr_macrozone)
 
-        logging.debug('Nbr macrozones{}'.format(self.messana_system.nbr_macrozone))
-        self.node.setDriver('GV5', self.messana_system.nbr_macrozone)
+        logging.debug('Nbr atu{}'.format(self.messana_system.nbr_atus))
+        self.node.setDriver('GV5', self.messana_system.nbr_atus)
 
         logging.debug('Nbr Hot Cold{}'.format(self.messana_system.nbr_HCgroup))
         self.node.setDriver('GV6', self.messana_system.nbr_HCgroup)
