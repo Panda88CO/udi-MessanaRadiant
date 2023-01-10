@@ -29,8 +29,31 @@ except ImportError:
 
 class MessanaController(udi_interface.Node):
 
+
+
     def __init__(self, polyglot, primary, address, name):
         super().__init__( polyglot, primary, address, name)
+
+
+        self.drivers = [
+            {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
+            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
+            {'driver': 'GV2', 'value':99, 'uom':25 }, # Energy Saving
+            {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
+            {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
+            {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
+            {'driver': 'GV6', 'value':99, 'uom':25 }, # HotCold count
+            {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
+            {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
+            {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
+            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count            
+            {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
+            {'driver': 'ST', 'value':0, 'uom':25 }, #state
+            ]
+
+
+
+
         logging.info('_init_ Messsana Controller')
         self.messanaImportOK = 0
         self.ISYforced = False
@@ -59,16 +82,17 @@ class MessanaController(udi_interface.Node):
         self.poly.subscribe(self.poly.POLL, self.systemPoll)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.n_queue = []
-
         
         self.poly.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()
 
-        self.node = self.poly.getNode(self.address)
-        self.node.setDriver('ST', 1, True, True)
-        logging.debug('MessanaRadiant init DONE')
+
         self.poly.updateProfile()
+
+        self.node = self.poly.getNode(self.address)
+
+        logging.debug('MessanaRadiant init DONE')
 
     def node_queue(self, data):
         self.n_queue.append(data['address'])
@@ -98,9 +122,11 @@ class MessanaController(udi_interface.Node):
     
 
     def start(self):
-        self.poly.Notices.clear()
-        #check params are ok 
         logging.info('Start Messana Main NEW')
+        self.poly.Notices.clear()
+        self.node.setDriver('ST', 1, True, True)
+        #check params are ok 
+
         if 'IP_ADDRESS' in self.Parameters:
             self.IPAddress = self.Parameters['IP_ADDRESS']
             if self.IPAddress is None:
@@ -379,22 +405,6 @@ class MessanaController(udi_interface.Node):
         #self.messana.updateSystemData('all')
         self.updateISY_longpoll()
         #self.reportDrivers()
-
-    drivers = [
-            {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
-            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
-            {'driver': 'GV2', 'value':99, 'uom':25 }, # Energy Saving
-            {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
-            {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
-            {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
-            {'driver': 'GV6', 'value':99, 'uom':25 }, # HotCold count
-            {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
-            {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
-            {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
-            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count            
-            {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
-            {'driver': 'ST', 'value':0, 'uom':25 }, #state
-            ]
 
 
     commands = { 'UPDATE': ISYupdate
