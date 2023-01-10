@@ -281,7 +281,7 @@ class MessanaController(udi_interface.Node):
 
         tmp = self.messana_system.get_external_alarm()
         logging.debug('Alarm Status{}'.format(tmp))
-        self.node.setDriver('GV11', tmp)         
+        self.node.setDriver('GV11', tmp)
 
     '''
     def discover(self, command=None):
