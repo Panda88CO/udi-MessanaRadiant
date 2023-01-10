@@ -75,6 +75,7 @@ class udi_messana_zone(udi_interface.Node):
         self.poly.addNode(self)
         self.wait_for_node_done()
         self.node = self.poly.getNode(self.address)
+        self.node.setDriver('ST', 1, True, True)
 
     def node_queue(self, data):
         self.n_queue.append(data['address'])
@@ -94,6 +95,12 @@ class udi_messana_zone(udi_interface.Node):
         name = bytes(name, 'utf-8').decode('utf-8','ignore')
         return re.sub(r"[^A-Za-z0-9_]", "", name.lower()[:14])
 
+    def isy_value(self, value):
+        if value == None:
+            return (99)
+        else:
+            return(value)
+
 
     def start(self):
         logging.info('udiMessanaZone Start ')
@@ -106,73 +113,73 @@ class udi_messana_zone(udi_interface.Node):
     def updateISY_shortpoll(self):
         Val = self.zone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', Val, True, True)
+        self.node.setDriver('GV0', self.isy_value(Val), True, True)
 
         Val = self.zone.get_air_temp()
         logging.debug('get_air_temp(GV4): {}'.format(Val))
-        self.node.setDriver('GV4', Val, True, True)
+        self.node.setDriver('GV4', self.isy_value(Val), True, True)
 
         Val = self.zone.get_humidity()
         logging.debug('Humidity(GV5): {}'.format(Val))
-        self.node.setDriver('GV5', Val, True, True)
+        self.node.setDriver('GV5', self.isy_value(Val), True, True)
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.node.setDriver('GV6', Val, True, True)
-        
+        self.node.setDriver('GV6', self.isy_value(Val), True, True)
+
         Val = self.zone.get_alarmOn()
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
-        self.node.setDriver('GV9', Val, True, True)
+        self.node.setDriver('GV9', self.isy_value(Val), True, True)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - zone {} Status:'.format(self.zone_nbr))
 
         Val = self.zone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', Val, True, True)
+        self.node.setDriver('GV0', self.isy_value(Val), True, True)
 
         Val = self.zone.get_thermal_status()
         logging.debug('Thermal Mode(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', Val, True, True)
+        self.node.setDriver('GV1', self.isy_value(Val), True, True)
 
         Val = self.zone.get_scheduleOn()
         logging.debug('Schedule Mode(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', Val, True, True)
+        self.node.setDriver('GV2', self.isy_value(Val), True, True)
 
         Val = self.zone.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
-        self.node.setDriver('GV3', Val, True, True)
+        self.node.setDriver('GV3', self.isy_value(Val), True, True)
 
         Val = self.zone.get_air_temp()
         logging.debug('get_air_temp(GV4): {}'.format(Val))
-        self.node.setDriver('GV4', Val, True, True)
+        self.node.setDriver('GV4', self.isy_value(Val), True, True)
 
         Val = self.zone.get_humidity()
         logging.debug('Humidity(GV5): {}'.format(Val))
-        self.node.setDriver('GV5', Val, True, True)
+        self.node.setDriver('GV5', self.isy_value(Val), True, True)
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.node.setDriver('GV6', Val, True, True)
+        self.node.setDriver('GV6', self.isy_value(Val), True, True)
 
         Val = self.zone.get_co2()
         logging.debug('Alarm On (GV7): {}'.format(Val))
-        self.node.setDriver('GV7', Val, True, True)
+        self.node.setDriver('GV7', self.isy_value(Val), True, True)
 
         Val = self.zone.get_energy_saving()
         logging.debug('get_energy_saving On (GV8): {}'.format(Val))
-        self.node.setDriver('GV8', Val, True, True)
+        self.node.setDriver('GV8', self.isy_value(Val), True, True)
 
         Val = self.zone.get_alarmOn()
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
-        self.node.setDriver('GV9', Val, True, True)
+        self.node.setDriver('GV9', self.isy_value(Val), True, True)
 
         Val = self.zone.get_temp()
         logging.debug('System Temp (GV10): {}'.format(Val))
-        self.node.setDriver('GV10', Val, True, True)
+        self.node.setDriver('GV10', self.isy_value(Val), True, True)
 
 
         #Val = self.zone.system_online
         #logging.debug('System Status: {}'.format(Val))
-        #self.node.setDriver('ST', Val, True, True)    
+        #self.node.setDriver('ST', self.isy_value(Val), True, True)    
         

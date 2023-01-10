@@ -144,25 +144,8 @@ class MessanaController(udi_interface.Node):
             name = 'dummy_name'
             self.zones[zone] = udi_messana_zone(self.poly, self.primary, address, name, zone, self.messana)
 
-            '''
-            self.id = self.messana.getSystemAddress()
-            #self.address = self.messana.getSystemAddress()
-            self.messana.updateSystemData('all')
-            self.systemGETKeys = self.messana.systemPullKeys()
-            self.systemPUTKeys = self.messana.systemPushKeys()
-            self.systemActiveKeys = self.messana.systemActiveKeys()
-            
-            
-            for key in self.systemGETKeys:
-                temp = self.messana.getSystemISYdriverInfo(key)
-                if  temp != {}:
-                    self.drivers.append(temp)
-                    #logging.debug(  'driver:  ' +  temp['driver'])
 
-            logging.info ('Install Profile')
-            self.poly.installprofile()
-            #logging.debug('Install Profile done')
-            '''
+
         self.updateISY_longpoll()
         #self.updateISYdrivers('all')
         #self.messanaImportOK = 1
@@ -281,12 +264,12 @@ class MessanaController(udi_interface.Node):
         logging.debug('Alarm Status{}'.format(tmp))
         self.node.setDriver('GV11', tmp)         
 
-
+    '''
     def updateISYdrivers(self, level):
         #logging.debug('System updateISYdrivers')
         try:
             logging.debug('updateISYdrivers')
-            '''
+            
             for ISYdriver in self.drivers:
                 ISYkey = ISYdriver['driver']
                 if level == 'active':
@@ -316,10 +299,10 @@ class MessanaController(udi_interface.Node):
                         logging.error('Error getting ' + ISYdriver['driver'])
                 else:
                     logging.error('Error!  Unknown level passed: ' + level)
-            '''
+            
         except Exception as e:
             logging.error('Exception updateISYdrivers: '+  str(e))
-    '''
+    
     def query(self, command=None):
         logging.debug('TOP querry')
         self.messana.updateSystemData('all')
@@ -444,7 +427,7 @@ class MessanaController(udi_interface.Node):
         #self.messana.updateSystemData('all')
         self.updateISYdrivers('all')
         self.reportDrivers()
-    
+
     drivers = [
             {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
             {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
