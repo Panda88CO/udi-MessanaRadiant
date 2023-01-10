@@ -71,6 +71,7 @@ class udi_messana_zone(udi_interface.Node):
         polyglot.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()
+        logging.debug(self.drivers)
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
 
@@ -101,7 +102,7 @@ class udi_messana_zone(udi_interface.Node):
 
     def start(self):
         logging.info('udiMessanaZone Start ')
-        self.updateISY_longpoll()
+        #self.updateISY_longpoll()
         
 
     def stop(self):

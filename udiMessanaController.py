@@ -40,6 +40,7 @@ class MessanaController(udi_interface.Node):
         #logging.debug('Name/address: '+ self.name + ' ' + self.address)
         self.primary = address
         self.address = address
+        self.poly = polyglot
         self.hb = 0
         self.ISYdrivers=[]
         self.ISYTempUnit = 0
@@ -379,7 +380,7 @@ class MessanaController(udi_interface.Node):
         #logging.info('ISY-update called')
         #self.messana.updateSystemData('all')
         self.updateISY_longpoll()
-        self.reportDrivers()
+        #self.reportDrivers()
 
     drivers = [
             {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
