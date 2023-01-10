@@ -163,11 +163,11 @@ class MessanaController(udi_interface.Node):
             self.poly.installprofile()
             #logging.debug('Install Profile done')
             '''
-
-        self.updateISYdrivers('all')
+        self.updateISY_longpoll()
+        #self.updateISYdrivers('all')
         #self.messanaImportOK = 1
         self.poll_start = True
-        self.discover()
+        #self.discover()
 
 
     def stop(self):
@@ -474,7 +474,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.31')
+        polyglot.start('0.0.32')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
