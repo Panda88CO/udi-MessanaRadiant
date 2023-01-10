@@ -3,7 +3,7 @@
       <editors />
       <sts>
          <st id="GV0" editor="status" />
-         <st id="GV1" editor="temp" />
+         <st id="GV1" editor="tempoffset" />
          <st id="GV2" editor="enable" />
          <st id="GV3" editor="count" />         
          <st id="GV4" editor="count" />
@@ -24,19 +24,19 @@
          <accepts>
             <cmd id="UPDATE" /> 
             <cmd id="SET_STATUS" > 
-               <p id="" editor="SYSTEM_1" init="GV0" /> 
+               <p id="" editor="enable" init="GV0" /> 
             </cmd> 
             <cmd id="SET_ENERGYSAVE" > 
-               <p id="" editor="SYSTEM_9" init="GV2" /> 
+               <p id="" editor="enable" init="GV2" /> 
             </cmd> 
             <cmd id="SET_SETBACK" > 
-               <p id="" editor="SYSTEM_10" init="GV1" /> 
+               <p id="" editor="tempoffset" init="GV1" /> 
             </cmd> 
          </accepts>
       </cmds>
    </nodeDef>
 
-   <nodeDef id="messana_zone" nls="nlszones">
+   <nodeDef id="mess_zone" nls="nlszones">
       <editors />
       <sts>
          <st id="GV0" editor="enable" />

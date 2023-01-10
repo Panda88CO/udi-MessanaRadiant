@@ -49,8 +49,9 @@ count-19 = 19
 count-20 = 20
 count-98= Not Present
 count-99 = Unknown
-
-
+UNKNOWN-0 = Unknown
+UNKNOWN-1 = Unknown
+UNKNOWN-99 = Unknown
 ND-messana_zone-NAME = Messana Zone
 ND-messana_zone-ICON = TempSensor
 CMD-nlszones-UPDATE-NAME = Update System Data

@@ -18,7 +18,7 @@ except ImportError:
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_zone(udi_interface.Node):
 
-    id = 'messana_zone'
+    id = 'mess_zone'
 
     '''
        drivers = [
@@ -33,9 +33,7 @@ class udi_messana_zone(udi_interface.Node):
             'GV8' = get_energy_saving()
             'GV9' = AlarmOn
             'GV10' = system_temperature
-            'ST' = System Status
-
-               
+            'ST' = System Status               
             ]
     ''' 
     drivers = [
@@ -61,7 +59,6 @@ class udi_messana_zone(udi_interface.Node):
         self.parent = primary
         self.zone_nbr = zone_nbr
         self.zone = messana_zone(self.zone_nbr, messana_info)
-        
         self.address = self.address
         tmp_name = self.zone.name
         self.name = self.getValidName(tmp_name)
