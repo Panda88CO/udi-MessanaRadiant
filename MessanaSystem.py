@@ -38,8 +38,8 @@ class messana_system(object):
         logging.debug('Getting System Data')
         self.status = self.get_status()
         logging.debug('Getting Status: {}'.format(self.status ))
-        self.temp_unit = self.GET_system_data('tempUnit')
-        logging.debug('Getting Temp Unit: {}'.format(self.temp_unit))
+        self.messana_temp_unit = self.get_temp_unit()
+        logging.debug('Getting Temp Unit: {}'.format(self.messana_temp_unit))
         self.nbr_zones = self.GET_system_data('zoneCount')
         logging.debug('Getting nbr zones: {}'.format(self.nbr_zones   ))
         self.nbr_atus = self.GET_system_data('atuCount')
@@ -59,6 +59,7 @@ class messana_system(object):
 
         self.name = self.GET_system_data('name')
         logging.debug('Getting  system name: {}'.format(self.name ))
+
 
     ###############################
     #pretty bad solution - just checking if a value can be extracted
@@ -130,3 +131,6 @@ class messana_system(object):
 
     def get_external_alarm(self):
         return(self.GET_system_data('externalAlarm'))
+
+    def get_temp_unit(self):
+        return(self.GET_system_data('tempUnit'))

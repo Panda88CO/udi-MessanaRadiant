@@ -18,7 +18,7 @@ except ImportError:
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_zone(udi_interface.Node):
 
-    id = 'mess_zone'
+    id = 'zone'
 
     '''
        drivers = [

@@ -24,7 +24,7 @@
          <accepts>
             <cmd id="UPDATE" /> 
             <cmd id="SET_STATUS" > 
-               <p id="" editor="enable" init="GV0" /> 
+               <p id="" editor="status" init="GV0" /> 
             </cmd> 
             <cmd id="SET_ENERGYSAVE" > 
                <p id="" editor="enable" init="GV2" /> 
@@ -36,7 +36,7 @@
       </cmds>
    </nodeDef>
 
-   <nodeDef id="mess_zone" nls="nlszones">
+   <nodeDef id="zone" nls="nlszone">
       <editors />
       <sts>
          <st id="GV0" editor="enable" />

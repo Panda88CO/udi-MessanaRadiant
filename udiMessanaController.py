@@ -397,7 +397,7 @@ class MessanaController(udi_interface.Node):
 
     drivers = [
             {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
-            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
+            {'driver': 'GV1', 'value':0, 'uom':4 }, # Setback Temp
             {'driver': 'GV2', 'value':99, 'uom':25 }, # Energy Saving
             {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
             {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp

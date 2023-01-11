@@ -20,9 +20,9 @@ ST-nlssystem-ST-NAME = Node Running
 status-0 = Off
 status-1 = On
 status-99 = Unknown
-enable-0 = Disabled
-enable-1 = Enabled
-enable-99 = Unknown
+enabled-0 = Disabled
+enabled-1 = Enabled
+enabled-99 = Unknown
 alarm-0 = No Alarm
 alarm-1 = Alarm
 alarm-99 = Unknown
@@ -49,28 +49,36 @@ count-19 = 19
 count-20 = 20
 count-98= Not Present
 count-99 = Unknown
-UNKNOWN-0 = Unknown
-UNKNOWN-1 = Unknown
+running-0 = Down
+running-1 = Up
+
+
+
+UNKNOWN-98 = No Support
 UNKNOWN-99 = Unknown
-ND-mess_zone-NAME = Messana Zone
-ND-mess_zone-ICON = TempSensor
-CMD-nlszones-UPDATE-NAME = Update System Data
-CMD-nlszones-SET_SETPOINT-NAME = Set Temperature
-CMD-nlszones-SET_STATUS-NAME = Zone State
-CMD-nlszones-SET_ENERGYSAVE-NAME = Energy Saving
-CMD-nlszones-SET_SCHEDULEON-NAME = Schedule Status
-ST-nlszones-GV0-NAME = Zone State
-ST-nlszones-GV1-NAME = Thermal Mode
-ST-nlszones-GV2-NAME = Zone Schedule 
-ST-nlszones-GV3-NAME = Setpoint
-ST-nlszones-GV4-NAME = Room Temperature
-ST-nlszones-GV5-NAME = Humidity
-ST-nlszones-GV6-NAME = Air Quality
-ST-nlszones-GV7-NAME = CO2
-ST-nlszones-GV8-NAME = Energy Saving
-ST-nlszones-GV9-NAME = Alarm
-ST-nlszones-GV10-NAME = System Temperature
-ST-nlszones-ST-NAME = Node Running
+
+
+ND-zone-NAME = Messana Zone
+ND-zone-ICON = TempSensor
+CMD-nlszone-UPDATE-NAME = Update System Data
+CMD-nlszone-SET_SETPOINT-NAME = Set Temperature
+CMD-nlszone-SET_STATUS-NAME = Zone State
+CMD-nlszone-SET_ENERGYSAVE-NAME = Energy Saving
+CMD-nlszone-SET_SCHEDULEON-NAME = Schedule Status
+ST-nlszone-GV0-NAME = Zone State
+ST-nlszone-GV1-NAME = Thermal Mode
+ST-nlszone-GV2-NAME = Zone Schedule 
+ST-nlszone-GV3-NAME = Setpoint
+ST-nlszone-GV4-NAME = Room Temperature
+ST-nlszone-GV5-NAME = Humidity
+ST-nlszone-GV6-NAME = Air Quality
+ST-nlszone-GV7-NAME = CO2
+ST-nlszone-GV8-NAME = Energy Saving
+ST-nlszone-GV9-NAME = Alarm
+ST-nlszone-GV10-NAME = System Temperature
+ST-nlszone-ST-NAME = Node Running
+
+
 thermalmode-0 = No Request
 thermalmode-0 = Heat Request
 thermalmode-0 = Cool Request
