@@ -59,7 +59,7 @@ class udi_messana_zone(udi_interface.Node):
         self.primary = primary
         self.zone_nbr = zone_nbr
         self.zone = messana_zone(self.zone_nbr, messana_info)
-        self.address = self.address
+        self.address = address
         tmp_name = self.zone.name
         self.name = self.getValidName(tmp_name)
         self.poly = polyglot
@@ -68,7 +68,7 @@ class udi_messana_zone(udi_interface.Node):
         polyglot.subscribe(polyglot.START, self.start, self.address)
         polyglot.subscribe(polyglot.STOP, self.stop)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        polyglot.ready()
+    
         self.poly.addNode(self)
         self.wait_for_node_done()
 
