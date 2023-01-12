@@ -18,7 +18,7 @@ except ImportError:
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_zone(udi_interface.Node):
 
-    id = 'zone'
+    #id = 'zone'
 
     '''
        drivers = [
@@ -52,11 +52,12 @@ class udi_messana_zone(udi_interface.Node):
         ]
 
     def __init__(self, polyglot, primary, address, name, zone_nbr, messana_info):
-        super().__init__(polyglot, primary, address, name)
+        #super().__init__(polyglot, primary, address, name)
         logging.info('init Messana Zone {}:'.format(zone_nbr) )
         #self.node_type = 'zone'
-        self.parent = primary
+        #self.parent = primary
         self.primary = primary
+        self.id = 'zone'
         self.zone_nbr = zone_nbr
         self.zone = messana_zone(self.zone_nbr, messana_info)
         self.address = address
@@ -65,10 +66,13 @@ class udi_messana_zone(udi_interface.Node):
         self.poly = polyglot
 
         self.n_queue = []
-        polyglot.subscribe(polyglot.START, self.start, self.address)
-        polyglot.subscribe(polyglot.STOP, self.stop)
+        self.poly.subscribe(polyglot.START, self.start, self.address)
+        self.poly.subscribe(polyglot.STOP, self.stop)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-    
+        logging.debug(self.primary, self.address, self.name, self.id)
+
+
+
         self.poly.addNode(self)
         self.wait_for_node_done()
 

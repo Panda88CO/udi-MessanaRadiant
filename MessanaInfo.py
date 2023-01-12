@@ -41,7 +41,7 @@ class messana_control(object):
         self.apiKey = api_key
         self.apiStr = 'apikey=' + self.apiKey
         self.IPstr ='http://'+ self.IPaddress
-
+        self.mTemp_unit = self.GET_system_data('tempUnit')
         #self.status = self.get_status()
         #self.temp_unit = self.GET_system_data('tempUnit')
         #self.nbr_zones = self.GET_system_data('zoneCount')

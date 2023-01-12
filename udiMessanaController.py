@@ -135,11 +135,11 @@ class MessanaController(udi_interface.Node):
             logging.error('MESSANA_KEY must be provided in configuration:' )
 
         if 'TEMP_UNIT' in self.Parameters:
-            self.temp_unit = self.convert_temp_unit(self.Parameters['TEMP_UNIT'])
+            self.ISY_temp_unit = self.convert_temp_unit(self.Parameters['TEMP_UNIT'])
         else:
-            self.temp_unit = 0  
+            self.ISY_temp_unit = 0  
             self.Parameters['TEMP_UNIT'] = 'C'
-            logging.debug('TEMP_UNIT: {}'.format(self.temp_unit ))
+            logging.debug('TEMP_UNIT: {}'.format(self.ISY_temp_unit ))
        
 
         if (self.IPAddress is None) or (self.MessanaKey is None):
@@ -192,7 +192,7 @@ class MessanaController(udi_interface.Node):
 
             if 'longPoll' in polltype:
                 #Keep token current
-                #self.node.setDriver('GV0', self.temp_unit, True, True)
+                #self.node.setDriver('GV0', self.ISY_temp_unit, True, True)
                 try:
                     nodes = self.poly.getNodes()
                     for nde in nodes:
@@ -428,7 +428,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.47')
+        polyglot.start('0.0.48')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
