@@ -28,9 +28,8 @@ except ImportError:
 
 
 class MessanaController(udi_interface.Node):
-
     def __init__(self, polyglot, primary, address, name):
-        super().__init__( polyglot, primary, address, name)
+        super().__init__(polyglot, primary, address, name)
 
         logging.info('_init_ Messsana Controller')
         self.messanaImportOK = 0
@@ -41,15 +40,14 @@ class MessanaController(udi_interface.Node):
         self.poly = polyglot
         self.primary = primary
         self.address = address
-       
+
         self.hb = 0
-        self.ISYdrivers=[]
         self.ISYTempUnit = 0
         self.nodeDefineDone = False
         self.nodeConfigDone = False
         self.zones = {}
         self.poll_start = False
-        
+
         self.Parameters = Custom(self.poly, 'customparams')
         self.Notices = Custom(self.poly, 'notices')
         self.n_queue = []
@@ -61,7 +59,9 @@ class MessanaController(udi_interface.Node):
         self.poly.subscribe(self.poly.POLL, self.systemPoll)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.poly.subscribe(self.poly.CONFIGDONE, self._configdone_handler)
-        
+
+        logging.debug(self.address, self.name, self.id, self.primary)
+
         self.poly.ready()
         self.poly.addNode(self)
         self.wait_for_node_done()

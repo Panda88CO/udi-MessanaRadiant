@@ -69,9 +69,9 @@ class udi_messana_zone(udi_interface.Node):
         self.poly.subscribe(polyglot.START, self.start, self.address)
         self.poly.subscribe(polyglot.STOP, self.stop)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        logging.debug(self.primary, self.address, self.name, self.id)
-
-
+        
+        
+        logging.debug(self.address, self.name, self.id, self.primary)
 
         self.poly.addNode(self)
         self.wait_for_node_done()
@@ -103,7 +103,6 @@ class udi_messana_zone(udi_interface.Node):
             return (99)
         else:
             return(value)
-
 
     def start(self):
         logging.info('udiMessanaZone Start ')
