@@ -1,0 +1,76 @@
+<nodeDefs> 
+   <nodeDef id="system" nls="nlssystem">
+      <editors />
+      <sts>
+         <st id="GV0" editor="status" />
+         <st id="GV1" editor="tempoffset" />
+         <st id="GV2" editor="enable" />
+         <st id="GV3" editor="count" />         
+         <st id="GV4" editor="count" />
+         <st id="GV5" editor="count" />
+         <st id="GV6" editor="count" />
+         <st id="GV7" editor="count" />
+         <st id="GV8" editor="count" />
+         <st id="GV9" editor="count" />
+         <st id="GV10" editor="count" />         
+         <st id="GV11" editor="alarm" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+            <cmd id="DON" /> 
+            <cmd id="DOF" /> 
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SET_STATUS" > 
+               <p id="" editor="status" init="GV0" /> 
+            </cmd> 
+            <cmd id="SET_ENERGYSAVE" > 
+               <p id="" editor="enable" init="GV2" /> 
+            </cmd> 
+            <cmd id="SET_SETBACK" > 
+               <p id="" editor="tempoffset" init="GV1" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+
+   <nodeDef id="zone" nls="nlszone">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="thermalmode" />
+         <st id="GV2" editor="status" />
+         <st id="GV3" editor="temp"/>
+         <st id="GV4" editor="temp" />
+         <st id="GV4" editor="humidity" />
+         <st id="GV6" editor="airq" />
+         <st id="GV7" editor="co2" />
+         <st id="GV8" editor="enable" />
+         <st id="GV9" editor="alarm" />
+         <st id="GV10" editor="temp" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SET_SETPOINT" > 
+               <p id="" editor="set_setpt" init="GV3" /> 
+            </cmd> 
+            <cmd id="SET_STATUS" > 
+               <p id="" editor="set_statue" init="GV0" /> 
+            </cmd> 
+            <cmd id="SET_ENERGYSAVE" > 
+               <p id="" editor="control" init="GV8" /> 
+            </cmd> 
+            <cmd id="SET_SCHEDULEON" > 
+               <p id="" editor="control" init="GV2" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+    
+</nodeDefs>  
