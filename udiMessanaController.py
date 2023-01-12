@@ -223,19 +223,24 @@ class MessanaController(udi_interface.Node):
             self.hb = 0
 
    
+    def set_temp_Driver(self, Key, temperature):
+        logging.debug('set_temp_Driver')
+        
+
     def updateISY_longpoll(self):
         logging.debug('updateISY_longpoll')
         tmp = self.messana_system.get_status()
         logging.debug('System State {}'.format(tmp))
-        self.node.setDriver('GV0', tmp)
+        self.node.setDriver('GV0', tmp, True, True)
 
         tmp = self.messana_system.get_setback_diff()
         logging.debug('Setback Offset {}'.format(tmp))
-        self.node.setDriver('GV1', tmp)        
+        self.node.setDriver('GV1', tmp, True, True)        
 
         tmp = self.messana_system.get_setback()
         logging.debug('Setback Enabled {}'.format(tmp))
-        self.node.setDriver('GV2', tmp)
+
+        self.node.setDriver('GV2', tmp, True, True)
 
         logging.debug('Nbr Zones{}'.format(self.messana_system.nbr_zones))
         self.node.setDriver('GV3', self.messana_system.nbr_zones)
@@ -264,7 +269,7 @@ class MessanaController(udi_interface.Node):
 
         tmp = self.messana_system.get_external_alarm()
         logging.debug('Alarm Status{}'.format(tmp))
-        self.node.setDriver('GV11', tmp)                
+        self.node.setDriver('GV11', tmp, True, True)                
 
     def updateISY_shortpoll(self):
         logging.debug('updateISY_shortpoll')
@@ -406,7 +411,7 @@ class MessanaController(udi_interface.Node):
             {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
             {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
             {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
-            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count            
+            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count      
             {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
             {'driver': 'ST', 'value':0, 'uom':25 }, #state
             ]
@@ -423,7 +428,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.46')
+        polyglot.start('0.0.47')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
