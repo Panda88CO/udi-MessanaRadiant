@@ -38,9 +38,10 @@ class MessanaController(udi_interface.Node):
         self.name = 'Messana Main'
 
         #logging.debug('Name/address: '+ self.name + ' ' + self.address)
+        self.poly = polyglot
         self.primary = primary
         self.address = address
-        self.poly = polyglot
+       
         self.hb = 0
         self.ISYdrivers=[]
         self.ISYTempUnit = 0
@@ -428,7 +429,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.48')
+        polyglot.start('0.0.49')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

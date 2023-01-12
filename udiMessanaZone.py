@@ -52,7 +52,7 @@ class udi_messana_zone(udi_interface.Node):
         ]
 
     def __init__(self, polyglot, primary, address, name, zone_nbr, messana_info):
-        #super().__init__(polyglot, primary, address, name)
+        super().__init__(polyglot, primary, address, name)
         logging.info('init Messana Zone {}:'.format(zone_nbr) )
         #self.node_type = 'zone'
         #self.parent = primary
