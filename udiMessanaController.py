@@ -60,7 +60,7 @@ class MessanaController(udi_interface.Node):
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         self.poly.subscribe(self.poly.CONFIGDONE, self._configdone_handler)
 
-        logging.debug(self.address, self.name, self.id, self.primary)
+        logging.debug('init node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
 
         self.poly.ready()
         self.poly.addNode(self)

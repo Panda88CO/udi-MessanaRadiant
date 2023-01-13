@@ -71,7 +71,7 @@ class udi_messana_zone(udi_interface.Node):
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         
         
-        logging.debug(self.address, self.name, self.id, self.primary)
+            logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
 
         self.poly.addNode(self)
         self.wait_for_node_done()
