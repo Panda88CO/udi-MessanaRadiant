@@ -152,7 +152,12 @@ class MessanaController(udi_interface.Node):
             self.messana_system = messana_system(self.messana)
             if not self.messana.connected():
                 self.stop()
-        
+
+            self.updateISY_longpoll()
+
+
+
+
         for zone_nbr in range(0, self.messana_system.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone_nbr))
             address = 'zone'+str(zone_nbr)
@@ -198,8 +203,7 @@ class MessanaController(udi_interface.Node):
                     nodes = self.poly.getNodes()
                     for nde in nodes:
                         logging.debug('Longpoll update nodes {}'.format(nde))
-                        if nde != 'controller':   # but not the controller node
-                            nodes[nde].updateISY_longpoll()
+                        nodes[nde].updateISY_longpoll()
                 except Exception as e:
                     logging.debug('Exeption occcured during systemPoll : {}'.format(e))
                     #self.yoAccess = YoLinkInitPAC (self.uaid, self.secretKey)
@@ -210,8 +214,7 @@ class MessanaController(udi_interface.Node):
                 nodes = self.poly.getNodes()
                 for nde in nodes:
                     logging.debug('short poll update nodes {}'.format(nde))
-                    if nde != 'controller':   # but not the controller node
-                        nodes[nde].updateISY_shortpoll()
+                    nodes[nde].updateISY_shortpoll()
 
 
     def heartbeat(self):
@@ -429,7 +432,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.49')
+        polyglot.start('0.0.50')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
