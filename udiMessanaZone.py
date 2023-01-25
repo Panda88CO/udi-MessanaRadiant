@@ -17,7 +17,8 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_zone(udi_interface.Node):
-    from udiLib import *
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy
+
     #id = 'zone'
 
     '''
@@ -116,19 +117,20 @@ class udi_messana_zone(udi_interface.Node):
     def updateISY_shortpoll(self):
         Val = self.zone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val), True, True)
+        self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.zone.get_air_temp()
         logging.debug('get_air_temp(GV4): {}'.format(Val))
-        self.node.setDriver('GV4', self.isy_value(Val), True, True)
+        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
+        self.send_temp_to_isy(Val, 'GV4')
 
         Val = self.zone.get_humidity()
         logging.debug('Humidity(GV5): {}'.format(Val))
-        self.node.setDriver('GV5', self.isy_value(Val), True, True)
+        self.node.setDriver('GV5', self.isy_value(Val))
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.node.setDriver('GV6', self.isy_value(Val), True, True)
+        self.node.setDriver('GV6', self.isy_value(Val))
 
         Val = self.zone.get_alarmOn()
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
@@ -139,23 +141,25 @@ class udi_messana_zone(udi_interface.Node):
 
         Val = self.zone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val), True, True)
+        self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.zone.get_thermal_status()
         logging.debug('Thermal Mode(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val), True, True)
+        self.node.setDriver('GV1', self.isy_value(Val))
 
         Val = self.zone.get_scheduleOn()
         logging.debug('Schedule Mode(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val), True, True)
+        self.node.setDriver('GV2', self.isy_value(Val))
 
         Val = self.zone.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
-        self.node.setDriver('GV3', self.isy_value(Val), True, True)
+        self.send_temp_to_isy(Val, 'GV3')
+        #self.node.setDriver('GV3', self.isy_value(Val))
 
         Val = self.zone.get_air_temp()
         logging.debug('get_air_temp(GV4): {}'.format(Val))
-        self.node.setDriver('GV4', self.isy_value(Val), True, True)
+        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
+        self.send_temp_to_isy(Val, 'GV4')
 
         Val = self.zone.get_humidity()
         logging.debug('Humidity(GV5): {}'.format(Val))
@@ -163,15 +167,15 @@ class udi_messana_zone(udi_interface.Node):
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.node.setDriver('GV6', self.isy_value(Val), True, True)
+        self.node.setDriver('GV6', self.isy_value(Val))
 
         Val = self.zone.get_co2()
         logging.debug('Alarm On (GV7): {}'.format(Val))
-        self.node.setDriver('GV7', self.isy_value(Val), True, True)
+        self.node.setDriver('GV7', self.isy_value(Val))
 
         Val = self.zone.get_energy_saving()
         logging.debug('get_energy_saving On (GV8): {}'.format(Val))
-        self.node.setDriver('GV8', self.isy_value(Val), True, True)
+        self.node.setDriver('GV8', self.isy_value(Val))
 
         Val = self.zone.get_alarmOn()
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
@@ -179,8 +183,8 @@ class udi_messana_zone(udi_interface.Node):
 
         Val = self.zone.get_temp()
         logging.debug('System Temp (GV10): {}'.format(Val))
-        self.node.setDriver('GV10', self.isy_value(Val), True, True)
-    
+        #self.node.setDriver('GV10', self.isy_value(Val), True, True)
+        self.send_temp_to_isy(Val, 'GV10')
 
     def set_status(self, val):
         logging.debug('set_status')

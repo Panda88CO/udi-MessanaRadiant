@@ -9,6 +9,7 @@ except ImportError:
     logging.basicConfig(level=logging.INFO)
     #logging = logging.getlogging('testLOG')
 import time
+import re
 
 
 def node_queue(self, data):
@@ -19,13 +20,6 @@ def wait_for_node_done(self):
         time.sleep(0.1)
     self.n_queue.pop()
 
-def convert_temp_unit(self, tempStr):
-    if tempStr.capitalize()[:1] == 'F':
-        return(1)
-    elif tempStr.capitalize()[:1] == 'K':
-        return(2)
-    else:
-        return(0)
 
 
 def getValidName(self, name):

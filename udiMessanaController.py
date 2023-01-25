@@ -28,7 +28,7 @@ except ImportError:
 
 
 class MessanaController(udi_interface.Node):
-    from  udiLib import *
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy
 
     def __init__(self, polyglot, primary, address, name):
         super().__init__(polyglot, primary, address, name)
@@ -81,6 +81,13 @@ class MessanaController(udi_interface.Node):
         logging.debug('config done')
         self.nodeConfigDone = True
 
+    def convert_temp_unit(self, tempStr):
+        if tempStr.capitalize()[:1] == 'F':
+            return(1)
+        elif tempStr.capitalize()[:1] == 'K':
+            return(2)
+        else:
+            return(0)
 
 
 
