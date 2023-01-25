@@ -28,6 +28,8 @@ except ImportError:
 
 
 class MessanaController(udi_interface.Node):
+    from  udiLib import *
+
     def __init__(self, polyglot, primary, address, name):
         super().__init__(polyglot, primary, address, name)
 
@@ -80,32 +82,7 @@ class MessanaController(udi_interface.Node):
         self.nodeConfigDone = True
 
 
-    def node_queue(self, data):
-        self.n_queue.append(data['address'])
 
-    def wait_for_node_done(self):
-        while len(self.n_queue) == 0:
-            time.sleep(0.1)
-        self.n_queue.pop()
-
-    def convert_temp_unit(self, tempStr):
-        if tempStr.capitalize()[:1] == 'F':
-            return(1)
-        elif tempStr.capitalize()[:1] == 'K':
-            return(2)
-        else:
-            return(0)
-
-
-    def getValidName(self, name):
-        name = bytes(name, 'utf-8').decode('utf-8','ignore')
-        return re.sub(r"[^A-Za-z0-9_ ]", "", name)
-
-    # remove all illegal characters from node address
-    def getValidAddress(self, name):
-        name = bytes(name, 'utf-8').decode('utf-8','ignore')
-        return re.sub(r"[^A-Za-z0-9_]", "", name.lower()[:14])
-    
 
     def start(self):
         logging.info('Start Messana Main NEW')
@@ -191,10 +168,25 @@ class MessanaController(udi_interface.Node):
         self.Parameters.load(userParam)
         self.poly.Notices.clear()
 
-    def convert_temp_to_isy(self, temperature):
+    '''
+    def send_temp_to_isy(self, temperature, stateVar):
         logging.debug('convert_temp_to_isy - {}'.format(temperature))
-        #if self.ISY_temp_unit == 0:
-
+        if self.ISY_temp_unit == 0: # Celsius in ISY
+            if self.messana_temp_unit == 'Celsius':
+                self.node.setDriver(stateVar, round(temperature,1), True, True, 4)
+            else:
+                self.node.setDriver(stateVar, round(temperature*9/5+32,1), True, True, 17)
+        elif  self.ISY_temp_unit == 1: # Farenheit in ISY
+            if self.messana_temp_unit == 'Celsius':
+                self.node.setDriver(stateVar, round((temperature*5/9-32),1), True, True, 4)
+            else:
+                self.node.setDriver(stateVar, round(temperature,1), True, True, 17)
+        else: # kelvin
+            if self.messana_temp_unit == 'Celsius':
+                self.node.setDriver(stateVar, round((temperature+273.15,1), True, True, 4))
+            else:
+                self.node.setDriver(stateVar, round((temperature+273.15)*9/5+32,1), True, True, 17)
+    '''
 
     def systemPoll (self, polltype):
         if self.poll_start:
@@ -243,7 +235,8 @@ class MessanaController(udi_interface.Node):
 
         tmp = self.messana_system.get_setback_diff()
         logging.debug('Setback Offset {}'.format(tmp))
-        self.node.setDriver('GV1', tmp, True, True)
+        self.send_temp_to_isy(tmp, 'GV1')
+        #self.node.setDriver('GV1', tmp, True, True)
 
         tmp = self.messana_system.get_setback()
         logging.debug('Setback Enabled {}'.format(tmp))
