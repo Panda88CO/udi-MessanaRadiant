@@ -193,7 +193,7 @@ class MessanaController(udi_interface.Node):
 
     def convert_temp_to_isy(self, temperature):
         logging.debug('convert_temp_to_isy - {}'.format(temperature))
-        if self.ISY_temp_unit == 0:
+        #if self.ISY_temp_unit == 0:
 
 
     def systemPoll (self, polltype):
@@ -436,7 +436,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.50')
+        polyglot.start('0.0.51')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
