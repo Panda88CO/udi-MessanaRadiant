@@ -28,11 +28,11 @@
      <range uom="25" subset="98-99" nls="UNKNOWN"/>
   </editor>
   <editor id = "airq" > 
-     <range uom="0" min="0" max="1000" step="1" prec="0" />
+     <range uom="" min="0" max="1000" step="1" prec="0" />
      <range uom="25" subset="98-99" nls="UNKNOWN"/>
   </editor>
   <editor id = "co2" > 
-     <range uom="0" min="0" max="1000" step="1" prec="0" />
+     <range uom="56" min="0" max="1000" step="1" prec="0" />
      <range uom="25" subset="98-99" nls="UNKNOWN"/>
   </editor>
   <editor id = "connected" > 
@@ -45,10 +45,11 @@
      <range  uom="25" subset="0-1,99" nls="connected"/>
   </editor>
   <editor id = "running" > 
-     <range  uom="25" subset="0-1" nls="running"/>
+     <range  uom="25" subset="0-1, 99" nls="running"/>
   </editor>
   <editor id = "count" > 
-     <range  uom="25" subset="0-20,98,99" nls="count"/>
+      <range  uom="107" min="0" max="127" setp = "1" prec = "0"/>
+      <range  uom="25" subset="98,99" nls="count"/>
   </editor>
 
 

@@ -63,7 +63,8 @@ class MessanaController(udi_interface.Node):
         logging.debug('init node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
 
         self.poly.ready()
-        self.poly.addNode(self)
+        self.poly.updateProfile()
+        self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()
 
         self.poly.updateProfile()
@@ -138,7 +139,7 @@ class MessanaController(udi_interface.Node):
         if 'TEMP_UNIT' in self.Parameters:
             self.ISY_temp_unit = self.convert_temp_unit(self.Parameters['TEMP_UNIT'])
         else:
-            self.ISY_temp_unit = 0  
+            self.ISY_temp_unit = 0
             self.Parameters['TEMP_UNIT'] = 'C'
             logging.debug('TEMP_UNIT: {}'.format(self.ISY_temp_unit ))
        
@@ -152,21 +153,21 @@ class MessanaController(udi_interface.Node):
             self.messana_system = messana_system(self.messana)
             if not self.messana.connected():
                 self.stop()
-
+            self.messana_temp_unit = self.messana_system.get_temp_unit()
             self.updateISY_longpoll()
 
 
 
-
+        '''
         for zone_nbr in range(0, self.messana_system.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone_nbr))
             address = 'zone'+str(zone_nbr)
             name = 'dummy_name'
             self.zones[zone_nbr] = udi_messana_zone(self.poly, self.primary, address, name, zone_nbr, self.messana)
-        
+        '''
 
 
-        self.updateISY_longpoll()
+        #self.updateISY_longpoll()
         #self.updateISYdrivers('all')
         #self.messanaImportOK = 1
         self.poll_start = True
@@ -190,6 +191,9 @@ class MessanaController(udi_interface.Node):
         self.Parameters.load(userParam)
         self.poly.Notices.clear()
 
+    def convert_temp_to_isy(self, temperature):
+        logging.debug('convert_temp_to_isy - {}'.format(temperature))
+        if self.ISY_temp_unit == 0:
 
 
     def systemPoll (self, polltype):
@@ -239,7 +243,7 @@ class MessanaController(udi_interface.Node):
 
         tmp = self.messana_system.get_setback_diff()
         logging.debug('Setback Offset {}'.format(tmp))
-        self.node.setDriver('GV1', tmp, True, True)        
+        self.node.setDriver('GV1', tmp, True, True)
 
         tmp = self.messana_system.get_setback()
         logging.debug('Setback Enabled {}'.format(tmp))
@@ -406,7 +410,7 @@ class MessanaController(udi_interface.Node):
 
     drivers = [
             {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
-            {'driver': 'GV1', 'value':0, 'uom':4 }, # Setback Temp
+            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
             {'driver': 'GV2', 'value':99, 'uom':25 }, # Energy Saving
             {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
             {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp

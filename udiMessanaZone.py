@@ -73,7 +73,7 @@ class udi_messana_zone(udi_interface.Node):
         
         logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
 
-        self.poly.addNode(self)
+        self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()
 
         logging.debug(self.drivers)
