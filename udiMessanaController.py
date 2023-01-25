@@ -64,6 +64,7 @@ class MessanaController(udi_interface.Node):
 
         logging.debug('init node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
 
+
         self.poly.ready()
         self.poly.updateProfile()
         self.poly.addNode(self, conn_status='ST')
