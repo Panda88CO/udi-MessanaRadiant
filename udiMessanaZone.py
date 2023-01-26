@@ -77,7 +77,8 @@ class udi_messana_zone(udi_interface.Node):
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()
 
-        logging.debug(self.drivers)
+        logging.debug('Drivers: {}'.format(self.drivers))
+        logging.debug('address: {}'.format(self.address))
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
     '''
@@ -131,6 +132,8 @@ set_enable
         Val = self.zone.get_alarmOn()
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
         self.node.setDriver('GV9', self.isy_value(Val), True, True)
+
+
 
     def updateISY_longpoll(self):
         logging.debug('update_system - zone {} Status:'.format(self.zone_nbr))

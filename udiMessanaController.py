@@ -139,6 +139,7 @@ class MessanaController(udi_interface.Node):
             if not self.messana.connected():
                 self.stop()
             self.messana_temp_unit = self.messana_system.get_temp_unit()
+            logging.debug('Messana Temp unit; {}, ISY temp unit: {}'.format(self.messana_temp_unit, self.ISY_temp_unit ))
             self.updateISY_longpoll()
 
 
