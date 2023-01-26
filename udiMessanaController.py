@@ -28,7 +28,7 @@ except ImportError:
 
 
 class MessanaController(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value
 
     def __init__(self, polyglot, primary, address, name):
         super().__init__(polyglot, primary, address, name)

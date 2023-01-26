@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_zone(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value
 
     id = 'zone'
 
@@ -99,11 +99,7 @@ class udi_messana_zone(udi_interface.Node):
         name = bytes(name, 'utf-8').decode('utf-8','ignore')
         return re.sub(r"[^A-Za-z0-9_]", "", name.lower()[:14])
     
-    def isy_value(self, value):
-        if value == None:
-            return (99)
-        else:
-            return(value)
+set_enable
     '''
 
     def start(self):
