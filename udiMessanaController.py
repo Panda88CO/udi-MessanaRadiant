@@ -427,9 +427,9 @@ class MessanaController(udi_interface.Node):
             ]
 
     commands = { 'UPDATE': ISYupdate
-                ,'SET_STATUS': setStatus
-                ,'SET_ENERGYSAVE': setEnergySave
-                ,'SET_SETBACK' : setSetback
+                ,'STATUS': setStatus
+                ,'ENERGYSAVE': setEnergySave
+                ,'SETBACK' : setSetback
                 }
 
     id = 'system'
@@ -438,7 +438,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.54')
+        polyglot.start('0.0.55')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

@@ -81,27 +81,7 @@ class udi_messana_zone(udi_interface.Node):
         logging.debug('address: {}'.format(self.address))
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
-    '''
-    def node_queue(self, data):
-        self.n_queue.append(data['address'])
 
-    def wait_for_node_done(self):
-        while len(self.n_queue) == 0:
-            time.sleep(0.1)
-        self.n_queue.pop()
-
-
-    def getValidName(self, name):
-        name = bytes(name, 'utf-8').decode('utf-8','ignore')
-        return re.sub(r"[^A-Za-z0-9_ ]", "", name)
-
-    # remove all illegal characters from node address
-    def getValidAddress(self, name):
-        name = bytes(name, 'utf-8').decode('utf-8','ignore')
-        return re.sub(r"[^A-Za-z0-9_]", "", name.lower()[:14])
-    
-set_enable
-    '''
 
     def start(self):
         logging.info('udiMessanaZone Start ')
@@ -185,27 +165,26 @@ set_enable
         #self.node.setDriver('GV10', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'GV10')
 
-    def set_status(self, val):
+    def set_status(self, command):
         logging.debug('set_status')
 
 
-
-    def set_energy_save(self, val):
+    def set_energy_save(self, command):
         logging.debug('set_energy_save')
 
 
-    def set_setpoint(self, val):
+    def set_setpoint(self, command):
         logging.debug('set_setpoint')
 
 
-    def set_schedule(self, val):
+    def set_schedule(self, command):
         logging.debug('set_schedule')                
 
     commands = { 'UPDATE': updateISY_longpoll
-                ,'SET_STATUS': set_status
-                ,'SET_ENERGYSAVE': set_energy_save
-                ,'SET_SETPOINT' : set_setpoint
-                ,'SET_SCHEDULEON' : set_schedule
+                ,'STATUS': set_status
+                ,'ENERGYSAVE': set_energy_save
+                ,'SETPOINT' : set_setpoint
+                ,'SCHEDULEON' : set_schedule
                 
                 }
 

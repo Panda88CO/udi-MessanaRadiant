@@ -23,13 +23,13 @@
          </sends>
          <accepts>
             <cmd id="UPDATE" /> 
-            <cmd id="SET_STATUS" > 
+            <cmd id="STATUS" > 
                <p id="" editor="status" init="GV0" /> 
             </cmd> 
-            <cmd id="SET_ENERGYSAVE" > 
+            <cmd id="ENERGYSAVE" > 
                <p id="" editor="enable" init="GV2" /> 
             </cmd> 
-            <cmd id="SET_SETBACK" > 
+            <cmd id="SETBACK" > 
                <p id="" editor="tempoffset" init="GV1" /> 
             </cmd> 
          </accepts>
@@ -57,16 +57,16 @@
          </sends>
          <accepts>
             <cmd id="UPDATE" /> 
-            <cmd id="SET_SETPOINT" > 
+            <cmd id="SETPOINT" > 
                <p id="" editor="set_temp" init="GV3" /> 
             </cmd> 
-            <cmd id="SET_STATUS" > 
+            <cmd id="STATUS" > 
                <p id="" editor="set_enable" init="GV0" /> 
             </cmd> 
-            <cmd id="SET_ENERGYSAVE" > 
+            <cmd id="ENERGYSAVE" > 
                <p id="" editor="set_enable" init="GV8" /> 
             </cmd> 
-            <cmd id="SET_SCHEDULEON" > 
+            <cmd id="SCHEDULEON" > 
                <p id="" editor="set_enable" init="GV2" /> 
             </cmd> 
          </accepts>
