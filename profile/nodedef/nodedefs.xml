@@ -58,16 +58,16 @@
          <accepts>
             <cmd id="UPDATE" /> 
             <cmd id="SET_SETPOINT" > 
-               <p id="" editor="set_setpt" init="GV3" /> 
+               <p id="" editor="set_temp" init="GV3" /> 
             </cmd> 
             <cmd id="SET_STATUS" > 
-               <p id="" editor="set_statue" init="GV0" /> 
+               <p id="" editor="set_enable" init="GV0" /> 
             </cmd> 
             <cmd id="SET_ENERGYSAVE" > 
-               <p id="" editor="control" init="GV8" /> 
+               <p id="" editor="set_enable" init="GV8" /> 
             </cmd> 
             <cmd id="SET_SCHEDULEON" > 
-               <p id="" editor="control" init="GV2" /> 
+               <p id="" editor="set_enable" init="GV2" /> 
             </cmd> 
          </accepts>
       </cmds>
