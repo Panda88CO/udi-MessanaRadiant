@@ -61,16 +61,17 @@ class udi_messana_zone(udi_interface.Node):
         #self.id = 'zone'
         self.zone_nbr = zone_nbr
         self.zone = messana_zone(self.zone_nbr, messana_info)
+
         self.address = address
         tmp_name = self.zone.name
         self.name = self.getValidName(tmp_name)
         self.poly = polyglot
-
+        self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
         self.poly.subscribe(polyglot.START, self.start, self.address)
         self.poly.subscribe(polyglot.STOP, self.stop)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        
+        self.poly.subscribe(self.poly.CUSTOMPARAMS, self.handleParams)
         
         logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
         self.poly.ready()
@@ -81,12 +82,17 @@ class udi_messana_zone(udi_interface.Node):
         logging.debug('address: {}'.format(self.address))
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
-
+        self.ISY_temp_unit = 1  #NEEDS TO BE FIXED 
+        self.messana_temp_unit = self.zone.messana_temp_unit
 
     def start(self):
         logging.info('udiMessanaZone Start ')
         self.updateISY_longpoll()
         
+    def handleParams (self, userParam ):
+        logging.debug('handleParams')
+        self.Parameters.load(userParam)
+
 
     def stop(self):
         logging.info('udiMessanaZone Stop ')

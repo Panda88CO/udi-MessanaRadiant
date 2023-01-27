@@ -1,9 +1,9 @@
 ND-system-NAME = Messana System
 ND-system-ICON = Thermostat
 CMD-nlssystem-UPDATE-NAME = Update System Data
-CMD-nlssystem-SET_STATUS-NAME = System Status
-CMD-nlssystem-SET_ENERGYSAVE-NAME = Energy Saving
-CMD-nlssystem-SET_SETBACK-NAME = Setback
+CMD-nlssystem-STATUS-NAME = System Status
+CMD-nlssystem-ENERGYSAVE-NAME = Energy Saving
+CMD-nlssystem-SETBACK-NAME = Setback
 ST-nlssystem-GV0-NAME = System state
 ST-nlssystem-GV1-NAME = Setback Temp Offset
 ST-nlssystem-GV2-NAME = Enegrgy Saving

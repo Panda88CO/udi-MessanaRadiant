@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import time
 import os
+
 try:
     import udi_interface
     logging = udi_interface.LOGGER
@@ -30,7 +31,7 @@ class messana_zone(object):
         self.nbr = zone_nbr
         self.name = self.get_name()
         self.stateList = [0,1]
-
+        self.messana_temp_unit = self.messana.GET_system_data('tempUnit')
         #self.get_all()
 
 
@@ -148,6 +149,7 @@ class messana_zone(object):
     def get_alarmOn(self):
         logging.debug('{} {} -get_alarmOn'.format(self.type, self.nbr))
         return(self.__get_zone_data('alarmOn'))
+
 
 
     def get_active(self):
