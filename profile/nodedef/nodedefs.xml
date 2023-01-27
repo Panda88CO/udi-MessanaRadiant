@@ -72,7 +72,7 @@
          </accepts>
       </cmds>
    </nodeDef>
-    
+   <!--
    <nodeDef id="macrozones0" nls="nlsmacrozones0">
       <editors />
       <sts>
@@ -207,4 +207,5 @@
          </accepts>
       </cmds>
    </nodeDef> 
+   -->
 </nodeDefs>  
