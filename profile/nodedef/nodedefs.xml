@@ -44,7 +44,7 @@
          <st id="GV2" editor="status" />
          <st id="GV3" editor="temp"/>
          <st id="GV4" editor="temp" />
-         <st id="GV4" editor="humidity" />
+         <st id="GV5" editor="humidity" />
          <st id="GV6" editor="airq" />
          <st id="GV7" editor="co2" />
          <st id="GV8" editor="enable" />

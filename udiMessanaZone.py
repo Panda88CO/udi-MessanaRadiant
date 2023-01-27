@@ -36,7 +36,7 @@ class udi_messana_zone(udi_interface.Node):
             'GV10' = system_temperature
             'ST' = System Status
             ]
-    ''' 
+    '''
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
