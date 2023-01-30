@@ -31,7 +31,7 @@ class udi_messana_zone(udi_interface.Node):
             'GV5' = humidity
             'GV6' = AirQuality
             'GV7' = CO2
-            'GV8' = get_energy_saving()
+            'GV8' = energy_saving
             'GV9' = AlarmOn
             'GV10' = system_temperature
             'ST' = System Status
@@ -172,25 +172,50 @@ class udi_messana_zone(udi_interface.Node):
         self.send_temp_to_isy(Val, 'GV10')
 
     def set_status(self, command):
-        logging.debug('set_status')
-
+        status = int(command.get('value'))
+        logging.debug('set Status Called {} for zone: {}'.format(status, self.zone_nbr))
+        if self.zone.set_status(status):
+            self.node.setDriver('GV0', status)
+        else:
+            logging.error('Error calling setStatus')
 
     def set_energy_save(self, command):
-        logging.debug('set_energy_save')
-
-
+        energy_save = int(command.get('value'))
+        logging.debug('setEnergySave Called {} for zone {}'.format(energy_save, self.zone_nbr))
+        if self.zone.set_energy_saving(energy_save):
+            self.node.setDriver('GV8', energy_save)
+        else:
+            logging.error('Error calling set_energy_save')
+        
     def set_setpoint(self, command):
-        logging.debug('set_setpoint')
-
+        set_point = round(round(command.get('value')*2,0)/2,1)
+        logging.debug('set_setpoint {} for zone {}'.format(set_point, self.zone_nbr))   
+        if self.zone.set_setpoint(set_point):
+            self.node.setDriver('GV3', set_point)
+        else:
+            logging.error('Error calling set_setpoint')
+    '''
+    def set_setpoint_co2(self, command):
+        set_point = round(round(command.get('value')*2,0)/2,1)
+        logging.debug('set_setpoint_co2 {} for zone {}'.format(set_point, self.zone_nbr))   
+        if self.zone.set_setpoint_co2(set_point):
+            self.node.setDriver('GV3', set_point)
+        else:
+            logging.error('Error calling set_setpoint_co2')
+   
 
     def set_schedule(self, command):
-        logging.debug('set_schedule')                
+        schedule = int(command.get('value'))
+        logging.debug('set_schedule: {}'.format(schedule))
 
+    '''
+    
     commands = { 'UPDATE': updateISY_longpoll
                 ,'STATUS': set_status
                 ,'ENERGYSAVE': set_energy_save
                 ,'SETPOINT' : set_setpoint
-                ,'SCHEDULEON' : set_schedule
+     #           ,'SETPOINTCO2' : set_setpoint_co2        
+     #           ,'SCHEDULEON' : set_schedule
                 
                 }
 

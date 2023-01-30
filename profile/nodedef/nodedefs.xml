@@ -5,6 +5,7 @@
          <st id="GV0" editor="status" />
          <st id="GV1" editor="tempoffset" />
          <st id="GV2" editor="enable" />
+         <st id="GV12" editor="enable" />
          <st id="GV3" editor="count" />         
          <st id="GV4" editor="count" />
          <st id="GV5" editor="count" />

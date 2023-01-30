@@ -238,6 +238,7 @@ class MessanaController(udi_interface.Node):
 
     def updateISY_longpoll(self):
         logging.debug('updateISY_longpoll')
+
         tmp = self.messana_system.get_status()
         logging.debug('System State {}'.format(tmp))
         self.node.setDriver('GV0', tmp, True, True)
@@ -249,8 +250,11 @@ class MessanaController(udi_interface.Node):
 
         tmp = self.messana_system.get_setback()
         logging.debug('Setback Enabled {}'.format(tmp))
-
         self.node.setDriver('GV2', tmp, True, True)
+
+        tmp = self.messana_system.get_energy_saving()
+        logging.debug('Setback Enabled {}'.format(tmp))
+        self.node.setDriver('GV12', tmp, True, True)
 
         logging.debug('Nbr Zones{}'.format(self.messana_system.nbr_zones))
         self.node.setDriver('GV3', self.messana_system.nbr_zones)
@@ -381,28 +385,39 @@ class MessanaController(udi_interface.Node):
   
     '''
     def setStatus(self, command):
-        #logging.debug('set Status Called')
-        value = int(command.get('value'))
-        #logging.debug('set Status Recived:' + str(value))
-        #if self.messana.systemSetStatus(value):
-        #    ISYdriver = self.messana.getSystemStatusISYdriver()
-        #    self.setDriver(ISYdriver, value, report = True)
-    
-    def setEnergySave(self, command):
-        #logging.debug('setEnergySave Called')
-        value = int(command.get('value'))
-        #logging.debug('SetEnergySave Recived:' + str(value))
-        #if self.messana.systemSetEnergySave(value):
-        #    ISYdriver = self.messana.getSystemEnergySaveISYdriver()
-        #    self.setDriver(ISYdriver, value, report = True)
+        status = int(command.get('value'))
+        logging.debug('set Status Called: {}'.format(status))
+        if self.messana_system.set_status(status):
+            self.node.setDriver('GV0', status)
+        else:
+            logging.error('Error calling setStatus')
+
+
+    def setEnergySave(self, command): 
+        energy_save = int(command.get('value'))
+        logging.debug('setEnergySave Called: {}'.format(energy_save))
+        if  self.messana_system.set_energy_sSaving(energy_save):
+            self.node.setDriver('GV12', energy_save)
+        else:
+            logging.error('Error calling setEnergySave')
+
 
     def setSetback(self, command):
-        #logging.debug('setSetback Called')
-        value = int(command.get('value'))
-        #logging.debug('setSetback Reeived:' + str(value))
-        #if self.messana.systemSetback(value):
-        #    ISYdriver = self.messana.getSystemSetbackISYdriver()
-        #    self.setDriver(ISYdriver, value, report = True)
+        setback = int(command.get('value'))
+        logging.debug('setSetback Called: {}'.format(setback))
+        if  self.messana_system.set_energy_saving(setback):
+            self.node.setDriver('GV2', setback)
+        else:
+            logging.error('Error calling setSetback')
+
+    def setSetbackOffset(self, command):
+        setback_diff = int(command.get('value'))
+        logging.debug('setSetbackOffset Called: {}'.format(setback_diff))
+        if  self.messana_system.set_setback_diff(setback_diff):
+            self.node.setDriver('GV1', setback_diff)
+        else:
+            logging.error('Error calling setSetbackOffset')
+
 
     def ISYupdate (self, command):
         #logging.info('ISY-update called')
@@ -412,8 +427,9 @@ class MessanaController(udi_interface.Node):
 
     drivers = [
             {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
-            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback Temp
-            {'driver': 'GV2', 'value':99, 'uom':25 }, # Energy Saving
+            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback diff Temp
+            {'driver': 'GV2', 'value':99, 'uom':25 }, # Setback Enabled
+            {'driver': 'GV12', 'value':99, 'uom':25 }, # Energy Saving
             {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
             {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
             {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
@@ -430,6 +446,7 @@ class MessanaController(udi_interface.Node):
                 ,'STATUS': setStatus
                 ,'ENERGYSAVE': setEnergySave
                 ,'SETBACK' : setSetback
+                ,'SETBACK_OFFSET' : setSetbackOffset
                 }
 
     id = 'system'
@@ -438,7 +455,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.58')
+        polyglot.start('0.0.59')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

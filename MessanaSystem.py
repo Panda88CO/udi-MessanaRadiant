@@ -111,10 +111,10 @@ class messana_system(object):
     def set_status(self, status):
         return(self.PUT_system_data('status', status))
 
-    def get_energySaving(self):
+    def get_energy_saving(self):
         return(self.GET_system_data('energySaving'))
 
-    def set_energySaving(self, status):
+    def set_energy_saving(self, status):
         return(self.PUT_system_data('status', status))
 
     def get_setback(self):
