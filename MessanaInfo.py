@@ -61,7 +61,7 @@ class messana_control(object):
 
     def GET_system_data(self, mKey):
         GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
-        logging.debug('GET_system_data: {}'.format(mKey))
+        logging.debug('GET_system_data: {}'.format(GETstr))
 
         #logging.debug( GETStr)
         try:
@@ -101,7 +101,7 @@ class messana_control(object):
     def GET_node_data(self, mKey, node_type, node_nbr):
         logging.debug('GETNodeData: ' + mKey + ' ' + str(node_nbr)+ ' ' + mKey)
         GETstr = self.IPstr +'/api/'+ node_type+'/'+mKey+'/'+str(node_nbr)+'?'+ self.apiStr
-        logging.debug('GET_node_data: {}-{}-{} '.format(node_type, node_nbr, mKey ))
+        logging.debug('GET_node_data: {}-{}-{} '.format(GETstr))
         try:
             nTemp = requests.get(GETstr)
             if str(nTemp) == self.RESPONSE_OK:
