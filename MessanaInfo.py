@@ -28,7 +28,7 @@ except ImportError:
 
 
 class messana_control(object):
-    def __init__(self, ip_address, api_key ) :
+    def __init__(self):
         self.systemAPI = '/api/system'
         self.RESPONSE_OK = '<Response [200]>'
         self.RESPONSE_NO_SUPPORT = '<Response [400]>'
@@ -37,11 +37,8 @@ class messana_control(object):
         self.NaNlist= [-32768 , -3276.8 ]
         self.apiStr = ''
         self.IPstr =''
-        self.IPaddress = ip_address
-        self.apiKey = api_key
-        self.apiStr = 'apikey=' + self.apiKey
-        self.IPstr ='http://'+ self.IPaddress
-        self.mTemp_unit = self.GET_system_data('tempUnit')
+      
+
         #self.status = self.get_status()
         #self.temp_unit = self.GET_system_data('tempUnit')
         #self.nbr_zones = self.GET_system_data('zoneCount')
@@ -54,18 +51,12 @@ class messana_control(object):
         #self.name = self.GET_system_data('name')
 
 
-
-
-    ###############################
-    #pretty bad solution - just checking if a value can be extracted
-    def connected(self):
-        #sysData = self.GET_system_data('apiVersion')
-        GETstr = self.IPstr +self.systemAPI+'/'+ 'apiVersion' + '?' + self.apiStr
-        systemTemp = requests.get(GETstr)
-        logging.debug('sysdata: {}'.format(systemTemp))
-        return ( str(systemTemp) == self.RESPONSE_OK)
-    
-
+    def initialize(self, ip_address, api_key ):
+        self.IPaddress = ip_address
+        self.apiKey = api_key
+        self.apiStr = 'apikey=' + self.apiKey
+        self.IPstr ='http://'+ self.IPaddress        
+        self.mTemp_unit = self.GET_system_data('tempUnit')
 
 
     def GET_system_data(self, mKey):
@@ -141,3 +132,17 @@ class messana_control(object):
         except Exception as e:
             logging.error('Error PUT_node_data try/cartch {}:{}'.format(PUTstr, e))
             return(False)
+
+
+    def get_temp_unit(self):
+        return(self.GET_system_data('tempUnit'))
+
+    ###############################
+    #pretty bad solution - just checking if a value can be extracted
+    def connected(self):
+        #sysData = self.GET_system_data('apiVersion')
+        GETstr = self.IPstr +self.systemAPI+'/'+ 'apiVersion' + '?' + self.apiStr
+        systemTemp = requests.get(GETstr)
+        logging.debug('sysdata: {}'.format(systemTemp))
+        return ( str(systemTemp) == self.RESPONSE_OK)
+    

@@ -16,25 +16,12 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 
-#from MessanaControl import messana_control
+from MessanaInfo import messana_control
 
 
-class messana_system(object):
-    def __init__(self, messana ):
-        self.systemAPI = '/api/system'
-        self.RESPONSE_OK = '<Response [200]>'
-        self.RESPONSE_NO_SUPPORT = '<Response [400]>'
-        self.RESPONSE_NO_RESPONSE = '<Response [404]>'
-        self.RESPONSE_SERVER_ERROR = '<Response [500]>'
-        self.NaNlist= [-32768 , -3276.8 ]
-        self.IPaddress = ''
-        self.Key = ''
-        self.apiStr = ''
-        self.IPstr =''
-        self.IPaddress = messana.IPaddress
-        self.Key = messana.apiKey
-        self.apiStr = 'apikey=' + self.Key
-        self.IPstr ='http://'+ self.IPaddress
+class messana_system(messana_control):
+    def __init__(self):
+        super().__init__()
         logging.debug('Getting System Data')
         self.status = self.get_status()
         logging.debug('Getting Status: {}'.format(self.status ))
@@ -63,13 +50,7 @@ class messana_system(object):
 
     ###############################
     #pretty bad solution - just checking if a value can be extracted
-    def connected(self):
-        try:
-            sysData = self.GET_system_data('apiVersion')
-            return(sysData['statusOK'])
-        except:
-            return(False)
-
+    '''
     def GET_system_data(self, mKey):
         GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
         logging.debug('GET_system_data: {}'.format(mKey))
@@ -104,7 +85,7 @@ class messana_system(object):
         except Exception as e:
             logging.error('Error PUT_system_data {}: {}'.format(PUTstr, e))
             return(None)
-  
+    '''
     def get_status(self):
         return(self.GET_system_data('status'))
 
@@ -132,5 +113,3 @@ class messana_system(object):
     def get_external_alarm(self):
         return(self.GET_system_data('externalAlarm'))
 
-    def get_temp_unit(self):
-        return(self.GET_system_data('tempUnit'))
