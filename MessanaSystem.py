@@ -19,33 +19,34 @@ except ImportError:
 from MessanaInfo import messana_control
 
 
-class messana_system(object):
+class messana_system(messana_control):
     def __init__(self, messana):
-        #super().__init__(messana.IPaddress, messana.apiKey )
-        self.messana = messana
+        super().__init__(messana['ip_address'], messana['api_key'] )
+
+        self = messana
         logging.debug('Getting System Data')
         self.status = self.get_status()
         logging.debug('Getting Status: {}'.format(self.status ))
-        self.messana_temp_unit = self.get_temp_unit()
-        logging.debug('Getting Temp Unit: {}'.format(self.messana_temp_unit))
+        self_temp_unit = self.get_temp_unit()
+        logging.debug('Getting Temp Unit: {}'.format(self_temp_unit))
         self.nbr_zones = self.GET_system_data('zoneCount')
         logging.debug('Getting nbr zones: {}'.format(self.nbr_zones   ))
-        self.nbr_atus = self.messana.GET_system_data('atuCount')
+        self.nbr_atus = self.GET_system_data('atuCount')
         logging.debug('Getting nbr atu Units: {}'.format( self.nbr_atus ))
-        self.nbr_buffer_tank = self.messana.GET_system_data('bufferTankCount')
+        self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
         logging.debug('Getting nbr buffertanl Units: {}'.format(self.nbr_buffer_tank   ))
-        self.nbr_energy_source = self.messana.GET_system_data('energySourceCount')
+        self.nbr_energy_source = self.GET_system_data('energySourceCount')
         logging.debug('Getting nbr energy source Units: {}'.format( self.nbr_energy_source   ))
-        self.nbr_fancoil = self.messana.GET_system_data('fancoilCount')
+        self.nbr_fancoil = self.GET_system_data('fancoilCount')
         logging.debug('Getting nbr fancoil Units: {}'.format(self.nbr_fancoil  ))
-        self.nbr_HCgroup = self.messana.GET_system_data('HCgroupCount')
+        self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
         logging.debug('Getting nbr hot cold Units: {}'.format( self.nbr_HCgroup ))
-        self.nbr_macrozone = self.messana.GET_system_data('macroZoneCount')
+        self.nbr_macrozone = self.GET_system_data('macroZoneCount')
         logging.debug('Getting nbr macon zones: {}'.format( self.nbr_macrozone  ))
-        self.nbr_dhwater = self.messana.GET_system_data('dhwCount')
+        self.nbr_dhwater = self.GET_system_data('dhwCount')
         logging.debug('Getting nbr domestic hot water: {}'.format( self.nbr_dhwater  ))
 
-        self.name = self.messana.GET_system_data('name')
+        self.name = self.GET_system_data('name')
         logging.debug('Getting  system name: {}'.format(self.name ))
 
 
@@ -88,29 +89,29 @@ class messana_system(object):
             return(None)
     '''
     def get_status(self):
-        return(self.messana.GET_system_data('status'))
+        return(self.GET_system_data('status'))
 
     def set_status(self, status):
-        return(self.messana.PUT_system_data('status', status))
+        return(self.PUT_system_data('status', status))
 
     def get_energy_saving(self):
-        return(self.messana.GET_system_data('energySaving'))
+        return(self.GET_system_data('energySaving'))
 
     def set_energy_saving(self, status):
-        return(self.messana.PUT_system_data('status', status))
+        return(self.PUT_system_data('status', status))
 
     def get_setback(self):
-        return(self.messana.GET_system_data('setback'))
+        return(self.GET_system_data('setback'))
 
     def set_setback(self, status):
-        return(self.messana.PUT_system_data('setback', status))
+        return(self.PUT_system_data('setback', status))
 
     def get_setback_diff(self):
-        return(self.messana.GET_system_data('setbackDiff'))
+        return(self.GET_system_data('setbackDiff'))
 
     def set_setback_diff(self, diff):
-        return(self.messana.PUT_system_data('setbackDiff', diff))
+        return(self.PUT_system_data('setbackDiff', diff))
 
     def get_external_alarm(self):
-        return(self.messana.GET_system_data('externalAlarm'))
+        return(self.GET_system_data('externalAlarm'))
 
