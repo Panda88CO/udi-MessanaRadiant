@@ -35,9 +35,6 @@ class messana_control(object):
         self.RESPONSE_NO_RESPONSE = '<Response [404]>'
         self.RESPONSE_SERVER_ERROR = '<Response [500]>'
         self.NaNlist= [-32768 , -3276.8 ]
-        self.apiStr = ''
-        self.IPstr =''
-      
 
         #self.status = self.get_status()
         #self.temp_unit = self.GET_system_data('tempUnit')
@@ -52,6 +49,7 @@ class messana_control(object):
 
 
     def initialize(self, ip_address, api_key ):
+        logging.debug('initialize: {} , {}'.format(ip_address, api_key ))
         self.IPaddress = ip_address
         self.apiKey = api_key
         self.apiStr = 'apikey=' + self.apiKey
@@ -60,6 +58,7 @@ class messana_control(object):
 
 
     def GET_system_data(self, mKey):
+        logging.debug('GET_system_data: {}'.format(mKey))
         GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
         logging.debug('GET_system_data: {}'.format(GETstr))
 
