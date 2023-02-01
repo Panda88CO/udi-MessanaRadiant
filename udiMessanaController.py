@@ -135,7 +135,7 @@ class MessanaController(udi_interface.Node):
         else:
             self.messana_info = {}
             self.messana_info['ip_address'] = self.IPAddress
-            self.messana_info['api_key'] = self.MessanaKey 
+            self.messana_info['api_key'] = self.MessanaKey
             #self.messana_info['temp_unit'] = self.ISY_temp_unit
 
             logging.info('Retrieving info from Messana System')
@@ -461,7 +461,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.61')
+        polyglot.start('0.0.62')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
