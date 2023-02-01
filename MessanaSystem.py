@@ -20,10 +20,9 @@ from MessanaInfo import messana_control
 
 
 class messana_system(messana_control):
-    def __init__(self, messana):
-        super().__init__(messana['ip_address'], messana['api_key'] )
+    def __init__(self, messana_info):
+        super().__init__(messana_info['ip_address'], messana_info['api_key'] )
 
-        self = messana
         logging.debug('Getting System Data')
         self.status = self.get_status()
         logging.debug('Getting Status: {}'.format(self.status ))
@@ -50,44 +49,10 @@ class messana_system(messana_control):
         logging.debug('Getting  system name: {}'.format(self.name ))
 
 
-    ###############################
-    #pretty bad solution - just checking if a value can be extracted
-    '''
-    def GET_system_data(self, mKey):
-        GETstr = self.IPstr +self.systemAPI+'/'+ mKey + '?' + self.apiStr
-        logging.debug('GET_system_data: {}'.format(mKey))
 
-        #logging.debug( GETStr)
-        try:
-            systemTemp = requests.get(GETstr)
-            #logging.debug(str(systemTemp))
-            if str(systemTemp) == self.RESPONSE_OK:
-                systemTemp = systemTemp.json()
-                data = systemTemp[str(list(systemTemp.keys())[0])]
-            else:
-                logging.error('GET_system_data error {} {}'.format(mKey, str(systemTemp)))
-            if data in self.NaNlist:
-                return(None)
-            else:
-                return(data) #No data for given keyword - remove from list
-        except Exception as e:
-            logging.error('System GET_system_data operation failed for {}: {}'.format(mKey, e))
-            return(None)
+    def connected(self):
+        return(self.system_connected())
 
-
-    def PUT_system_data(self, mKey, value):
-        mData = {}
-        PUTstr = self.IPstr + self.systemAPI+'/'+ mKey
-        mData = {'value':value, 'apikey': self.apiStr}
-        logging.debug('PUT_system_data :{} {}'.format(PUTstr, value) )
-        try:
-            resp = requests.put(PUTstr, json=mData)
-            return( str(resp) == self.RESPONSE_OK)
-
-        except Exception as e:
-            logging.error('Error PUT_system_data {}: {}'.format(PUTstr, e))
-            return(None)
-    '''
     def get_status(self):
         return(self.GET_system_data('status'))
 

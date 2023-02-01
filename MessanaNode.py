@@ -22,26 +22,26 @@ except ImportError:
 
 from MessanaInfo import messana_control
 
-#messana, controller, primary, address, name, nodeType, nodeNbr, messana
-class messana_node():
-    def __init__(self, messana, node_type, node_nbr):
 
-        self.messana = messana
+class messana_node(messana_control):
+    def __init__(self, messana_info, node_type, node_nbr):
+        super().__init__(messana_info['ip_address'], messana_info['api_key'])
+        #self.messana = messana_info
         self.type = node_type
         self.nbr = node_nbr
         logging.info('init Node {} {}:'.format(node_type, node_nbr ) )
         self.name = self.get_name()
         self.stateList = [0,1]
-        self.messana_temp_unit = self.messana.GET_system_data('tempUnit')
+        self.messana_temp_unit = self.GET_system_data('tempUnit')
         #self.get_all()
 
     def __get_node_data(self, mKey):
         logging.debug('{} {} __get_node_data'.format(self.type, self.nbr ))
-        return(self.messana.GET_node_data(mKey, self.type, self.nbr))
+        return(self.GET_node_data(mKey, self.type, self.nbr))
 
     def __put_node_data(self, mKey, value):
         logging.debug('{} {} __put_node_data'.format(self.type, self.nbr ))
-        return(self.messana.PUT_node_data(mKey, value, self.type, self.nbr))
+        return(self.PUT_node_data(mKey, value, self.type, self.nbr))
 
     def get_name(self):
         logging.debug('{} {} get_name'.format(self.type, self.nbr ))

@@ -25,15 +25,14 @@ except ImportError:
 from MessanaNode import messana_node
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messana_zone(messana_node):
-    def __init__(self, messana, zone_nbr):
-        super().__init__(messana, 'zone', zone_nbr)
+    def __init__(self, zone_nbr, messana_info):
+        super().__init__(messana_info, 'zone', zone_nbr)
         logging.info('init Zone:' )
-        self.messana = messana
         self.type = 'zone'
         self.nbr = zone_nbr
         self.name = self.get_name()
         #self.stateList = [0,1]
-        self.messana_temp_unit = self.messana.GET_system_data('tempUnit')
+        self.messana_temp_unit = self.GET_system_data('tempUnit')
         #self.get_all()
 
     '''

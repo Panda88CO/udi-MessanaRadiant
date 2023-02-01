@@ -133,29 +133,29 @@ class MessanaController(udi_interface.Node):
             #self.defineInputParams()
             self.stop()
         else:
-            self.messana = {}
-            self.messana['ip_address'] = self.IPAddress
-            self.messana['api_key'] = self.MessanaKey 
-            self.messana['temp_unit'] = self.ISY_temp_unit
+            self.messana_info = {}
+            self.messana_info['ip_address'] = self.IPAddress
+            self.messana_info['api_key'] = self.MessanaKey 
+            #self.messana_info['temp_unit'] = self.ISY_temp_unit
 
             logging.info('Retrieving info from Messana System')
             #self.messana = messana_control(self.IPAddress, self.MessanaKey)
             #self.messana.initialize(self.IPAddress, self.MessanaKey)
-            self.messana_system = messana_system(self.messana)
+            self.messana = messana_system(self.messana_info)
             if not self.messana.connected():
                 self.stop()
-            self.messana_temp_unit = self.get_temp_unit()
+            self.messana_temp_unit = self.messana.get_temp_unit()
             logging.debug('Messana Temp unit; {}, ISY temp unit: {}'.format(self.messana_temp_unit, self.ISY_temp_unit ))
             self.updateISY_longpoll()
 
 
 
         
-        for zone_nbr in range(0, self.messana_system.nbr_zones ):
+        for zone_nbr in range(0, self.messana.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone_nbr))
             address = 'zone'+str(zone_nbr)
             name = 'dummy_name'
-            self.zones[zone_nbr] = udi_messana_zone(self.poly, self.primary, address, name, zone_nbr, self.messana)
+            self.zones[zone_nbr] = udi_messana_zone(self.poly, self.primary, address, name, zone_nbr, self.messana_info)
         
 
 
