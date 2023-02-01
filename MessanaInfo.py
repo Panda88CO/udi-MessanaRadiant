@@ -28,33 +28,31 @@ except ImportError:
 
 
 class messana_control(object):
-    def __init__(self):
+    def __init__(self, ip_address, api_key ):
         self.systemAPI = '/api/system'
         self.RESPONSE_OK = '<Response [200]>'
         self.RESPONSE_NO_SUPPORT = '<Response [400]>'
         self.RESPONSE_NO_RESPONSE = '<Response [404]>'
         self.RESPONSE_SERVER_ERROR = '<Response [500]>'
         self.NaNlist= [-32768 , -3276.8 ]
-
-        #self.status = self.get_status()
-        #self.temp_unit = self.GET_system_data('tempUnit')
-        #self.nbr_zones = self.GET_system_data('zoneCount')
-        #self.nbr_atus = self.GET_system_data('atuCount')
-        #self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
-        #self.nbr_energy_source = self.GET_system_data('energySourceCount')
-        #self.nbr_fancoil = self.GET_system_data('fancoilCount')
-        #self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
-        #self.nbr_macrozone = self.GET_system_data('macroZoneCount')
-        #self.name = self.GET_system_data('name')
-
-
-    def initialize(self, ip_address, api_key ):
-        logging.debug('initialize: {} , {}'.format(ip_address, api_key ))
         self.IPaddress = ip_address
         self.apiKey = api_key
         self.apiStr = 'apikey=' + self.apiKey
         self.IPstr ='http://'+ self.IPaddress        
         self.mTemp_unit = self.GET_system_data('tempUnit')
+
+        self.temp_unit = self.GET_system_data('status')
+        self.temp_unit = self.GET_system_data('tempUnit')
+        self.nbr_zones = self.GET_system_data('zoneCount')
+        self.nbr_atus = self.GET_system_data('atuCount')
+        self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
+        self.nbr_energy_source = self.GET_system_data('energySourceCount')
+        self.nbr_fancoil = self.GET_system_data('fancoilCount')
+        self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
+        self.nbr_macrozone = self.GET_system_data('macroZoneCount')
+        self.name = self.GET_system_data('name')
+
+
 
 
     def GET_system_data(self, mKey):
