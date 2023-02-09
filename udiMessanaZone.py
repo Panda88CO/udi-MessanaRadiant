@@ -105,13 +105,18 @@ class udi_messana_zone(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.zone.get_air_temp()
-        logging.debug('get_air_temp(GV4): {}'.format(Val))
+        logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'GV4')
+        self.send_temp_to_isy(Val, 'CLITEMP')
 
         Val = self.zone.get_humidity()
-        logging.debug('Humidity(GV5): {}'.format(Val))
-        self.node.setDriver('GV5', self.isy_value(Val))
+        logging.debug('Humidity(CLIHUM): {}'.format(Val))
+        self.node.setDriver('CLIHUM', self.isy_value(Val))
+
+        Val = self.zone.get_dewpoint()
+        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
+        self.send_temp_to_isy(Val, 'DEWPT')
+
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
@@ -147,13 +152,18 @@ class udi_messana_zone(udi_interface.Node):
         #self.node.setDriver('GV3', self.isy_value(Val))
 
         Val = self.zone.get_air_temp()
-        logging.debug('get_air_temp(GV4): {}'.format(Val))
+        logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'GV4')
+        self.send_temp_to_isy(Val, 'CLITEMP')
 
         Val = self.zone.get_humidity()
-        logging.debug('get_humidity(GV5): {}'.format(Val))
-        self.node.setDriver('GV5', self.isy_value(Val), True, True)
+        logging.debug('get_humidity(CLIHUM)): {}'.format(Val))
+        self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
+        
+        Val = self.zone.get_dewpoint()
+        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
+        self.send_temp_to_isy(Val, 'DEWPT')
+
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))

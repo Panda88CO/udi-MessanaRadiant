@@ -3,7 +3,7 @@
 import time
 import re
 #from MessanaInfo import messana_info
-from MessanaZone import messana_macrozone
+from MessanaMacrozone import messana_macrozone
 
 try:
     import udi_interface
@@ -52,11 +52,11 @@ class udi_messana_macrozone(udi_interface.Node):
         #self.parent = primary
         self.primary = primary
         #self.id = 'zone'
-        self.zone_nbr = zone_nbr
-        self.zone = messana_macrozone(self.zone_nbr, messana_info)
+        self.macrozone_nbr = zone_nbr
+        self.macrozone = messana_macrozone(self.macrozone_nbr, messana_info)
 
         self.address = address
-        tmp_name = self.zone.name
+        tmp_name = self.macrozone.name
         self.name = self.getValidName(tmp_name)
         self.poly = polyglot
         self.Parameters = Custom(self.poly, 'customparams')
@@ -76,7 +76,7 @@ class udi_messana_macrozone(udi_interface.Node):
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
         self.ISY_temp_unit = 1  #NEEDS TO BE FIXED 
-        self.messana_temp_unit = self.zone.messana_temp_unit
+        self.messana_temp_unit = self.macrozone.messana_temp_unit
 
     def start(self):
         logging.info('udiMessanaZone Start ')
@@ -91,128 +91,97 @@ class udi_messana_macrozone(udi_interface.Node):
         logging.info('udiMessanaZone Stop ')
 
     def updateISY_shortpoll(self):
-        Val = self.zone.get_status()
+        Val = self.macrozone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.zone.get_air_temp()
-        logging.debug('get_air_temp(GV4): {}'.format(Val))
+        Val = self.macrozone.get_air_temp()
+        logging.debug('get_air_temp(CLITEMP)): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'GV4')
+        self.send_temp_to_isy(Val, 'CLITEMP')
 
-        Val = self.zone.get_humidity()
-        logging.debug('Humidity(GV5): {}'.format(Val))
+        Val = self.macrozone.get_humidity()
+        logging.debug('Humidity(CLIHUM): {}'.format(Val))
         self.node.setDriver('GV5', self.isy_value(Val))
 
-        Val = self.zone.get_air_quality()
-        logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.node.setDriver('GV6', self.isy_value(Val))
+        Val = self.macrozone.get_dewpoint()
+        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
+        self.send_temp_to_isy(Val, 'DEWPT')
 
-        Val = self.zone.get_alarmOn()
-        logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
-        self.node.setDriver('GV9', self.isy_value(Val), True, True)
+
 
 
 
     def updateISY_longpoll(self):
-        logging.debug('update_system - zone {} Status:'.format(self.zone_nbr))
+        logging.debug('update_system - zone {} Status:'.format(self.macrozone_nbr))
 
-        Val = self.zone.get_status()
+        Val = self.macrozone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.zone.get_thermal_status()
-        logging.debug('Thermal Mode(GV1): {}'.format(Val))
+        Val = self.macrozone.get_thermal_status()
+        logging.debug('Anti Freeze temp(GV1): {}'.format(Val))
         self.node.setDriver('GV1', self.isy_value(Val))
 
-        Val = self.zone.get_scheduleOn()
+        Val = self.macrozone.get_scheduleOn()
         logging.debug('Schedule Mode(GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 
-        Val = self.zone.get_setpoint()
+        Val = self.macrozone.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
         self.send_temp_to_isy(Val, 'GV3')
         #self.node.setDriver('GV3', self.isy_value(Val))
 
-        Val = self.zone.get_air_temp()
-        logging.debug('get_air_temp(GV4): {}'.format(Val))
+        Val = self.macrozone.get_air_temp()
+        logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'GV4')
+        self.send_temp_to_isy(Val, 'CLITEMP')
 
-        Val = self.zone.get_humidity()
-        logging.debug('Humidity(GV5): {}'.format(Val))
-        self.node.setDriver('GV5', self.isy_value(Val), True, True)
+        Val = self.macrozone.get_humidity()
+        logging.debug('Humidity(CLIHUM): {}'.format(Val))
+        self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
 
-        Val = self.zone.get_air_quality()
-        logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.node.setDriver('GV6', self.isy_value(Val))
+        Val = self.macrozone.get_dewpoint()
+        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
+        self.send_temp_to_isy(Val, 'DEWPT')
 
-        Val = self.zone.get_co2()
-        logging.debug('Alarm On (GV7): {}'.format(Val))
-        self.node.setDriver('GV7', self.isy_value(Val))
 
-        Val = self.zone.get_energy_saving()
-        logging.debug('get_energy_saving On (GV8): {}'.format(Val))
-        self.node.setDriver('GV8', self.isy_value(Val))
-
-        Val = self.zone.get_alarmOn()
-        logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
-        self.node.setDriver('GV9', self.isy_value(Val), True, True)
-
-        Val = self.zone.get_temp()
-        logging.debug('System Temp (GV10): {}'.format(Val))
-        #self.node.setDriver('GV10', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'GV10')
 
     def set_status(self, command):
         status = int(command.get('value'))
-        logging.debug('set Status Called {} for zone: {}'.format(status, self.zone_nbr))
-        if self.zone.set_status(status):
+        logging.debug('set Status Called {} for zone: {}'.format(status, self.macrozone_nbr))
+        if self.macrozone.set_status(status):
             self.node.setDriver('GV0', status)
         else:
             logging.error('Error calling setStatus')
 
     def set_energy_save(self, command):
         energy_save = int(command.get('value'))
-        logging.debug('setEnergySave Called {} for zone {}'.format(energy_save, self.zone_nbr))
-        if self.zone.set_energy_saving(energy_save):
+        logging.debug('setEnergySave Called {} for zone {}'.format(energy_save, self.macrozone_nbr))
+        if self.macrozone.set_energy_saving(energy_save):
             self.node.setDriver('GV8', energy_save)
         else:
             logging.error('Error calling set_energy_save')
         
     def set_setpoint(self, command):
         set_point = round(round(command.get('value')*2,0)/2,1)
-        logging.debug('set_setpoint {} for zone {}'.format(set_point, self.zone_nbr))   
-        if self.zone.set_setpoint(set_point):
+        logging.debug('set_setpoint {} for zone {}'.format(set_point, self.macrozone_nbr))   
+        if self.macrozone.set_setpoint(set_point):
             self.node.setDriver('GV3', set_point)
         else:
             logging.error('Error calling set_setpoint')
-    '''
-    def set_setpoint_co2(self, command):
-        set_point = round(round(command.get('value')*2,0)/2,1)
-        logging.debug('set_setpoint_co2 {} for zone {}'.format(set_point, self.zone_nbr))   
-        if self.zone.set_setpoint_co2(set_point):
-            self.node.setDriver('GV3', set_point)
-        else:
-            logging.error('Error calling set_setpoint_co2')
-   
 
     def set_schedule(self, command):
         schedule = int(command.get('value'))
         logging.debug('set_schedule: {}'.format(schedule))
 
-    '''
     
     commands = { 'UPDATE': updateISY_longpoll
                 ,'STATUS': set_status
-                ,'ENERGYSAVE': set_energy_save
+                #,'ENERGYSAVE': set_energy_save
                 ,'SETPOINT' : set_setpoint
      #           ,'SETPOINTCO2' : set_setpoint_co2        
-     #           ,'SCHEDULEON' : set_schedule
+                ,'SCHEDULEON' : set_schedule
                 
                 }
-
-        #Val = self.zone.system_online
-        #logging.debug('System Status: {}'.format(Val))
-        #self.node.setDriver('ST', self.isy_value(Val), True, True)    
         
