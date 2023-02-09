@@ -26,7 +26,7 @@ class messana_system(messana_control):
         logging.debug('Getting System Data')
         self.status = self.get_status()
         logging.debug('Getting Status: {}'.format(self.status ))
-        self_temp_unit = self.get_temp_unit()
+        self_temp_unit = self.GET_system_data('tempUnit')
         logging.debug('Getting Temp Unit: {}'.format(self_temp_unit))
         self.nbr_zones = self.GET_system_data('zoneCount')
         logging.debug('Getting nbr zones: {}'.format(self.nbr_zones   ))

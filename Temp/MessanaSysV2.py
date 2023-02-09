@@ -5,7 +5,7 @@ import json
 import os 
 import polyinterface
 LOGGER = polyinterface.LOGGER
-from MessanaZoneOld import messanaZones
+from Temp.MessanaZoneOld import messanaZones
 
 
 class messanaSystem(object):
