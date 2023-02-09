@@ -2,7 +2,7 @@
 
 
 import sys
-from MessanaSystem import messana_system
+from Messana_System import messana_system
 from udi_MessanaZone import udi_messana_zone
 from udi_MessanaMacrozone import udi_messana_macrozone
 #from MessanaATUV2 import messanaAtu

@@ -16,7 +16,7 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 
-from MessanaInfo import messana_control
+from Temp.MessanaInfo import messana_control
 
 
 class messana_system(messana_control):

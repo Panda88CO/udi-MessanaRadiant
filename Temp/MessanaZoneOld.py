@@ -12,7 +12,7 @@ except ImportError:
 
 #from subprocess import call
 
-from MessanaInfo import messanaInfo
+from Temp.MessanaInfo import messanaInfo
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messanaZone(messanaInfo):

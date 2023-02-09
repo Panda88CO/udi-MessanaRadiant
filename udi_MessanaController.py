@@ -2,9 +2,9 @@
 
 
 import sys
-from MessanaSystem import messana_system
-from Temp.udiMessanaZone import udi_messana_zone
-from Temp.udiMessanaMacroZone import udi_messana_macrozone
+from Messana_System import messana_system
+from udi_MessanaZone import udi_messana_zone
+from udi_MessanaMacrozone import udi_messana_macrozone
 #from MessanaATUV2 import messanaAtu
 #from MessanaBufTankV2 import messanaBufTank
 #from MessanaEnergySourceV2 import messanaEnergySource
@@ -423,7 +423,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.65')
+        polyglot.start('0.0.66')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

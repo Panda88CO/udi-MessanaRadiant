@@ -11,7 +11,7 @@ except ImportError:
     logging.basicConfig(level=logging.INFO)
 
 
-from MessanaSystem import messanaSystem
+from Temp.MessanaSystem import messanaSystem
 from Temp.udiMessanaSystem import udi_messana_system
 #from MessanaZone import messanaZone
 from Temp.udiMessanaZone import udiMessanaZone

@@ -20,8 +20,8 @@ except ImportError:
         logging.StreamHandler(sys.stdout) ]
     )
 
-from MessanaInfo import messana_control
-from MessanaNode import messana_node
+#from Messana_Info import messana_control
+from Messana_Node import messana_node
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messana_macrozone(messana_node):
     def __init__(self, messana, macrozone_nbr):

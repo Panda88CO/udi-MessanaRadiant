@@ -3,7 +3,7 @@
 import time
 import re
 #from MessanaInfo import messana_info
-from MessanaZone import messana_zone
+from Temp.MessanaZone import messana_zone
 
 try:
     import udi_interface
