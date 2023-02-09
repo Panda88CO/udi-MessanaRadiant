@@ -110,8 +110,6 @@ class udi_messana_macrozone(udi_interface.Node):
 
 
 
-
-
     def updateISY_longpoll(self):
         logging.debug('update_system - zone {} Status:'.format(self.macrozone_nbr))
 
