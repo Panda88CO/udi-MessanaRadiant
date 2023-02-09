@@ -385,7 +385,7 @@ class MessanaController(udi_interface.Node):
     def setEnergySave(self, command): 
         energy_save = int(command.get('value'))
         logging.debug('setEnergySave Called: {}'.format(energy_save))
-        if  self.messana.set_energy_sSaving(energy_save):
+        if  self.messana.set_energy_saving(energy_save):
             self.node.setDriver('GV12', energy_save)
         else:
             logging.error('Error calling setEnergySave')
@@ -444,7 +444,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.63')
+        polyglot.start('0.0.64')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
