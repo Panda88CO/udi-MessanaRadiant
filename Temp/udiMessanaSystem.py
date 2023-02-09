@@ -12,7 +12,7 @@ except ImportError:
 
 from Temp.MessanaSystem import messanaSystem 
 #from MessanaZone import messanaZone
-from udiMessanaZone import udiMessanaZone
+from Temp.udiMessanaZone import udiMessanaZone
 import time
 
 class YoLinkSetup (udi_interface.Node):

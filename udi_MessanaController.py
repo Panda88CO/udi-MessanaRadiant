@@ -3,8 +3,8 @@
 
 import sys
 from MessanaSystem import messana_system
-from udiMessanaZone import udi_messana_zone
-from udiMessanaMacroZone import udi_messana_macrozone
+from Temp.udiMessanaZone import udi_messana_zone
+from Temp.udiMessanaMacroZone import udi_messana_macrozone
 #from MessanaATUV2 import messanaAtu
 #from MessanaBufTankV2 import messanaBufTank
 #from MessanaEnergySourceV2 import messanaEnergySource
