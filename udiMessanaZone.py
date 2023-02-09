@@ -113,7 +113,10 @@ class udi_messana_zone(udi_interface.Node):
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.node.setDriver('GV6', self.isy_value(Val))
+        if Val == -1:
+             self.node.setDriver('GV6', 98, True, True, 25)
+        else:
+            self.node.setDriver('GV6', self.isy_value(Val))
 
         Val = self.zone.get_alarmOn()
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
@@ -147,23 +150,29 @@ class udi_messana_zone(udi_interface.Node):
         self.send_temp_to_isy(Val, 'GV4')
 
         Val = self.zone.get_humidity()
-        logging.debug('Humidity(GV5): {}'.format(Val))
+        logging.debug('get_humidity(GV5): {}'.format(Val))
         self.node.setDriver('GV5', self.isy_value(Val), True, True)
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        self.node.setDriver('GV6', self.isy_value(Val))
+        if Val == -1:
+             self.node.setDriver('GV6', 98, True, True, 25)
+        else:
+            self.node.setDriver('GV6', self.isy_value(Val))
 
         Val = self.zone.get_co2()
-        logging.debug('Alarm On (GV7): {}'.format(Val))
-        self.node.setDriver('GV7', self.isy_value(Val))
+        logging.debug('get_co2 (GV7): {}'.format(Val))
+        if Val == -1 or Val == None:
+             self.node.setDriver('GV7', 98, True, True, 25)
+        else:
+            self.node.setDriver('GV7', self.isy_value(Val))
 
         Val = self.zone.get_energy_saving()
         logging.debug('get_energy_saving On (GV8): {}'.format(Val))
         self.node.setDriver('GV8', self.isy_value(Val))
 
         Val = self.zone.get_alarmOn()
-        logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
+        logging.debug('get_alarmOn(GV9): {}'.format(Val))
         self.node.setDriver('GV9', self.isy_value(Val), True, True)
 
         Val = self.zone.get_temp()

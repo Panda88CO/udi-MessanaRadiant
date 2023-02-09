@@ -32,6 +32,7 @@ count-99 = Unknown
 running-0 = Down
 running-1 = Up
 running-99 = Unknown
+
 UNKNOWN-98 = No Support
 UNKNOWN-99 = Unknown
 
@@ -56,9 +57,8 @@ ST-nlszone-GV10-NAME = System Temperature
 ST-nlszone-ST-NAME = Node Running
 
 thermalmode-0 = No Request
-thermalmode-0 = Heat Request
-thermalmode-0 = Cool Request
-thermalmode-0 = Heat&Cool Request
+thermalmode-1 = Heat Request
+thermalmode-2 = Cool Request
+thermalmode-3 = Heat&Cool Request
 thermalmode-99  = Unknown
-co2-99 = Unknown
-co2-98 = Not Supported
+

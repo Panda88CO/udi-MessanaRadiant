@@ -107,7 +107,10 @@ class messana_node(messana_control):
         logging.debug('{} {} - get_air_quality'.format(self.type, self.nbr))
         val = self.__get_node_data('airQuality')
         logging.debug('Air quality;{}'.format(val))
-        return( 0)
+        if val == self.RESPONSE_NO_SUPPORT or val == None:
+            return(-1)
+        else:
+            return(val)
         #if val not in self.messana.NaNlist:
         #    return(val['category'])
         #else:
@@ -143,7 +146,13 @@ class messana_node(messana_control):
 
     def get_co2(self):
         logging.debug('{} {} - get_co2'.format(self.type, self.nbr))
-        return(self.__get_node_data('co2'))
+        val = self.__get_node_data('co2')
+        if val == self.RESPONSE_NO_SUPPORT or val == None:
+            return(-1)
+        else:
+            return(val)
+        #self.__get_node_data('co2')
+        #return(self.__get_node_data('co2'))
 
 
     def get_alarmOn(self):

@@ -105,8 +105,8 @@ class messana_control(object):
             if str(nTemp) == self.RESPONSE_OK:
                 nData = nTemp.json()
                 data   = nData[str(list(nData.keys())[0])]
-                logging.debug('GET_node_data node{} - data: {}'.format(node_type, data))
-                if data in self.NaNlist:
+                logging.debug('GET_node_data node {} - data: {}'.format(node_type, data))
+                if data in self.NaNlist or data == self.RESPONSE_NO_SUPPORT:
                     return(None)
                 else:
                     return(data)
