@@ -27,13 +27,14 @@ class udi_messana_zone(udi_interface.Node):
             'GV1' = Thermal Operation (0-3)
             'GV2' = Schedule State
             'GV3' = Setpoint
-            'GV4' = air_temp
-            'GV5' = humidity
+            'CLITEMP' = air_temp
+            'CLIHUM' = humidity
+            'DEWPT' = dewpoint
             'GV6' = AirQuality
-            'GV7' = CO2
+            'CO2LVL' = CO2
             'GV8' = energy_saving
             'GV9' = AlarmOn
-            'GV10' = system_temperature
+            'CLITEMP' = system_temperature
             'ST' = System Status
             ]
     '''
@@ -42,10 +43,11 @@ class udi_messana_zone(udi_interface.Node):
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'GV4', 'value': 99, 'uom': 25},
-        {'driver': 'GV5', 'value': 99, 'uom': 25},
+        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
+        {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
+        {'driver': 'DEWPT', 'value': 99, 'uom': 25},
         {'driver': 'GV6', 'value': 99, 'uom': 25},
-        {'driver': 'GV7', 'value': 99, 'uom': 25},
+        {'driver': 'CO2LVL', 'value': 99, 'uom': 25},
         {'driver': 'GV8', 'value': 99, 'uom': 25},
         {'driver': 'GV9', 'value': 99, 'uom': 25},
         {'driver': 'GV10', 'value': 99, 'uom': 25},

@@ -3,7 +3,7 @@
 import time
 import re
 #from MessanaInfo import messana_info
-from MessanaZone import messana_zone
+from MessanaZone import messana_macrozone
 
 try:
     import udi_interface
@@ -16,39 +16,32 @@ except ImportError:
 
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
-class udi_messana_zone(udi_interface.Node):
+class udi_messana_macrozone(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value
 
-    id = 'zone'
+    id = 'macrozone'
 
     '''
        drivers = [
-            'GV0' = Zone status
-            'GV1' = Thermal Operation (0-3)
+            'GV0' = Macrozone status
+            'GV1' = AntiFreeze
             'GV2' = Schedule State
             'GV3' = Setpoint
-            'GV4' = air_temp
-            'GV5' = humidity
-            'GV6' = AirQuality
-            'GV7' = CO2
-            'GV8' = energy_saving
-            'GV9' = AlarmOn
-            'GV10' = system_temperature
+            'CLITEMP' = air_temp
+            'CLIHUM' = humidity
+            'DEWPT' = Dewpoint
             'ST' = System Status
             ]
     '''
+    
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'GV4', 'value': 99, 'uom': 25},
-        {'driver': 'GV5', 'value': 99, 'uom': 25},
-        {'driver': 'GV6', 'value': 99, 'uom': 25},
-        {'driver': 'GV7', 'value': 99, 'uom': 25},
-        {'driver': 'GV8', 'value': 99, 'uom': 25},
-        {'driver': 'GV9', 'value': 99, 'uom': 25},
-        {'driver': 'GV10', 'value': 99, 'uom': 25},
+        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
+        {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
+        {'driver': 'DEWPT', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
 
@@ -60,7 +53,7 @@ class udi_messana_zone(udi_interface.Node):
         self.primary = primary
         #self.id = 'zone'
         self.zone_nbr = zone_nbr
-        self.zone = messana_zone(self.zone_nbr, messana_info)
+        self.zone = messana_macrozone(self.zone_nbr, messana_info)
 
         self.address = address
         tmp_name = self.zone.name

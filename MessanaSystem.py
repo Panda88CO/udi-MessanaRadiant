@@ -40,8 +40,8 @@ class messana_system(messana_control):
         logging.debug('Getting nbr fancoil Units: {}'.format(self.nbr_fancoil  ))
         self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
         logging.debug('Getting nbr hot cold Units: {}'.format( self.nbr_HCgroup ))
-        self.nbr_macrozone = self.GET_system_data('macroZoneCount')
-        logging.debug('Getting nbr macon zones: {}'.format( self.nbr_macrozone  ))
+        self.nbr_macrozones = self.GET_system_data('macroZoneCount')
+        logging.debug('Getting nbr macon zones: {}'.format( self.nbr_macrozones  ))
         self.nbr_dhwater = self.GET_system_data('dhwCount')
         logging.debug('Getting nbr domestic hot water: {}'.format( self.nbr_dhwater  ))
 

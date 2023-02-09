@@ -3,10 +3,10 @@
 
 import sys
 from MessanaSystem import messana_system
-from MessanaInfo import messana_control
-from MessanaZone import messana_zone
+#from MessanaInfo import messana_control
+#from MessanaZone import messana_zone
 from udiMessanaZone import udi_messana_zone
-#from MessanaMacrozoneV2 import messanaMacrozone
+from udiMessanaMacrozone import udi_messana_macrozone
 #from MessanaATUV2 import messanaAtu
 #from MessanaBufTankV2 import messanaBufTank
 #from MessanaEnergySourceV2 import messanaEnergySource
@@ -150,16 +150,17 @@ class MessanaController(udi_interface.Node):
             
             self.updateISY_longpoll()
 
-
-
-        
         for zone_nbr in range(0, self.messana.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone_nbr))
             address = 'zone'+str(zone_nbr)
             name = 'dummy_name'
             self.zones[zone_nbr] = udi_messana_zone(self.poly, self.primary, address, name, zone_nbr, self.messana_info)
         
-
+        for macrozone_nbr in range(0, self.messana.nbr_macrozones ):
+            logging.debug('Creating macrozone {}'.format(macrozone_nbr))
+            address = 'macrozone'+str(zone_nbr)
+            name = 'dummy_name'
+            self.zones[zone_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, zone_nbr, self.messana_info)
 
         #self.updateISY_longpoll()
         #self.updateISYdrivers('all')
@@ -307,26 +308,6 @@ class MessanaController(udi_interface.Node):
 
     '''
     def discover(self, command=None):
-
-        logging.info('discover zones')
-        nbrZones =  self.messana.getZoneCount()
-        for zoneNbr in range(0,nbrZones):
-            #logging.debug('Adding zone ' + str(zoneNbr))
-            zonename = self.messana.getZoneName(zoneNbr)
-            zoneaddress = self.messana.getZoneAddress(zoneNbr)
-            #logging.debug('zone ' + str(zoneNbr) + ' : name, Address: ' + zonename +' ' + zoneaddress) 
-            if not zoneaddress in self.nodes:
-                self.addNode(messanaZone(self, self.address, zoneaddress, zonename, zoneNbr))
-        
-        logging.info('discover macrozones')
-        nbrMacrozones =  self.messana.getMacrozoneCount()
-        for macrozoneNbr in range(0,nbrMacrozones):
-            #logging.debug('Adding macrozone ' + str(macrozoneNbr))
-            macrozonename = self.messana.getMacrozoneName(macrozoneNbr)
-            macrozoneaddress = self.messana.getMacrozoneAddress(macrozoneNbr)
-            #logging.debug('macrozone ' + str(macrozoneNbr) + ' : name, Address: ' + macrozonename +' ' + macrozoneaddress) 
-            if not macrozoneaddress in self.nodes:
-                self.addNode(messanaMacrozone(self, self.address, macrozoneaddress, macrozonename, macrozoneNbr))
         
         logging.info('discover atus')
         nbrAtus =  self.messana.getAtuCount()
