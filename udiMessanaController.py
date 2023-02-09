@@ -187,26 +187,6 @@ class MessanaController(udi_interface.Node):
         self.Parameters.load(userParam)
         self.poly.Notices.clear()
 
-    '''
-    def send_temp_to_isy(self, temperature, stateVar):
-        logging.debug('convert_temp_to_isy - {}'.format(temperature))
-        if self.ISY_temp_unit == 0: # Celsius in ISY
-            if self.messana_temp_unit == 'Celsius':
-                self.node.setDriver(stateVar, round(temperature,1), True, True, 4)
-            else:
-                self.node.setDriver(stateVar, round(temperature*9/5+32,1), True, True, 17)
-        elif  self.ISY_temp_unit == 1: # Farenheit in ISY
-            if self.messana_temp_unit == 'Celsius':
-                self.node.setDriver(stateVar, round((temperature*5/9-32),1), True, True, 4)
-            else:
-                self.node.setDriver(stateVar, round(temperature,1), True, True, 17)
-        else: # kelvin
-            if self.messana_temp_unit == 'Celsius':
-                self.node.setDriver(stateVar, round((temperature+273.15,1), True, True, 4))
-            else:
-                self.node.setDriver(stateVar, round((temperature+273.15)*9/5+32,1), True, True, 17)
-    '''
-
     def systemPoll (self, polltype):
         if self.poll_start:
             logging.debug('System Poll executing: {}'.format(polltype))
@@ -445,7 +425,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.64')
+        polyglot.start('0.0.65')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
