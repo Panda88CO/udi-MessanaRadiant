@@ -146,6 +146,8 @@ class MessanaController(udi_interface.Node):
                 self.stop()
             self.messana_temp_unit = self.convert_temp_unit(self.messana.temp_unit)
             logging.debug('Messana Temp unit; {}, ISY temp unit: {}'.format(self.messana_temp_unit, self.ISY_temp_unit ))
+            
+            
             self.updateISY_longpoll()
 
 
@@ -245,49 +247,49 @@ class MessanaController(udi_interface.Node):
     def updateISY_longpoll(self):
         logging.debug('updateISY_longpoll')
 
-        tmp = self.messana_system.get_status()
+        tmp = self.messana.get_status()
         logging.debug('System State {}'.format(tmp))
         self.node.setDriver('GV0', tmp, True, True)
 
-        tmp = self.messana_system.get_setback_diff()
+        tmp = self.messana.get_setback_diff()
         logging.debug('Setback Offset {}'.format(tmp))
         self.send_temp_to_isy(tmp, 'GV1')
         #self.node.setDriver('GV1', tmp, True, True)
 
-        tmp = self.messana_system.get_setback()
+        tmp = self.messana.get_setback()
         logging.debug('Setback Enabled {}'.format(tmp))
         self.node.setDriver('GV2', tmp, True, True)
 
-        tmp = self.messana_system.get_energy_saving()
+        tmp = self.messana.get_energy_saving()
         logging.debug('Setback Enabled {}'.format(tmp))
         self.node.setDriver('GV12', tmp, True, True)
 
-        logging.debug('Nbr Zones{}'.format(self.messana_system.nbr_zones))
-        self.node.setDriver('GV3', self.messana_system.nbr_zones)
+        logging.debug('Nbr Zones{}'.format(self.messana.nbr_zones))
+        self.node.setDriver('GV3', self.messana.nbr_zones)
 
-        logging.debug('Nbr macrozones{}'.format(self.messana_system.nbr_macrozone))
-        self.node.setDriver('GV4', self.messana_system.nbr_macrozone)
+        logging.debug('Nbr macrozones{}'.format(self.messana.nbr_macrozone))
+        self.node.setDriver('GV4', self.messana.nbr_macrozone)
 
-        logging.debug('Nbr atu{}'.format(self.messana_system.nbr_atus))
-        self.node.setDriver('GV5', self.messana_system.nbr_atus)
+        logging.debug('Nbr atu{}'.format(self.messana.nbr_atus))
+        self.node.setDriver('GV5', self.messana.nbr_atus)
 
-        logging.debug('Nbr Hot Cold{}'.format(self.messana_system.nbr_HCgroup))
-        self.node.setDriver('GV6', self.messana_system.nbr_HCgroup)
+        logging.debug('Nbr Hot Cold{}'.format(self.messana.nbr_HCgroup))
+        self.node.setDriver('GV6', self.messana.nbr_HCgroup)
 
-        logging.debug('Nbr fan coil{}'.format(self.messana_system.nbr_fancoil))
-        self.node.setDriver('GV7', self.messana_system.nbr_fancoil)
+        logging.debug('Nbr fan coil{}'.format(self.messana.nbr_fancoil))
+        self.node.setDriver('GV7', self.messana.nbr_fancoil)
 
-        logging.debug('Nbr domestic Hot Water{}'.format(self.messana_system.nbr_dhwater))
-        self.node.setDriver('GV8', self.messana_system.nbr_dhwater)
+        logging.debug('Nbr domestic Hot Water{}'.format(self.messana.nbr_dhwater))
+        self.node.setDriver('GV8', self.messana.nbr_dhwater)
 
 
-        logging.debug('Nbr buffer Tank {}'.format(self.messana_system.nbr_buffer_tank))
-        self.node.setDriver('GV9', self.messana_system.nbr_buffer_tank)
+        logging.debug('Nbr buffer Tank {}'.format(self.messana.nbr_buffer_tank))
+        self.node.setDriver('GV9', self.messana.nbr_buffer_tank)
 
-        logging.debug('Nbr energy source{}'.format(self.messana_system.nbr_energy_source))
-        self.node.setDriver('GV10', self.messana_system.nbr_energy_source)
+        logging.debug('Nbr energy source{}'.format(self.messana.nbr_energy_source))
+        self.node.setDriver('GV10', self.messana.nbr_energy_source)
 
-        tmp = self.messana_system.get_external_alarm()
+        tmp = self.messana.get_external_alarm()
         logging.debug('Alarm Status{}'.format(tmp))
         self.node.setDriver('GV11', tmp, True, True)                
 
@@ -295,11 +297,11 @@ class MessanaController(udi_interface.Node):
         logging.debug('updateISY_shortpoll')
         self.heartbeat()
 
-        tmp = self.messana_system.get_status()
+        tmp = self.messana.get_status()
         logging.debug('System State {}'.format(tmp))
         self.node.setDriver('GV0', tmp)
 
-        tmp = self.messana_system.get_external_alarm()
+        tmp = self.messana.get_external_alarm()
         logging.debug('Alarm Status{}'.format(tmp))
         self.node.setDriver('GV11', tmp)
 
@@ -393,7 +395,7 @@ class MessanaController(udi_interface.Node):
     def setStatus(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called: {}'.format(status))
-        if self.messana_system.set_status(status):
+        if self.messana.set_status(status):
             self.node.setDriver('GV0', status)
         else:
             logging.error('Error calling setStatus')
@@ -402,7 +404,7 @@ class MessanaController(udi_interface.Node):
     def setEnergySave(self, command): 
         energy_save = int(command.get('value'))
         logging.debug('setEnergySave Called: {}'.format(energy_save))
-        if  self.messana_system.set_energy_sSaving(energy_save):
+        if  self.messana.set_energy_sSaving(energy_save):
             self.node.setDriver('GV12', energy_save)
         else:
             logging.error('Error calling setEnergySave')
@@ -411,7 +413,7 @@ class MessanaController(udi_interface.Node):
     def setSetback(self, command):
         setback = int(command.get('value'))
         logging.debug('setSetback Called: {}'.format(setback))
-        if  self.messana_system.set_energy_saving(setback):
+        if  self.messana.set_energy_saving(setback):
             self.node.setDriver('GV2', setback)
         else:
             logging.error('Error calling setSetback')
@@ -419,7 +421,7 @@ class MessanaController(udi_interface.Node):
     def setSetbackOffset(self, command):
         setback_diff = int(command.get('value'))
         logging.debug('setSetbackOffset Called: {}'.format(setback_diff))
-        if  self.messana_system.set_setback_diff(setback_diff):
+        if  self.messana.set_setback_diff(setback_diff):
             self.node.setDriver('GV1', setback_diff)
         else:
             logging.error('Error calling setSetbackOffset')
@@ -461,7 +463,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.62')
+        polyglot.start('0.0.63')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

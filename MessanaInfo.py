@@ -67,6 +67,7 @@ class messana_control(object):
             if str(systemTemp) == self.RESPONSE_OK:
                 systemTemp = systemTemp.json()
                 data = systemTemp[str(list(systemTemp.keys())[0])]
+                logging.debug('GET_system_data - data: {}'.format(data))
             else:
                 logging.error('GET_system_data error {} {}'.format(mKey, str(systemTemp)))
             if data in self.NaNlist:
@@ -104,6 +105,7 @@ class messana_control(object):
             if str(nTemp) == self.RESPONSE_OK:
                 nData = nTemp.json()
                 data   = nData[str(list(nData.keys())[0])]
+                logging.debug('GET_node_data node{} - data: {}'.format(node_type, data))
                 if data in self.NaNlist:
                     return(None)
                 else:
