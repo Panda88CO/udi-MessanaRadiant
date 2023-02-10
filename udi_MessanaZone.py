@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_zone(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
     id = 'zone'
 
@@ -84,7 +84,7 @@ class udi_messana_zone(udi_interface.Node):
         logging.debug('address: {}'.format(self.address))
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
-        self.ISY_temp_unit = 1  #NEEDS TO BE FIXED 
+        self.ISY_temp_unit = messana_info['isy_temp_unit']
         self.messana_temp_unit = self.zone.messana_temp_unit
 
     def start(self):
