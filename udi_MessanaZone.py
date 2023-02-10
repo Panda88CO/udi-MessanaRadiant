@@ -120,7 +120,7 @@ class udi_messana_zone(udi_interface.Node):
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        if Val == -1:
+        if Val == None:
              self.node.setDriver('GV6', 98, True, True, 25)
         else:
             self.node.setDriver('GV6', self.isy_value(Val))

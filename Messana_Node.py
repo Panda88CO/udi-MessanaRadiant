@@ -108,7 +108,7 @@ class messana_node(messana_control):
         val = self.__get_node_data('airQuality')
         logging.debug('Air quality;{}'.format(val))
         if val == self.RESPONSE_NO_SUPPORT or val == None:
-            return(-1)
+            return(None)
         else:
             return(val)
         #if val not in self.messana.NaNlist:
