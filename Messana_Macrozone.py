@@ -5,7 +5,7 @@ import os
 try:
     import udi_interface
     logging = udi_interface.LOGGER
-    Custom = udi_interface.Customde_data
+    Custom = udi_interface.Custom
 except ImportError:
     if (os.path.exists('./debug1.log')):
         os.remove('./debug1.log')
