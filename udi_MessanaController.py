@@ -140,8 +140,7 @@ class MessanaController(udi_interface.Node):
             
             
             self.updateISY_longpoll()
-            time.sleep(10)
-            self.stop()
+            time.sleep(1)
 
         for zone_nbr in range(0, self.messana.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone_nbr))
