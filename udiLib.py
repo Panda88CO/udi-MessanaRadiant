@@ -20,8 +20,6 @@ def wait_for_node_done(self):
         time.sleep(0.1)
     self.n_queue.pop()
 
-
-
 def getValidName(self, name):
     name = bytes(name, 'utf-8').decode('utf-8','ignore')
     return re.sub(r"[^A-Za-z0-9_ ]", "", name)
@@ -41,8 +39,6 @@ def handleLevelChange(self, level):
     logging.info('New log level: {}'.format(level))
     logging.setLevel(level['level'])
 
-
-
 def handleParams (self, userParam ):
     logging.debug('handleParams')
     self.Parameters.load(userParam)
@@ -50,13 +46,14 @@ def handleParams (self, userParam ):
 
 def send_temp_to_isy(self, temperature, stateVar):
     logging.debug('convert_temp_to_isy - {}'.format(temperature))
+    logging.debug('ISYunit={}, Mess_unit={}'.format(self.ISY_temp_unit , self.messana_temp_unit ))
     if self.ISY_temp_unit == 0: # Celsius in ISY
         if self.messana_temp_unit == 'Celsius':
             self.node.setDriver(stateVar, round(temperature,1), True, True, 4)
-        else:
-            self.node.setDriver(stateVar, round(temperature*9/5+32,1), True, True, 17)
+        else: # messana = Farenheit
+            self.node.setDriver(stateVar, round(temperature*5/9-32,1), True, True, 17)
     elif  self.ISY_temp_unit == 1: # Farenheit in ISY
-        if self.messana_temp_unit == 'Celsius':
+        if self.messana_temp_unit == 'Celcius':
             self.node.setDriver(stateVar, round((temperature*5/9-32),1), True, True, 4)
         else:
             self.node.setDriver(stateVar, round(temperature,1), True, True, 17)
