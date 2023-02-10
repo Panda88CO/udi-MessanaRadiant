@@ -141,6 +141,8 @@ class MessanaController(udi_interface.Node):
             
             
             self.updateISY_longpoll()
+            time.sleep(10)
+            self.stop()
 
         for zone_nbr in range(0, self.messana.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone_nbr))
@@ -417,7 +419,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.70')
+        polyglot.start('0.0.71')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
