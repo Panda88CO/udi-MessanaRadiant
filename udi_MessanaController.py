@@ -27,7 +27,7 @@ except ImportError:
 
 
 class MessanaController(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, convert_temp_unit
 
     def __init__(self, polyglot, primary, address, name):
         super().__init__(polyglot, primary, address, name)
@@ -81,13 +81,6 @@ class MessanaController(udi_interface.Node):
         logging.debug('config done')
         self.nodeConfigDone = True
 
-    def convert_temp_unit(self, tempStr):
-        if tempStr.capitalize()[:1] == 'F':
-            return(1)
-        elif tempStr.capitalize()[:1] == 'K':
-            return(2)
-        else:
-            return(0)
 
 
 
@@ -233,7 +226,7 @@ class MessanaController(udi_interface.Node):
 
         tmp = self.messana.get_setback_diff()
         logging.debug('Setback Offset {}'.format(tmp))
-        self.send_temp_to_isy(tmp, 'GV1')
+        self.send_rel_temp_to_isy(tmp, 'GV1')
         #self.node.setDriver('GV1', tmp, True, True)
 
         tmp = self.messana.get_setback()
@@ -382,7 +375,8 @@ class MessanaController(udi_interface.Node):
         setback_diff = int(command.get('value'))
         logging.debug('setSetbackOffset Called: {}'.format(setback_diff))
         if  self.messana.set_setback_diff(setback_diff):
-            self.node.setDriver('GV1', setback_diff)
+            self.send_rel_temp_to_isy(setback_diff, 'GV1')
+            #self.node.setDriver('GV1', setback_diff)
         else:
             logging.error('Error calling setSetbackOffset')
 
