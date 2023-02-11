@@ -54,7 +54,7 @@ def send_rel_temp_to_isy(self, temperature, stateVar):
             self.node.setDriver(stateVar, round(temperature*5/9,1), True, True, 17)
     elif  self.ISY_temp_unit == 1: # Farenheit in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
-            self.node.setDriver(stateVar, round((temperature*5/9),1), True, True, 4)
+            self.node.setDriver(stateVar, round((temperature*9/5),1), True, True, 4)
         else:
             self.node.setDriver(stateVar, round(temperature,1), True, True, 17)
     else: # kelvin
@@ -71,17 +71,17 @@ def send_temp_to_isy(self, temperature, stateVar):
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
             self.node.setDriver(stateVar, round(temperature,1), True, True, 4)
         else: # messana = Farenheit
-            self.node.setDriver(stateVar, round(temperature*5/9-32,1), True, True, 17)
+            self.node.setDriver(stateVar, round((temperature-32)*5/9,1), True, True, 17)
     elif  self.ISY_temp_unit == 1: # Farenheit in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
-            self.node.setDriver(stateVar, round((temperature*5/9-32),1), True, True, 4)
+            self.node.setDriver(stateVar, round((temperature*9/5+32),1), True, True, 4)
         else:
             self.node.setDriver(stateVar, round(temperature,1), True, True, 17)
     else: # kelvin
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
             self.node.setDriver(stateVar, round((temperature+273.15,1), True, True, 4))
         else:
-            self.node.setDriver(stateVar, round((temperature+273.15)*9/5+32,1), True, True, 17)
+            self.node.setDriver(stateVar, round((temperature+273.15-32)*9/5,1), True, True, 17)
 
 def convert_temp_unit(self, tempStr):
     if tempStr.capitalize()[:1] == 'F':
