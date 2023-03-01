@@ -93,11 +93,11 @@ class udi_messana_macrozone(udi_interface.Node):
 
     def updateISY_shortpoll(self):
         Val = self.macrozone.get_status()
-        logging.debug('Zone Status (GV0): {}'.format(Val))
+        logging.debug('Macrozone Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.macrozone.get_air_temp()
-        logging.debug('get_air_temp(CLITEMP)): {}'.format(Val))
+        Val = self.macrozone.get_temp()
+        logging.debug('Macrozone get_temp(CLITEMP)): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 
@@ -119,7 +119,7 @@ class udi_messana_macrozone(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.macrozone.get_temp()
-        logging.debug('Anti Freeze temp(GV1): {}'.format(Val))
+        logging.debug('Macrozone temp(GV1): {}'.format(Val))
         self.node.setDriver('GV1', self.isy_value(Val))
 
         Val = self.macrozone.get_scheduleOn()
