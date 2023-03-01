@@ -47,6 +47,13 @@ class MessanaController(udi_interface.Node):
         self.nodeDefineDone = False
         self.nodeConfigDone = False
         self.zones = {}
+        self.macrozones = {}
+        self.atus = {}
+        self.buffertanks = {}
+        self.fan_coils = {}
+        self.hot_cold_change_overs = {}
+        self.energy_sources = {}
+        self.hotwaters = {}
         self.poll_start = False
 
         self.Parameters = Custom(self.poly, 'customparams')
@@ -153,7 +160,9 @@ class MessanaController(udi_interface.Node):
             logging.debug('Creating macrozone {}'.format(macrozone_nbr))
             address = 'macrozone'+str(zone_nbr)
             name = 'dummy_name'
-            self.zones[zone_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, zone_nbr, self.messana_info)
+            self.macrozones[macrozone_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, macrozone_nbr, self.messana_info)
+
+
 
         #self.updateISY_longpoll()
         #self.updateISYdrivers('all')
@@ -255,7 +264,6 @@ class MessanaController(udi_interface.Node):
 
         logging.debug('Nbr domestic Hot Water{}'.format(self.messana.nbr_dhwater))
         self.node.setDriver('GV8', self.messana.nbr_dhwater)
-
 
         logging.debug('Nbr buffer Tank {}'.format(self.messana.nbr_buffer_tank))
         self.node.setDriver('GV9', self.messana.nbr_buffer_tank)
@@ -418,7 +426,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.78')
+        polyglot.start('0.0.79')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

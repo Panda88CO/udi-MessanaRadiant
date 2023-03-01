@@ -115,10 +115,10 @@ class udi_messana_macrozone(udi_interface.Node):
         logging.debug('update_system - zone {} Status:'.format(self.macrozone_nbr))
 
         Val = self.macrozone.get_status()
-        logging.debug('Zone Status (GV0): {}'.format(Val))
+        logging.debug('Macrozone Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.macrozone.get_thermal_status()
+        Val = self.macrozone.get_temp()
         logging.debug('Anti Freeze temp(GV1): {}'.format(Val))
         self.node.setDriver('GV1', self.isy_value(Val))
 
