@@ -46,21 +46,21 @@ class udi_messana_macrozone(udi_interface.Node):
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
 
-    def __init__(self, polyglot, primary, address, name, zone_nbr, messana_info):
+    def __init__(self, polyglot, primary, address, name, macrozone_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
-        logging.info('init Messana MacroZone {}:'.format(zone_nbr) )
+        logging.info('init Messana MacroZone {}:'.format(macrozone_nbr) )
         #self.node_type = 'zone'
         #self.parent = primary
         self.primary = primary
         #self.id = 'zone'
-        self.macrozone_nbr = zone_nbr
+        self.macrozone_nbr = macrozone_nbr
         self.macrozone = messana_macrozone(self.macrozone_nbr, messana_info)
 
         self.address = address
         tmp_name = self.macrozone.name
         self.name = self.getValidName(tmp_name)
         self.poly = polyglot
-        self.Parameters = Custom(self.poly, 'customparams')
+        #self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
         self.poly.subscribe(polyglot.START, self.start, self.address)
         self.poly.subscribe(polyglot.STOP, self.stop)
@@ -82,11 +82,11 @@ class udi_messana_macrozone(udi_interface.Node):
     def start(self):
         logging.info('udiMessanaZone Start ')
         self.updateISY_longpoll()
-        
+    ''' 
     def handleParams (self, userParam ):
         logging.debug('handleParams')
         self.Parameters.load(userParam)
-
+    '''
 
     def stop(self):
         logging.info('udiMessanaZone Stop ')

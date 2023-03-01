@@ -68,7 +68,7 @@ class udi_messana_zone(udi_interface.Node):
         tmp_name = self.zone.name
         self.name = self.getValidName(tmp_name)
         self.poly = polyglot
-        self.Parameters = Custom(self.poly, 'customparams')
+        #self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
         self.poly.subscribe(polyglot.START, self.start, self.address)
         self.poly.subscribe(polyglot.STOP, self.stop)
@@ -90,11 +90,11 @@ class udi_messana_zone(udi_interface.Node):
     def start(self):
         logging.info('udiMessanaZone Start ')
         self.updateISY_longpoll()
-        
+    '''
     def handleParams (self, userParam ):
         logging.debug('handleParams')
         self.Parameters.load(userParam)
-
+    '''
 
     def stop(self):
         logging.info('udiMessanaZone Stop ')
