@@ -64,7 +64,7 @@ thermalmode-3 = Heat&Cool Request
 thermalmode-99  = Unknown
 
 ND-macrozone-NAME = Messana Macrozone
-ND-ND-macrozone-ICON = TempSensor
+ND-macrozone-ICON = TempSensor
 
 CMD-nlsmacrozone-UPDATE-NAME = Update System Data
 CMD-nlsmacrozone-SET_SETPOINT-NAME = Set Temperature
