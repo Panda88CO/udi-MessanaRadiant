@@ -73,7 +73,7 @@ class udi_messana_zone(udi_interface.Node):
         self.poly.subscribe(polyglot.START, self.start, self.address)
         self.poly.subscribe(polyglot.STOP, self.stop)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
-        self.poly.subscribe(self.poly.CUSTOMPARAMS, self.handleParams)
+        #self.poly.subscribe(self.poly.CUSTOMPARAMS, self.handleParams)
         
         logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
         self.poly.ready()
