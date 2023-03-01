@@ -65,7 +65,6 @@ thermalmode-99  = Unknown
 
 ND-macrozone-NAME = Messana Macrozone
 ND-macrozone-ICON = TempSensor
-
 CMD-nlsmacrozone-UPDATE-NAME = Update System Data
 CMD-nlsmacrozone-SET_SETPOINT-NAME = Set Temperature
 CMD-nlsmacrozone-SET_STATUS-NAME = Macrozone State
