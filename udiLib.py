@@ -20,22 +20,22 @@ def wait_for_node_done(self):
         time.sleep(0.1)
     self.n_queue.pop()
 
-def getValidName(name):
+def getValidName(self, name):
     name = bytes(name, 'utf-8').decode('utf-8','ignore')
     return re.sub(r"[^A-Za-z0-9_ ]", "", name)
 
 # remove all illegal characters from node address
-def getValidAddress(name):
+def getValidAddress(self, name):
     name = bytes(name, 'utf-8').decode('utf-8','ignore')
     return re.sub(r"[^A-Za-z0-9_]", "", name.lower()[:14])
 
-def isy_value(value):
+def isy_value(self, value):
     if value == None:
         return (99)
     else:
         return(value)
 
-def handleLevelChange(level):
+def handleLevelChange(self, level):
     logging.info('New log level: {}'.format(level))
     logging.setLevel(level['level'])
 
