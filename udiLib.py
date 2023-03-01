@@ -96,7 +96,7 @@ def send_temp_to_isy(self, temperature, stateVar):
         self.node.setDriver(stateVar, temp, True, True, 26)
 
 
-def convert_temp_unit(tempStr):
+def convert_temp_unit(self, tempStr):
     if tempStr.capitalize()[:1] == 'F':
         return(1)
     elif tempStr.capitalize()[:1] == 'K':

@@ -114,6 +114,7 @@ class MessanaController(udi_interface.Node):
             logging.error('MESSANA_KEY must be provided in configuration:' )
 
         if 'TEMP_UNIT' in self.Parameters:
+            logging.debug( 'Temp Unit {} '.format(self.Parameters['TEMP_UNIT']) )
             self.ISY_temp_unit = self.convert_temp_unit(self.Parameters['TEMP_UNIT'])
         else:
             self.ISY_temp_unit = 0
@@ -417,7 +418,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.74')
+        polyglot.start('0.0.76')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
