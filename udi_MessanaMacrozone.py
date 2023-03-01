@@ -103,7 +103,7 @@ class udi_messana_macrozone(udi_interface.Node):
 
         Val = self.macrozone.get_humidity()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        self.node.setDriver('GV5', self.isy_value(Val))
+        self.node.setDriver('CLIHUM', self.isy_value(Val))
 
         Val = self.macrozone.get_dewpoint()
         logging.debug('get_dewpoint (DEWPT): {}'.format(Val))

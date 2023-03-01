@@ -158,7 +158,7 @@ class MessanaController(udi_interface.Node):
         
         for macrozone_nbr in range(0, self.messana.nbr_macrozones ):
             logging.debug('Creating macrozone {}'.format(macrozone_nbr))
-            address = 'macrozone'+str(zone_nbr)
+            address = 'macrozone'+str(macrozone_nbr)
             name = 'dummy_name'
             self.macrozones[macrozone_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, macrozone_nbr, self.messana_info)
 
@@ -408,7 +408,7 @@ class MessanaController(udi_interface.Node):
             {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
             {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
             {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
-            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count      
+            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count
             {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
             {'driver': 'ST', 'value':0, 'uom':25 }, #state
             ]
@@ -426,7 +426,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.82')
+        polyglot.start('0.0.83')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
