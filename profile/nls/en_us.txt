@@ -33,7 +33,8 @@ count-99 = Unknown
 running-0 = Down
 running-1 = Up
 running-99 = Unknown
-
+setenable-0 = Disable
+setenable-1 = Enable
 UNKNOWN-98 = No Support
 UNKNOWN-99 = Unknown
 

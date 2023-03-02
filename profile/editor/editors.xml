@@ -56,7 +56,7 @@
       <range  uom="25" subset="98,99" nls="count"/>
   </editor>
   <editor id = "set_enable" > 
-      <range  uom="25" subset="0-1" nls="count"/>
+      <range  uom="25" subset="0-1" nls="setenable"/>
   </editor>
 
 </editors> 

@@ -162,8 +162,42 @@ class MessanaController(udi_interface.Node):
             name = 'dummy_name'
             self.macrozones[macrozone_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, macrozone_nbr, self.messana_info)
 
+        for atu_nbr in range(0, self.messana.nbr_atus ):
+            logging.debug('Creating atus {}'.format(atu_nbr))
+            address = 'atu'+str(atu_nbr)
+            name = 'dummy_name'
+            self.macrozones[atu_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, atu_nbr, self.messana_info)
+        '''
+        for buffertank_nbr in range(0, self.messana.nbr_buffer_tank ):
+            logging.debug('Creating buffer tanks {}'.format(buffertank_nbr))
+            address = 'buffertank'+str(buffertank_nbr)
+            name = 'dummy_name'
+            self.macrozones[buffertank_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
 
+        for energy_source_nbr in range(0, self.messana.nbr_energy_source ):
+            logging.debug('Creating energy_source {}'.format(energy_source_nbr))
+            address = 'energysource'+str(energy_source_nbr)
+            name = 'dummy_name'
+            self.macrozones[energy_source_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, energy_source_nbr, self.messana_info)
 
+        for fan_coil_nbr in range(0, self.messana.nbr_fancoil ):
+            logging.debug('Creating fan coils {}'.format(fan_coil_nbr))
+            address = 'fancoil'+str(fan_coil_nbr)
+            name = 'dummy_name'
+            self.macrozones[fan_coil_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, fan_coil_nbr, self.messana_info)
+
+        for hotcold_nbr in range(0, self.messana.nbr_HCgroup ):
+            logging.debug('Creating hot cold change overs {}'.format(hotcold_nbr))
+            address = 'hotcold'+str(hotcold_nbr)
+            name = 'dummy_name'
+            self.macrozones[hotcold_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, hotcold_nbr, self.messana_info)
+
+        for hotwater_nbr in range(0, self.messana.nbr_atus ):
+            logging.debug('Creating domestic hot water {}'.format(hotwater_nbr))
+            address = 'hotwater'+str(hotwater_nbr)
+            name = 'dummy_name'
+            self.macrozones[hotwater_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, hotwater_nbr, self.messana_info)
+        '''                                                
         #self.updateISY_longpoll()
         #self.updateISYdrivers('all')
         #self.messanaImportOK = 1
@@ -287,73 +321,7 @@ class MessanaController(udi_interface.Node):
         logging.debug('Alarm Status{}'.format(tmp))
         self.node.setDriver('GV11', tmp)
 
-    '''
-    def discover(self, command=None):
-        
-        logging.info('discover atus')
-        nbrAtus =  self.messana.getAtuCount()
-        for atuNbr in range(0,nbrAtus):
-            #logging.debug('Adding atu ' + str(atuNbr))
-            atuname = self.messana.getAtuName(atuNbr)
-            atuaddress = self.messana.getAtuAddress(atuNbr)
-            #logging.debug('ATU ' + str(atuNbr) + ' : name, Address: ' + atuname +' ' + atuaddress) 
-            if not atuaddress in self.nodes:
-                self.addNode(messanaAtu(self, self.address, atuaddress, atuname, atuNbr))
-               
-        logging.info('discover buffer tanks')
-        nbrBufferTanks =  self.messana.getBufferTankCount()
-        for bufferTankNbr in range(0,nbrBufferTanks):
-            #logging.debug('Adding buffer tank ' + str(bufferTankNbr))
-            bufferTankName = self.messana.getBufferTankName(bufferTankNbr)
-            bufferTankAddress = self.messana.getBufferTankAddress(bufferTankNbr)
-            #logging.debug('Buffer Tank' + str(bufferTankNbr) + ' : name, Address: ' + bufferTankName +' ' + bufferTankAddress) 
-            if not bufferTankAddress in self.nodes:
-                self.addNode(messanaBufTank(self, self.address, bufferTankAddress, bufferTankName, bufferTankNbr))
-               
-        logging.info('discover hot cold change overs')
-        nbrHcCos =  self.messana.getHcCoCount()
-        for HcCoNbr in range(0,nbrHcCos):
-            #logging.debug('Adding hot cold cnage over ' + str(HcCoNbr))
-            atuname = self.messana.getHcCoName(HcCoNbr)
-            atuaddress = self.messana.getHcCoAddress(HcCoNbr)
-            #logging.debug('ATU ' + str(HcCoNbr) + ' : name, Address: ' + atuname +' ' + atuaddress) 
-            if not atuaddress in self.nodes:
-                self.addNode(messanaHcCo(self, self.address, atuaddress, atuname, HcCoNbr))
 
-        logging.info('discover fan coils')
-        nbrFanCoils =  self.messana.getFanCoilCount()
-        for fanCoilNbr in range(0,nbrFanCoils):
-            #logging.debug('Adding fan coils ' + str(fanCoilNbr))
-            atuname = self.messana.getFanCoilName(fanCoilNbr)
-            atuaddress = self.messana.getFanCoilAddress(fanCoilNbr)
-            #logging.debug('ATU ' + str(fanCoilNbr) + ' : name, Address: ' + atuname +' ' + atuaddress) 
-            if not atuaddress in self.nodes:
-                self.addNode(messanaFanCoil(self, self.address, atuaddress, atuname, fanCoilNbr))
-
-        logging.info('discover energy sources' )
-        nbrEnergySources =  self.messana.getEnergySourceCount()
-        for energySourceNbr in range(0, nbrEnergySources):
-            #logging.debug('Adding energy sources ' + str(energySourceNbr))
-            atuname = self.messana.getEnergySourceName(energySourceNbr)
-            atuaddress = self.messana.getEnergySourceAddress(energySourceNbr)
-            #logging.debug('ATU ' + str(energySourceNbr) + ' : name, Address: ' + atuname +' ' + atuaddress) 
-            if not atuaddress in self.nodes:
-                self.addNode(messanaEnergySource(self, self.address, atuaddress, atuname, energySourceNbr))
-
-
-        logging.info('discover domestic hot waters' )
-        nbrDHWs =  self.messana.getDomesticHotWaterCount()
-        for DHWNbr in range(0,nbrDHWs):
-            #logging.debug('Adding domestic hot water ' + str(DHWNbr))
-            atuname = self.messana.getDomesticHotWaterName(DHWNbr)
-            atuaddress = self.messana.getDomesticHotWaterAddress(DHWNbr)
-            #logging.debug('ATU ' + str(DHWNbr) + ' : name, Address: ' + atuname +' ' + atuaddress) 
-            if not atuaddress in self.nodes:
-                self.addNode(messanaHotWater(self, self.address, atuaddress, atuname, DHWNbr))
-
-        self.nodeDefineDone = True
-  
-    '''
     def setStatus(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called: {}'.format(status))
@@ -388,7 +356,6 @@ class MessanaController(udi_interface.Node):
             #self.node.setDriver('GV1', setback_diff)
         else:
             logging.error('Error calling setSetbackOffset')
-
 
     def ISYupdate (self, command):
         #logging.info('ISY-update called')
