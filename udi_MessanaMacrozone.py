@@ -180,7 +180,7 @@ class udi_messana_macrozone(udi_interface.Node):
                 #,'ENERGYSAVE': set_energy_save
                 ,'SETPOINT' : set_setpoint
      #           ,'SETPOINTCO2' : set_setpoint_co2        
-                ,'SCHEDULEON' : set_schedule
+     #           ,'SCHEDULEON' : set_schedule
                 
                 }
         

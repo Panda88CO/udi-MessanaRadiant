@@ -71,9 +71,11 @@
             <cmd id="ENERGYSAVE" > 
                <p id="" editor="set_enable" init="GV8" /> 
             </cmd> 
+            <!--
             <cmd id="SCHEDULEON" > 
                <p id="" editor="set_enable" init="GV2" /> 
             </cmd> 
+            -->
          </accepts>
       </cmds>
    </nodeDef>
@@ -100,9 +102,11 @@
             <cmd id="STATUS" > 
                <p id="" editor="set_enable" init="GV0" /> 
             </cmd> 
+            <!--
             <cmd id="SCHEDULEON" > 
                <p id="" editor="set_enable" init="GV2" /> 
             </cmd> 
+            -->
          </accepts>
       </cmds>
    </nodeDef>
