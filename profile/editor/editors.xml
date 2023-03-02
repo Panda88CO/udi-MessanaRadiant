@@ -7,9 +7,9 @@
     <range uom="25" subset="98-99" nls="UNKNOWN" />
   </editor>
   <editor id = "set_temp" > 
-    <range uom="4" min="-50" max="75" step="0.5" prec="1" />
-    <range uom="17" min="-50" max="150" step="1" prec="1" />
-    <range uom="26" min="-223" max="348" step="0.5" prec="1" />
+    <range uom="4" min="10" max="35" step="0.5" prec="1" />
+    <range uom="17" min="50" max="100" step="1" prec="1" />
+    <range uom="26" min="283" max="373" step="0.5" prec="1" />
   </editor>
   <editor id = "tempoffset" > 
     <range uom="4" min="0" max="25" step="0.5" prec="1" />
