@@ -32,7 +32,7 @@ class udi_messana_atu(udi_interface.Node):
             'ST' = System Status
             ]
     '''
-    
+    # AirTemp, AlarmOn, dehumStatus, flowLevel,  hrvOn, hrvStateus. hmstatus. humOn, convIntStatus,  intOn, ntdOn, status
     
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
