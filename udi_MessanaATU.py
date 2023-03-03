@@ -158,31 +158,34 @@ class udi_messana_atu(udi_interface.Node):
         else:
             logging.error('Error calling setStatus')
 
-    def set_energy_save(self, command):
-        energy_save = int(command.get('value'))
-        logging.debug('setEnergySave Called {} for atu {}'.format(energy_save, self.atu_nbr))
-        if self.atu.set_energy_saving(energy_save):
-            self.node.setDriver('GV8', energy_save)
-        else:
-            logging.error('Error calling set_energy_save')
-        
-    def set_setpoint(self, command):
-        set_point = round(round(command.get('value')*2,0)/2,1)
-        logging.debug('set_setpoint {} for atu {}'.format(set_point, self.atu_nbr))   
-        if self.atu.set_setpoint(set_point):
-            self.node.setDriver('GV3', set_point)
-        else:
-            logging.error('Error calling set_setpoint')
+    def heat_recovery_en(self, command):
+        val = int(command.get('value'))
+        logging.debug('heat_recovery_en: {}'.format(val))
 
-    def set_schedule(self, command):
-        schedule = int(command.get('value'))
-        logging.debug('set_schedule: {}'.format(schedule))
+    def humidification_en(self, command):
+        val = int(command.get('value'))
+        logging.debug('humidification_en: {}'.format(val))
 
-    
+    def dehumidification_en(self, command):
+        val = int(command.get('value'))
+        logging.debug('dehumidification_en: {}'.format(val))
+
+    def convection_en(self, command):
+        val = int(command.get('value'))
+        logging.debug('convection_en: {}'.format(val))
+
+    def set_flow(self, command):
+        val = int(command.get('value'))
+        logging.debug('set_flow: {}'.format(val))
+
+
     commands = { 'UPDATE': updateISY_longpoll
                 ,'STATUS': set_status
-                #,'ENERGYSAVE': set_energy_save
-                ,'SETPOINT' : set_setpoint
+                ,'HRVEN' : heat_recovery_en
+                ,'HUMEN' : humidification_en
+                ,'DEHUMEN' : dehumidification_en
+                ,'CONVEN' : convection_en
+                ,'SET_FLOW' : set_flow,
      #           ,'SETPOINTCO2' : set_setpoint_co2        
      #           ,'SCHEDULEON' : set_schedule
                 
