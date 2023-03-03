@@ -173,3 +173,6 @@ class messana_node(messana_control):
             time.sleep(0.5)
         return(self.get_scheduleOn())
 
+    def get_flow_level(self):
+        logging.debug('{} {} - get_flow_level'.format(self.type, self.nbr))
+        return(self.__get_node_data('flowLevel'))

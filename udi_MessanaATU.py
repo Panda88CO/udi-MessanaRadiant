@@ -42,7 +42,7 @@ class udi_messana_atu(udi_interface.Node):
  
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},        
+        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},    
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
@@ -60,10 +60,10 @@ class udi_messana_atu(udi_interface.Node):
     def __init__(self, polyglot, primary, address, name, atu_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
         logging.info('init Messana ATU {}:'.format(atu_nbr) )
-        #self.node_type = 'zone'
+        #self.node_type = 'atu'
         #self.parent = primary
         self.primary = primary
-        #self.id = 'zone'
+        #self.id = 'atu'
         self.atu_nbr = atu_nbr
         self.atu = messana_atu(self.atu_nbr, messana_info)
 
@@ -91,23 +91,23 @@ class udi_messana_atu(udi_interface.Node):
         self.messana_temp_unit = self.atu.messana_temp_unit
 
     def start(self):
-        logging.info('udiMessanaZone Start ')
+        logging.info('udiMessanaATUStart ')
         self.updateISY_longpoll()
 
     def stop(self):
-        logging.info('udiMessanaZone Stop ')
+        logging.info('udiMessanaATU Stop ')
 
     def updateISY_shortpoll(self):
         Val = self.atu.get_status()
         logging.debug('atu Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.atu.get_temp()
+        Val = self.atu.get_air_temp()
         logging.debug('atu get_temp(CLITEMP)): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 
-        Val = self.atu.get_humidity()
+        Val = self.atu.get_flow_level()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
         self.node.setDriver('CLIHUM', self.isy_value(Val))
 
@@ -118,29 +118,27 @@ class udi_messana_atu(udi_interface.Node):
 
 
     def updateISY_longpoll(self):
-        logging.debug('update_system - zone {} Status:'.format(self.atu_nbr))
+        logging.debug('update_system - ATU {} Status:'.format(self.atu_nbr))
 
         Val = self.atu.get_status()
         logging.debug('atu Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.atu.get_temp()
-        logging.debug('atu temp(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
+        Val = self.atu.get_air_temp()
+        logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
+        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
+        self.send_temp_to_isy(Val, 'CLITEMP')
 
-        Val = self.atu.get_scheduleOn()
+        Val = self.atu.get_flow_level()
         logging.debug('Schedule Mode(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
+        self.node.setDriver('GV1', self.isy_value(Val))
 
         Val = self.atu.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
         self.send_temp_to_isy(Val, 'GV3')
         #self.node.setDriver('GV3', self.isy_value(Val))
 
-        Val = self.atu.get_air_temp()
-        logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+
 
         Val = self.atu.get_humidity()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
@@ -154,7 +152,7 @@ class udi_messana_atu(udi_interface.Node):
 
     def set_status(self, command):
         status = int(command.get('value'))
-        logging.debug('set Status Called {} for zone: {}'.format(status, self.atu_nbr))
+        logging.debug('set Status Called {} for atu: {}'.format(status, self.atu_nbr))
         if self.atu.set_status(status):
             self.node.setDriver('GV0', status)
         else:
@@ -162,7 +160,7 @@ class udi_messana_atu(udi_interface.Node):
 
     def set_energy_save(self, command):
         energy_save = int(command.get('value'))
-        logging.debug('setEnergySave Called {} for zone {}'.format(energy_save, self.atu_nbr))
+        logging.debug('setEnergySave Called {} for atu {}'.format(energy_save, self.atu_nbr))
         if self.atu.set_energy_saving(energy_save):
             self.node.setDriver('GV8', energy_save)
         else:
@@ -170,7 +168,7 @@ class udi_messana_atu(udi_interface.Node):
         
     def set_setpoint(self, command):
         set_point = round(round(command.get('value')*2,0)/2,1)
-        logging.debug('set_setpoint {} for zone {}'.format(set_point, self.atu_nbr))   
+        logging.debug('set_setpoint {} for atu {}'.format(set_point, self.atu_nbr))   
         if self.atu.set_setpoint(set_point):
             self.node.setDriver('GV3', set_point)
         else:
