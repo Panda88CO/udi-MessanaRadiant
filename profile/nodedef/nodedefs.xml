@@ -111,46 +111,50 @@
       </cmds>
    </nodeDef>
 
-
-   <!--
-
-  
-   <nodeDef id="atus0" nls="nlsatus0">
+   <nodeDef id="atu" nls="nlsatu">
       <editors />
       <sts>
-         <st id="GV1" editor="ATUS0_1" />
-         <st id="GV2" editor="ATUS0_2" />
-         <st id="GV3" editor="ATUS0_3" />
-         <st id="GV4" editor="ATUS0_4" />
-         <st id="GV5" editor="ATUS0_5" />
-         <st id="GV6" editor="ATUS0_6" />
-         <st id="GV7" editor="ATUS0_7" />
-         <st id="GV8" editor="ATUS0_8" />
-         <st id="GV9" editor="ATUS0_9" />
-         <st id="GV10" editor="ATUS0_10" />
+         <st id="GV0" editor="enable" />
+         <st id="CLITEMP" editor="temp" />         
+         <st id="GV1" editor="flowlvl" />
+         <st id="GV2" editor="enable" />
+         <st id="GV3" editor="onoff" />
+         <st id="GV4" editor="enable" />
+         <st id="GV5" editor="onoff" />
+         <st id="GV6" editor="enable" />
+         <st id="GV7" editor="onoff" />
+         <st id="GV8" editor="enable" />
+         <st id="GV9" editor="onoff" />
+         <st id="GV10" editor="onoff" />
+         <st id="GV11" editor="alarm" />
+         <st id="ST" editor="running" />
       </sts>
       <cmds>
          <sends>
          </sends>
          <accepts>
-            <cmd id="SET_STATUS" > 
-               <p id="" editor="ATUS0_1" init="GV1" /> 
-            </cmd> 
             <cmd id="UPDATE" /> 
-            <cmd id="SET_HRVON" > 
-               <p id="" editor="ATUS0_2" init="GV2" /> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
             </cmd> 
-            <cmd id="SET_NTDON" > 
-               <p id="" editor="ATUS0_3" init="GV3" /> 
+            <cmd id="HRVEN" > 
+               <p id="" editor="set_enable" init="GV2" /> 
             </cmd> 
-            <cmd id="SET_INTON" > 
-               <p id="" editor="ATUS0_4" init="GV4" /> 
+            <cmd id="HUMEN" > 
+               <p id="" editor="set_enable" init="GV4" /> 
             </cmd> 
-            <cmd id="SET_DEHUM_SP_RH" > 
-               <p id="" editor="ATUS0_10" init="GV10" /> 
+            <cmd id="DEHUMEN" > 
+               <p id="" editor="set_enable" init="GV6" /> 
+            </cmd> 
+            <cmd id="CONVEN" > 
+               <p id="" editor="set_enable" init="GV8" /> 
+            </cmd> 
+            <cmd id="SET_FLOW" > 
+               <p id="" editor="flowlvl" init="GV1" /> 
             </cmd> 
          </accepts>
       </cmds>
+   <!--
    </nodeDef> 
    <nodeDef id="EnergyS0" nls="nlsEnergyS0">
       <editors />

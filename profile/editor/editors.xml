@@ -58,5 +58,11 @@
   <editor id = "set_enable" > 
       <range  uom="25" subset="0-1" nls="setenable"/>
   </editor>
-
+  <editor id = "onoff" > 
+      <range  uom="25" subset="0-1,98,99" nls="onoff"/>
+  </editor>
+  <editor id = "flowlvl" > 
+      <range  uom="7"  min="0" max="1000" step="10" prec="0" />
+      <range  uom="25" subset="98,99" nls="UNKNOWN"/>
+  </editor>  
 </editors> 

@@ -22,26 +22,38 @@ class udi_messana_atu(udi_interface.Node):
 
     '''
        drivers = [
-            'GV0' = atu status
-            'GV1' = AntiFreeze
-            'GV2' = Schedule State
-            'GV3' = Setpoint
-            'CLITEMP' = air_temp
-            'CLIHUM' = humidity
-            'DEWPT' = Dewpoint
+            'GV0' = atu status #
+            'CLITEMP' = air_temp #
+            'GV1' = flowLevel #
+            'GV2' = hrvStatus #
+            'GV3' = hrvOn #
+            'GV4' = HumStatus
+            'GV5' = HumOn
+            'GV6' = DehumStatus
+            'GV7' = DehumOn
+            'GV8' = ConvStatus
+            'GV9' = ConvOn
+            'GV10' = ntdOn
+            'GV11' = AlarmOn
+
             'ST' = System Status
             ]
     '''
-    # AirTemp, AlarmOn, dehumStatus, flowLevel,  hrvOn, hrvStateus. hmstatus. humOn, convIntStatus,  intOn, ntdOn, status
-    
+ 
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
+        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},        
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
-        {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
-        {'driver': 'DEWPT', 'value': 99, 'uom': 25},
+        {'driver': 'GV4', 'value': 99, 'uom': 25},
+        {'driver': 'GV5', 'value': 99, 'uom': 25},
+        {'driver': 'GV6', 'value': 99, 'uom': 25},
+        {'driver': 'GV7', 'value': 99, 'uom': 25},
+        {'driver': 'GV8', 'value': 99, 'uom': 25},
+        {'driver': 'GV9', 'value': 99, 'uom': 25},
+        {'driver': 'GV10', 'value': 99, 'uom': 25},
+        {'driver': 'GV11', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
 

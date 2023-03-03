@@ -78,7 +78,33 @@ ST-nlsmacrozone-GV3-NAME = Setpoint
 ST-nlsmacrozone-CLITEMP-NAME = Room Temperature
 ST-nlsmacrozone-CLIHUM-NAME = Humidity
 ST-nlsmacrozone-DEWPT-NAME = Dew Point
-ST-nlszone-ST-NAME = Node Running
+ST-nlsmacrozone-ST-NAME = Node Running
 
+ND-atu-NAME = Messana ATU
+ND-atu-ICON = EnergyMonitor
+CMD-nlsatu-UPDATE-NAME = Update System Data
+CMD-nlsatu-STATUS-NAME = Set ATU state
+CMD-nlsatu-HRVEN-NAME = HRV state
+CMD-nlsatu-HUMEN-NAME = Humidification
+CMD-nlsatu-DEHUMEN-NAME = De-humidification
+CMD-nlsatu-CONVEN-NAME = Convection
+CMD-nlsatu-HUMEN-NAME = Set Flow Level
+ST-nlsatu-GV0-NAME = State
+ST-nlsatu-CLITEMP-NAME = Atu Air Temperature
+ST-nlsatu-GV1-NAME = Flow Level
+ST-nlsatu-GV2-NAME = HRV status
+ST-nlsatu-GV3-NAME = HRV state
+ST-nlsatu-GV4-NAME = Hunidification Status
+ST-nlsatu-GV5-NAME = Hunidification State
+ST-nlsatu-GV6-NAME = De-hunidification Status
+ST-nlsatu-GV7-NAME = De-hunidification State
+ST-nlsatu-GV8-NAME = Conv Integration Status
+ST-nlsatu-GV9-NAME = Conv Integration State
+ST-nlsatu-GV10-NAME = NTD state
+ST-nlsatu-GV11-NAME =Alarm
+ST-nlsatu-ST-NAME = Node Running
 
-
+onoff-0 = Off
+onoff-1 = On
+onoff-98 = Not supported
+opoff-99 = Unknown
