@@ -69,6 +69,7 @@ class udi_messana_atu(udi_interface.Node):
 
         self.address = address
         tmp_name = self.atu.name
+        logging.debug('ATU {} name : {}'.format(atu_nbr, tmp_name ))
         self.name = self.getValidName(tmp_name)
         self.poly = polyglot
         #self.Parameters = Custom(self.poly, 'customparams')

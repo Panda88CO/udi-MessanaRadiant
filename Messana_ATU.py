@@ -30,6 +30,7 @@ class messana_atu(messana_node):
         self.type = 'atu'
         self.nbr = atu_nbr
         self.name = self.get_name()
+        logging.debug('ATU node name {}'.format(self.name))
         self.stateList = [0,1]
         self.messana_temp_unit = self.GET_system_data('tempUnit')
         
