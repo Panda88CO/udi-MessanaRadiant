@@ -13,7 +13,7 @@ except ImportError:
     logging.basicConfig(level=logging.INFO)
 
 
-
+import time
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_atu(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
@@ -33,7 +33,7 @@ class udi_messana_atu(udi_interface.Node):
             'GV7' = DehumOn
             'GV8' = ConvStatus
             'GV9' = ConvOn
-            'GV10' = ntdOn
+   
             'GV11' = AlarmOn
 
             'ST' = System Status
@@ -52,7 +52,7 @@ class udi_messana_atu(udi_interface.Node):
         {'driver': 'GV7', 'value': 99, 'uom': 25},
         {'driver': 'GV8', 'value': 99, 'uom': 25},
         {'driver': 'GV9', 'value': 99, 'uom': 25},
-        {'driver': 'GV10', 'value': 99, 'uom': 25},
+
         {'driver': 'GV11', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
@@ -103,18 +103,33 @@ class udi_messana_atu(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.atu.get_air_temp()
-        logging.debug('atu get_temp(CLITEMP)): {}'.format(Val))
+        logging.debug('et_air_temp(CLITEMP)): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 
         Val = self.atu.get_flow_level()
-        logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        self.node.setDriver('CLIHUM', self.isy_value(Val))
+        logging.debug('get_flow_level(GV1): {}'.format(Val))
+        self.node.setDriver('GV1', self.isy_value(Val))
 
-        Val = self.atu.get_dewpoint()
-        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'DEWPT')
+        Val = self.atu.get_HRV_status()
+        logging.debug('get_HRV_status(GV2): {}'.format(Val))
+        self.node.setDriver('GV2', self.isy_value(Val))
 
+        Val = self.atu.get_humidification_status()
+        logging.debug('get_humidification_status(GV4): {}'.format(Val))
+        self.node.setDriver('GV4', self.isy_value(Val))
+
+        Val = self.atu.get_dehumidification_status()
+        logging.debug('get_humidification_status(GV4): {}'.format(Val))
+        self.node.setDriver('GV6', self.isy_value(Val))
+
+        Val = self.atu.get_convection_status()
+        logging.debug('get_convection_status(GV8): {}'.format(Val))
+        self.node.setDriver('GV8', self.isy_value(Val))        
+
+        Val = self.atu.get_alarmOn()
+        logging.debug('get_alarmOn(GV11): {}'.format(Val))
+        self.node.setDriver('GV11', self.isy_value(Val))
 
 
     def updateISY_longpoll(self):
@@ -130,23 +145,47 @@ class udi_messana_atu(udi_interface.Node):
         self.send_temp_to_isy(Val, 'CLITEMP')
 
         Val = self.atu.get_flow_level()
-        logging.debug('Schedule Mode(GV2): {}'.format(Val))
+        logging.debug('get_flow_level(GV1): {}'.format(Val))
         self.node.setDriver('GV1', self.isy_value(Val))
 
-        Val = self.atu.get_setpoint()
-        logging.debug('Set point (GV3): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'GV3')
-        #self.node.setDriver('GV3', self.isy_value(Val))
+
+        Val = self.atu.get_HRV_status()
+        logging.debug('get_HRV_status(GV2): {}'.format(Val))
+        self.node.setDriver('GV2', self.isy_value(Val))
+
+        Val = self.atu.get_activate_HRV()
+        logging.debug('get_activate_HRV(GV3): {}'.format(Val))
+        self.node.setDriver('GV3', self.isy_value(Val))
+
+        Val = self.atu.get_humidification_status()
+        logging.debug('get_humidification_status(GV4): {}'.format(Val))
+        self.node.setDriver('GV4', self.isy_value(Val))
+
+        Val = self.atu.get_humidification_enable()
+        logging.debug('get_humidification_enable(GV5): {}'.format(Val))
+        self.node.setDriver('GV5', self.isy_value(Val))
 
 
+        Val = self.atu.get_dehumidification_status()
+        logging.debug('get_humidification_status(GV4): {}'.format(Val))
+        self.node.setDriver('GV6', self.isy_value(Val))
 
-        Val = self.atu.get_humidity()
-        logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
+        Val = self.atu.get_dehumidification_enable()
+        logging.debug('get_humidification_enable(GV5): {}'.format(Val))
+        self.node.setDriver('GV7', self.isy_value(Val))
 
-        Val = self.atu.get_dewpoint()
-        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'DEWPT')
+        Val = self.atu.get_convection_status()
+        logging.debug('get_convection_status(GV8): {}'.format(Val))
+        self.node.setDriver('GV8', self.isy_value(Val))
+
+        Val = self.atu.get_convection_enable()
+        logging.debug('get_humidification_status(GV9): {}'.format(Val))
+        self.node.setDriver('GV9', self.isy_value(Val))
+
+        Val = self.atu.get_alarmOn())
+        logging.debug('get_alarmOn(GV11): {}'.format(Val))
+        self.node.setDriver('GV11', self.isy_value(Val))
+
 
 
 
@@ -161,27 +200,50 @@ class udi_messana_atu(udi_interface.Node):
     def heat_recovery_en(self, command):
         val = int(command.get('value'))
         logging.debug('heat_recovery_en: {}'.format(val))
+        if self.atu.set_activate_HRV(val):
+            time.sleep(0.2)
+            self.node.setDriver('GV2', self.atu.get_HRV_status(self))
+            self.node.setDriver('GV3', self.atu.get_activate_HRV(self))
 
     def humidification_en(self, command):
         val = int(command.get('value'))
         logging.debug('humidification_en: {}'.format(val))
+        if self.atu.set_humidification_enable(val):
+            time.sleep(0.2)
+            self.node.setDriver('GV4', self.atu.get_humidification_status(self))
+            self.node.setDriver('GV5', self.atu.get_humidification_enable(self))
+
+
 
     def dehumidification_en(self, command):
         val = int(command.get('value'))
         logging.debug('dehumidification_en: {}'.format(val))
+        if self.atu.set_dehumidification_enable(val):
+            time.sleep(0.2)
+            self.node.setDriver('GV6', self.atu.get_dehumidification_status(self))
+            self.node.setDriver('GV7', self.atu.get_dehumidification_enable(self))
+
 
     def convection_en(self, command):
         val = int(command.get('value'))
         logging.debug('convection_en: {}'.format(val))
+        if self.atu. set_convection_enable(val):
+            time.sleep(0.2)
+            self.node.setDriver('GV2', self.atu.get_convection_status(self))
+            self.node.setDriver('GV3', self.atu.get_convection_enable(self))
+
 
     def set_flow(self, command):
         val = int(command.get('value'))
         logging.debug('set_flow: {}'.format(val))
+        if self.atu.set_flow_level(val):
+            time.sleep(0.2)
+            self.node.setDriver('GV2', self.atu.get_flow_level(self))
+
 
 
     commands = { 'UPDATE': updateISY_longpoll
                 ,'STATUS': set_status
-                ,'HRVEN' : heat_recovery_en
                 ,'HUMEN' : humidification_en
                 ,'DEHUMEN' : dehumidification_en
                 ,'CONVEN' : convection_en

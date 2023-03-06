@@ -165,14 +165,89 @@ class messana_node(messana_control):
         logging.debug('{} {} - get_antifreeze_setpoint'.format(self.type, self.nbr))
         return(self.__get_node_data('antifreezeSP'))
 
-
-
     def set_antifreeze_setpoint(self, af_sp):
         logging.debug('{} {} set_scheduleOn {}'.format(self.type, self.nbr, af_sp ))
         if self.__put_node_data('antifreezeSP', af_sp):
             time.sleep(0.5)
-        return(self.get_scheduleOn())
+        return(self.get_antifreeze_setpoint())
+
 
     def get_flow_level(self):
         logging.debug('{} {} - get_flow_level'.format(self.type, self.nbr))
         return(self.__get_node_data('flowLevel'))
+    
+    def set_flow_level(self, flow_level):
+        logging.debug('{} {} - set_flow_level {} '.format(self.type, self.nbr, flow_level))
+        if self.__put_node_data('flowLevel', flow_level):
+            time.sleep(0.5)
+        return(self.get_flow_level())
+    
+    def get_HRV_status(self):
+        logging.debug('{} {} - get_HRVstatus'.format(self.type, self.nbr))
+        return(self.__get_node_data('hrvStatus'))
+    
+    def get_activate_HRV(self):
+        logging.debug('{} {} - get_HRVstatus'.format(self.type, self.nbr))
+        return(self.__get_node_data('hrvON'))
+
+    def set_activate_HRV(self, hrv_en):
+        logging.debug('{} {} - set_activate_HRV {} '.format(self.type, self.nbr, hrv_en))
+        if self.__put_node_data('hrvON', hrv_en):
+            time.sleep(0.5)
+        return(self.get_activate_HRV())
+
+
+    def get_humidification_status(self):
+        logging.debug('{} {} - get_humidification_status'.format(self.type, self.nbr))
+        return(self.__get_node_data('humidificationStatus'))
+    
+    def get_humidification_enable(self):
+        logging.debug('{} {} - get_humidification_enable'.format(self.type, self.nbr))
+        return(self.__get_node_data('humON'))
+
+    def set_humidification_enable(self, hum_en):
+        logging.debug('{} {} - set_humidification_enable {} '.format(self.type, self.nbr, hum_en))
+        if self.__put_node_data('humON', hum_en):
+            time.sleep(0.5)
+        return(self.get_humidification_enable())
+
+    def get_dehumidification_status(self):
+        logging.debug('{} {} - get_dehumidification_status'.format(self.type, self.nbr))
+        return(self.__get_node_data('dehumidificationStatus'))
+    
+    def get_dehumidification_enable(self):
+        logging.debug('{} {} - get_dehumidification_enable'.format(self.type, self.nbr))
+        return(self.__get_node_data('ntdON'))
+
+    def set_dehumidification_enable(self, dehum_en):
+        logging.debug('{} {} - set_dehumidification_enable {} '.format(self.type, self.nbr, dehum_en))
+        if self.__put_node_data('ntdON', dehum_en):
+            time.sleep(0.5)
+        return(self.get_dehumidification_enable())
+    
+
+    def get_convection_status(self):
+        logging.debug('{} {} - get_convection_status'.format(self.type, self.nbr))
+        return(self.__get_node_data('integratioStatus'))
+    
+
+    def get_convection_enable(self):
+        logging.debug('{} {} - get_convection_enable'.format(self.type, self.nbr))
+        return(self.__get_node_data('intON'))
+
+    def set_convection_enable(self, conv_en):
+        logging.debug('{} {} - set_convection_enable {} '.format(self.type, self.nbr, conv_en))
+        if self.__put_node_data('intON', conv_en):
+            time.sleep(0.5)
+        return(self.get_convection_enable())
+
+
+'''
+                ,'HRVEN' : heat_recovery_en
+                ,'HUMEN' : humidification_en
+                ,'DEHUMEN' : dehumidification_en
+                ,'CONVEN' : convection_en
+                ,'SET_FLOW' : set_flow,
+                
+                }
+'''        
