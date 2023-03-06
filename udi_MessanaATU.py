@@ -182,7 +182,7 @@ class udi_messana_atu(udi_interface.Node):
         logging.debug('get_humidification_status(GV9): {}'.format(Val))
         self.node.setDriver('GV9', self.isy_value(Val))
 
-        Val = self.atu.get_alarmOn())
+        Val = self.atu.get_alarmOn()
         logging.debug('get_alarmOn(GV11): {}'.format(Val))
         self.node.setDriver('GV11', self.isy_value(Val))
 
@@ -202,16 +202,16 @@ class udi_messana_atu(udi_interface.Node):
         logging.debug('heat_recovery_en: {}'.format(val))
         if self.atu.set_activate_HRV(val):
             time.sleep(0.2)
-            self.node.setDriver('GV2', self.atu.get_HRV_status(self))
-            self.node.setDriver('GV3', self.atu.get_activate_HRV(self))
+            self.node.setDriver('GV2', self.atu.get_HRV_status())
+            self.node.setDriver('GV3', self.atu.get_activate_HRV())
 
     def humidification_en(self, command):
         val = int(command.get('value'))
         logging.debug('humidification_en: {}'.format(val))
         if self.atu.set_humidification_enable(val):
             time.sleep(0.2)
-            self.node.setDriver('GV4', self.atu.get_humidification_status(self))
-            self.node.setDriver('GV5', self.atu.get_humidification_enable(self))
+            self.node.setDriver('GV4', self.atu.get_humidification_status())
+            self.node.setDriver('GV5', self.atu.get_humidification_enable())
 
 
 
@@ -220,8 +220,8 @@ class udi_messana_atu(udi_interface.Node):
         logging.debug('dehumidification_en: {}'.format(val))
         if self.atu.set_dehumidification_enable(val):
             time.sleep(0.2)
-            self.node.setDriver('GV6', self.atu.get_dehumidification_status(self))
-            self.node.setDriver('GV7', self.atu.get_dehumidification_enable(self))
+            self.node.setDriver('GV6', self.atu.get_dehumidification_status())
+            self.node.setDriver('GV7', self.atu.get_dehumidification_enable())
 
 
     def convection_en(self, command):
@@ -229,8 +229,8 @@ class udi_messana_atu(udi_interface.Node):
         logging.debug('convection_en: {}'.format(val))
         if self.atu. set_convection_enable(val):
             time.sleep(0.2)
-            self.node.setDriver('GV2', self.atu.get_convection_status(self))
-            self.node.setDriver('GV3', self.atu.get_convection_enable(self))
+            self.node.setDriver('GV2', self.atu.get_convection_status())
+            self.node.setDriver('GV3', self.atu.get_convection_enable())
 
 
     def set_flow(self, command):
@@ -238,7 +238,7 @@ class udi_messana_atu(udi_interface.Node):
         logging.debug('set_flow: {}'.format(val))
         if self.atu.set_flow_level(val):
             time.sleep(0.2)
-            self.node.setDriver('GV2', self.atu.get_flow_level(self))
+            self.node.setDriver('GV2', self.atu.get_flow_level())
 
 
 
