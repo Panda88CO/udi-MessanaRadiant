@@ -186,8 +186,6 @@ class udi_messana_atu(udi_interface.Node):
                 ,'DEHUMEN' : dehumidification_en
                 ,'CONVEN' : convection_en
                 ,'SET_FLOW' : set_flow,
-     #           ,'SETPOINTCO2' : set_setpoint_co2        
-     #           ,'SCHEDULEON' : set_schedule
                 
                 }
         
