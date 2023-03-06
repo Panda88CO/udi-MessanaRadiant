@@ -92,7 +92,7 @@ class udi_messana_macrozone(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.macrozone.get_temp()
-        logging.debug('Macrozone get_temp(CLITEMP)): {}'.format(Val))
+        logging.debug('get_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 
@@ -126,8 +126,8 @@ class udi_messana_macrozone(udi_interface.Node):
         self.send_temp_to_isy(Val, 'GV3')
         #self.node.setDriver('GV3', self.isy_value(Val))
 
-        Val = self.macrozone.get_air_temp()
-        logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
+        Val = self.macrozone.get_temp()
+        logging.debug('get_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 

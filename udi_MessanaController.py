@@ -5,12 +5,12 @@ import sys
 from Messana_System import messana_system
 from udi_MessanaZone import udi_messana_zone
 from udi_MessanaMacrozone import udi_messana_macrozone
-#from MessanaATUV2 import messanaAtu
-#from MessanaBufTankV2 import messanaBufTank
-#from MessanaEnergySourceV2 import messanaEnergySource
-#from MessanaFanCoilV2 import  messanaFanCoil
-#from MessanaHotColdCOV2 import messanaHcCo
-#from MessanaHotWaterV2 import messanaHotWater
+from udi_MessanaATU import udi_messana_atu
+#from udi_MessanaBuffertank import udi_messanaBuffertank
+#from udi_MessanaEnergySource import udi_messanaEnergySource
+#from udi_MessanaFanCoil import  udi_messanaFanCoil
+#from udi_MessanaHotColdCO import udi_messanaHcCo
+#from udi_MessanaHotWater import udi_messanaHotWater
 
 import time
 import re
@@ -166,13 +166,13 @@ class MessanaController(udi_interface.Node):
             logging.debug('Creating atus {}'.format(atu_nbr))
             address = 'atu'+str(atu_nbr)
             name = 'dummy_name'
-            self.macrozones[atu_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, atu_nbr, self.messana_info)
+            self.atus[atu_nbr] = udi_messana_atu(self.poly, self.primary, address, name, atu_nbr, self.messana_info)
         '''
         for buffertank_nbr in range(0, self.messana.nbr_buffer_tank ):
             logging.debug('Creating buffer tanks {}'.format(buffertank_nbr))
             address = 'buffertank'+str(buffertank_nbr)
             name = 'dummy_name'
-            self.macrozones[buffertank_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
+            self.buffertank[buffertank_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
 
         for energy_source_nbr in range(0, self.messana.nbr_energy_source ):
             logging.debug('Creating energy_source {}'.format(energy_source_nbr))
@@ -393,7 +393,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.88')
+        polyglot.start('0.0.89')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
