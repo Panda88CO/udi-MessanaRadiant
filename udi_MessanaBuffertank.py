@@ -3,7 +3,7 @@
 import time
 import re
 #from MessanaInfo import messana_info
-from Messana_Macrozone import messana_macrozone
+from Messana_Buffertank import messana_buffertank
 
 try:
     import udi_interface
@@ -16,18 +16,17 @@ except ImportError:
 
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
-class udi_messana_macrozone(udi_interface.Node):
+class udi_messana_buffertank(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'macrozone'
+    id = 'buffertank'
 
     '''
        drivers = [
-            'GV0' = Macrozone status
-            'GV3' = Setpoint
+            'GV0' = buffertank status
+            'GV1' = mode
+            'GV2' = Temp mpde
             'CLITEMP' = air_temp
-            'CLIHUM' = humidity
-            'DEWPT' = Dewpoint
             'ST' = System Status
             ]
     '''
@@ -35,23 +34,21 @@ class udi_messana_macrozone(udi_interface.Node):
     
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
+        {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
-        {'driver': 'GV3', 'value': 99, 'uom': 25},
         {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
-        {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
-        {'driver': 'DEWPT', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
 
-    def __init__(self, polyglot, primary, address, name, macrozone_nbr, messana_info):
+    def __init__(self, polyglot, primary, address, name, buffertank_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
-        logging.info('init Messana MacroZone {}:'.format(macrozone_nbr) )
+        logging.info('init Messana buffertank {}:'.format(buffertank_nbr) )
 
         self.primary = primary  
-        self.macrozone_nbr = macrozone_nbr
-        self.macrozone = messana_macrozone(self.macrozone_nbr, messana_info)
+        self.buffertank_nbr = buffertank_nbr
+        self.buffertank = messana_buffertank(self.buffertank_nbr, messana_info)
         self.address =self.getValidAddress(address)
-        tmp_name = self.macrozone.name
+        tmp_name = self.buffertank.name
         self.name = self.getValidName(tmp_name)
         self.poly = polyglot
         #self.Parameters = Custom(self.poly, 'customparams')
@@ -71,7 +68,7 @@ class udi_messana_macrozone(udi_interface.Node):
         self.node = self.poly.getNode(self.address)
         self.node.setDriver('ST', 1, True, True)
         self.ISY_temp_unit = messana_info['isy_temp_unit']
-        self.messana_temp_unit = self.macrozone.messana_temp_unit
+        self.messana_temp_unit = self.buffertank.messana_temp_unit
 
     def start(self):
         logging.info('udiMessanaZone Start ')
@@ -81,90 +78,71 @@ class udi_messana_macrozone(udi_interface.Node):
         logging.info('udiMessanaZone Stop ')
 
     def updateISY_shortpoll(self):
-        Val = self.macrozone.get_status()
-        logging.debug('Macrozone Status (GV0): {}'.format(Val))
+        Val = self.buffertank.get_status()
+        logging.debug('buffertank Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.macrozone.get_temp()
+        Val = self.buffertank.get_temp()
         logging.debug('get_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 
-        Val = self.macrozone.get_humidity()
-        logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        self.node.setDriver('CLIHUM', self.isy_value(Val))
-
-        Val = self.macrozone.get_dewpoint()
-        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'DEWPT')
 
 
 
     def updateISY_longpoll(self):
-        logging.debug('update_system - macrozone {} Status:'.format(self.macrozone_nbr))
+        logging.debug('update_system - zone {} Status:'.format(self.buffertank_nbr))
 
-        Val = self.macrozone.get_status()
-        logging.debug('Macrozone Status (GV0): {}'.format(Val))
+        Val = self.buffertank.get_status()
+        logging.debug('buffertank Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.macrozone.get_scheduleOn()
+        Val = self.buffertank.get_buffertank_mode()
+        logging.debug('buffertank temp(GV1): {}'.format(Val))
+        self.node.setDriver('GV1', self.isy_value(Val))
+
+        Val = self.buffertank.get_buffertank_temp_mode()
         logging.debug('Schedule Mode(GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 
-        Val = self.macrozone.get_setpoint()
-        logging.debug('Set point (GV3): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'GV3')
-        #self.node.setDriver('GV3', self.isy_value(Val))
-
-        Val = self.macrozone.get_temp()
+        Val = self.buffertank.get_temp()
         logging.debug('get_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
-
-        Val = self.macrozone.get_humidity()
-        logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
-
-        Val = self.macrozone.get_dewpoint()
-        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'DEWPT')
 
 
 
     def set_status(self, command):
         status = int(command.get('value'))
-        logging.debug('set Status Called {} for macrozone: {}'.format(status, self.macrozone_nbr))
-        if self.macrozone.set_status(status):
+        logging.debug('set Status Called {} for zone: {}'.format(status, self.buffertank_nbr))
+        if self.buffertank.set_status(status):
             self.node.setDriver('GV0', status)
         else:
             logging.error('Error calling setStatus')
 
-    def set_energy_save(self, command):
-        energy_save = int(command.get('value'))
-        logging.debug('setEnergySave Called {} for macrozone {}'.format(energy_save, self.macrozone_nbr))
-        if self.macrozone.set_energy_saving(energy_save):
-            self.node.setDriver('GV8', energy_save)
+    def set_buffertank_mode(self, command):
+        mode = int(command.get('value'))
+        logging.debug('set_buffertank_mode Called {} for BT {}'.format(mode, self.buffertank_nbr))
+        if self.buffertank.set_buffertank_mode(mode):
+            self.node.setDriver('GV1', mode)
         else:
             logging.error('Error calling set_energy_save')
         
-    def set_setpoint(self, command):
-        set_point = round(round(command.get('value')*2,0)/2,1)
-        logging.debug('set_setpoint {} for macrozone {}'.format(set_point, self.macrozone_nbr))   
-        if self.macrozone.set_setpoint(set_point):
-            self.node.setDriver('GV3', set_point)
+    def set_buffertank_temp_mode(self, command):
+        mode = int(command.get('value'))
+        logging.debug('set_buffertank_temp_mode {} for BT {}'.format(mode, self.buffertank_nbr))   
+        if self.buffertank.set_buffertank_temp_mode(mode):
+            self.node.setDriver('GV2', mode)
         else:
             logging.error('Error calling set_setpoint')
 
-    def set_schedule(self, command):
-        schedule = int(command.get('value'))
-        logging.debug('set_schedule: {}'.format(schedule))
 
     
     commands = { 'UPDATE': updateISY_longpoll
                 ,'STATUS': set_status
                 #,'ENERGYSAVE': set_energy_save
-                ,'SETPOINT' : set_setpoint
-     #           ,'SETPOINTCO2' : set_setpoint_co2        
+                ,'MODE' : set_buffertank_mode
+                ,'TEMPMODE' : set_buffertank_temp_mode        
      #           ,'SCHEDULEON' : set_schedule
                 
                 }

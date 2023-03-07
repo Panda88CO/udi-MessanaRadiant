@@ -167,13 +167,13 @@ class MessanaController(udi_interface.Node):
             address = 'atu'+str(atu_nbr)
             name = 'dummy_name'
             self.atus[atu_nbr] = udi_messana_atu(self.poly, self.primary, address, name, atu_nbr, self.messana_info)
-        '''
+
         for buffertank_nbr in range(0, self.messana.nbr_buffer_tank ):
             logging.debug('Creating buffer tanks {}'.format(buffertank_nbr))
             address = 'buffertank'+str(buffertank_nbr)
             name = 'dummy_name'
             self.buffertank[buffertank_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
-
+        '''
         for energy_source_nbr in range(0, self.messana.nbr_energy_source ):
             logging.debug('Creating energy_source {}'.format(energy_source_nbr))
             address = 'energysource'+str(energy_source_nbr)
@@ -393,7 +393,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.93')
+        polyglot.start('0.0.95')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

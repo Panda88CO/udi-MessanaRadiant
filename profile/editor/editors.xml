@@ -65,4 +65,19 @@
       <range  uom="7"  min="0" max="1000" step="10" prec="0" />
       <range  uom="25" subset="98,99" nls="UNKNOWN"/>
   </editor>  
+  <editor id = "btmode" > 
+      <range  uom="25" subset="0-1,98,99" nls="onoff"/>
+  </editor>
+  <editor id = "bttempmode" > 
+      <range  uom="25" subset="0-2,98,99" nls="onoff"/>
+  </editor>
+
+  <editor id = "set_btmode" > 
+      <range  uom="25" subset="0-1" nls="onoff"/>
+  </editor>
+  <editor id = "set_bttempmode" > 
+      <range  uom="25" subset="0-2" nls="onoff"/>
+  </editor>
+
+
 </editors> 

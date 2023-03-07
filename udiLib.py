@@ -10,7 +10,7 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 import time
 import re
-
+import numbers
 
 def node_queue(self, data):
     self.n_queue.append(data['address'])
@@ -32,6 +32,8 @@ def getValidAddress(self, name):
 def isy_value(self, value):
     if value == None:
         return (99)
+    elif not (isinstance (value, numbers.Number)):
+        return(98)
     else:
         return(value)
 

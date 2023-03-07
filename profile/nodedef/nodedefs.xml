@@ -83,8 +83,6 @@
       <editors />
       <sts>
          <st id="GV0" editor="enable" />
-         <st id="GV1" editor="temp" />
-         <st id="GV2" editor="status" />
          <st id="GV3" editor="temp"/>
          <st id="CLITEMP" editor="temp" />
          <st id="CLIHUM" editor="humidity" />
@@ -154,6 +152,44 @@
          </accepts>
       </cmds>
    </nodeDef> 
+   <nodeDef id="buffertank" nls="nlsbuffertank">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="btmode"/>
+         <st id="GV1" editor="bttempmode"/>
+         <st id="CLITEMP" editor="temp" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SETPOINT" > 
+               <p id="" editor="set_temp" init="GV3" /> 
+            </cmd> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="MODE" > 
+               <p id="" editor="set_btmode" init="GV1" /> 
+            </cmd> 
+            <cmd id="TEMPMODE" > 
+               <p id="" editor="set_bttempmode" init="GV2" /> 
+            </cmd> 
+
+
+            <!--
+            <cmd id="SCHEDULEON" > 
+               <p id="" editor="set_enable" init="GV2" /> 
+            </cmd> 
+            -->
+         </accepts>
+      </cmds>
+   </nodeDef>
+
+
    <!--
    <nodeDef id="EnergyS0" nls="nlsEnergyS0">
       <editors />

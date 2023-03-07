@@ -42,7 +42,7 @@ class udi_messana_atu(udi_interface.Node):
  
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},    
+        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
@@ -60,18 +60,18 @@ class udi_messana_atu(udi_interface.Node):
     def __init__(self, polyglot, primary, address, name, atu_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
         logging.info('init Messana ATU {}:'.format(atu_nbr) )
-        #self.node_type = 'atu'
-        #self.parent = primary
-        self.primary = primary
-        #self.id = 'atu'
-        self.atu_nbr = atu_nbr
-        self.atu = messana_atu(self.atu_nbr, messana_info)
 
-        self.address = address
+        self.poly = polyglot
+        self.primary = primary
+        self.atu_nbr = atu_nbr
+        self.address =self.getValidAddress(address)
+
+        self.atu = messana_atu(self.atu_nbr, messana_info)
         tmp_name = self.atu.name
         logging.debug('ATU {} name : {}'.format(atu_nbr, tmp_name ))
-        self.name = self.getValidName(tmp_name)
-        self.poly = polyglot
+        self.name = self.getValidName(tmp_name)        
+
+        
         #self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
         self.poly.subscribe(polyglot.START, self.start, self.address)
@@ -126,7 +126,7 @@ class udi_messana_atu(udi_interface.Node):
 
         Val = self.atu.get_convection_status()
         logging.debug('get_convection_status(GV8): {}'.format(Val))
-        self.node.setDriver('GV8', self.isy_value(Val))        
+        self.node.setDriver('GV8', self.isy_value(Val))
 
         Val = self.atu.get_alarmOn()
         logging.debug('get_alarmOn(GV11): {}'.format(Val))

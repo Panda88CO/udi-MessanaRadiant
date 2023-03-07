@@ -244,6 +244,26 @@ class messana_node(messana_control):
             time.sleep(0.5)
         return(self.get_convection_enable())
 
+    def get_buffertank_mode(self):
+        logging.debug('{} {} - get_buffertank_mode'.format(self.type, self.nbr))
+        return(self.__get_node_data('mode'))
+
+    def set_buffertank_mode(self, mode):
+        logging.debug('{} {} - set_buffertank_mode {} '.format(self.type, self.nbr, mode))
+        if self.__put_node_data('mode', mode):
+            time.sleep(0.5)
+        return(self.get_buffertank_mode())
+
+    def get_buffertank_temp_mode(self):
+        logging.debug('{} {} - get_buffertank_temp_mode'.format(self.type, self.nbr))
+        return(self.__get_node_data('tempMode'))
+
+    def set_buffertank_temp_mode(self, temp_mode):
+        logging.debug('{} {} - set_buffertank_temp_mode {} '.format(self.type, self.nbr, temp_mode))
+        if self.__put_node_data('tempMode', temp_mode):
+            time.sleep(0.5)
+        return(self.get_buffertank_temp_mode())
+
 
 '''
                 ,'HRVEN' : heat_recovery_en
