@@ -107,17 +107,17 @@ onoff-1 = On
 onoff-98 = Not supported
 opoff-99 = Unknown
 
-ND-buffertank-NAME = Messana Macrozone
-ND-buffertank-ICON = TempSensor
+ND-buffertank-NAME = Messana Buffertank
+ND-buffertank-ICON = Irrigation
 CMD-nlsbuffertank-UPDATE-NAME = Update System Data
-CMD-nlsbuffertank-SETPOINT-NAME = Set Temperature
-CMD-nlsbuffertank-STATUS-NAME = Macrozone State
-CMD-nlsbuffertank-SCHEDULEON-NAME = Schedule Status
-ST-nlsnlsbuffertankmacrozone-GV0-NAME = State
+CMD-nlsbuffertank-STATUS-NAME = Buffertank Status
+CMD-nlsbuffertank-MODE-NAME = Buffertank Mode
+CMD-nlsbuffertank-TEMPMODE-NAME = Buffertank Temperature Mode
+ST-nlsbuffertank-GV0-NAME = State
 ST-nlsbuffertank-GV1-NAME = Buffertank Mode
 ST-nlsbuffertank-GV2-NAME = Buffertank temperature Mode
-ST-nlsmnlsbuffertankacrozone-CLITEMP-NAME = Buffertank Temperature
-ST-nlsmnlsbuffertankacrozone-ST-NAME = Node Running
+ST-nlsbuffertank-CLITEMP-NAME = Buffertank Temperature
+ST-nlsbuffertank-ST-NAME = Node Running
 
 btmode-0 = Manual
 btmode-1 = Automatic
@@ -129,3 +129,37 @@ bttempmode-1 = Follow Heat/Cool loads
 bttempmode-2 = Outdoor Temperature
 bttempmode-98 = Nor supported
 bttempmode-99 = Unknown
+
+setbtmode-0 = Manual
+setbtmode-1 = Automatic
+
+setbttempmode-0 = FIxed Temperature
+setbttempmode-1 = Follow Heat/Cool loads
+setbttempmode-2 = Outdoor Temperature
+
+ND-hc_co-NAME = Messana Hot Cold Changeover
+ND-hc_co-ICON = Switch
+CMD-nlshc_co-UPDATE-NAME = Update System Data
+CMD-nlshc_co-STATUS-NAME = Adaptive Comfort State
+CMD-nlshc_co-MODE-NAME = Changeover Mode
+CMD-nlshc_co-TEMPMODE-NAME = Changeover Temperature Mode
+ST-nlshc_co-GV0-NAME = Adaptive Comfort State
+ST-nlshc_co-GV1-NAME = Changeover Mode
+ST-nlshc_co-GV2-NAME = Changeover Temperature Mode
+ST-nlshc_co-ST-NAME = Node Running
+
+hccomode-0 = Heating Mode 
+hccomode-1 = Cooling Mode
+hccomode-2 = Auto Mode
+hccomode-98 = Not Supported
+hccomode-99 = Unknown
+
+seasonmode-0 = Heating
+seasonmode-1 = Cooling
+seasonmode-98 = Not Supported
+seasonmode-99 = Unknown
+
+set_hccomode-0 = Heating Mode
+set_hccomode-1 = Cooling Mode
+set_hccomode-2 = Auto Mode
+

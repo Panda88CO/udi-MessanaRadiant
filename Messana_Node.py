@@ -265,6 +265,35 @@ class messana_node(messana_control):
         return(self.get_buffertank_temp_mode())
 
 
+    def get_adaptive_comf_status(self):
+        logging.debug('{} {} - get_adaptive_comf_status'.format(self.type, self.nbr))
+        return(self.__get_node_data('adaptiveComfort'))
+
+    def set_adaptive_comf_status(self, temp_mode):
+        logging.debug('{} {} - set_adaptive_comf_status {} '.format(self.type, self.nbr, temp_mode))
+        if self.__put_node_data('adaptiveComfort', temp_mode):
+            time.sleep(0.5)
+        return(self.get_adaptive_comf_status())
+
+
+    def get_hc_co_mode(self):
+        logging.debug('{} {} - get_hc_co_mode'.format(self.type, self.nbr))
+        return(self.__get_node_data('mode'))
+
+    def set_hc_co_mode(self, temp_mode):
+        logging.debug('{} {} - set_hc_co_mode {} '.format(self.type, self.nbr, temp_mode))
+        if self.__put_node_data('mode', temp_mode):
+            time.sleep(0.5)
+        return(self.get_hc_co_mode())
+    
+    
+    def get_hc_co_season_mode(self):
+        logging.debug('{} {} - get_hc_co_season_mode'.format(self.type, self.nbr))
+        return(self.__get_node_data('executiveSeason'))
+
+
+
+
 '''
                 ,'HRVEN' : heat_recovery_en
                 ,'HUMEN' : humidification_en

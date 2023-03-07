@@ -26,7 +26,7 @@ class udi_messana_buffertank(udi_interface.Node):
             'GV0' = buffertank status
             'GV1' = mode
             'GV2' = Temp mpde
-            'CLITEMP' = air_temp
+            'GV2' = executive mode
             'ST' = System Status
             ]
     '''
@@ -36,7 +36,7 @@ class udi_messana_buffertank(udi_interface.Node):
         {'driver': 'GV0', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
+        {'driver': 'GV3', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
 
@@ -83,7 +83,7 @@ class udi_messana_buffertank(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.buffertank.get_temp()
-        logging.debug('get_temp(CLITEMP): {}'.format(Val))
+        logging.debug('buffertank get_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 
@@ -98,15 +98,15 @@ class udi_messana_buffertank(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.buffertank.get_buffertank_mode()
-        logging.debug('buffertank temp(GV1): {}'.format(Val))
+        logging.debug('get_buffertank_mode(GV1): {}'.format(Val))
         self.node.setDriver('GV1', self.isy_value(Val))
 
         Val = self.buffertank.get_buffertank_temp_mode()
-        logging.debug('Schedule Mode(GV2): {}'.format(Val))
+        logging.debug('buffertanl temp Mode(GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 
         Val = self.buffertank.get_temp()
-        logging.debug('get_temp(CLITEMP): {}'.format(Val))
+        logging.debug('buffertank get_temp(CLITEMP): {}'.format(Val))
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 

@@ -157,7 +157,7 @@
       <sts>
          <st id="GV0" editor="enable" />
          <st id="GV1" editor="btmode"/>
-         <st id="GV1" editor="bttempmode"/>
+         <st id="GV2" editor="bttempmode"/>
          <st id="CLITEMP" editor="temp" />
          <st id="ST" editor="running" />
       </sts>
@@ -166,9 +166,7 @@
          </sends>
          <accepts>
             <cmd id="UPDATE" /> 
-            <cmd id="SETPOINT" > 
-               <p id="" editor="set_temp" init="GV3" /> 
-            </cmd> 
+
             <cmd id="STATUS" > 
                <p id="" editor="set_enable" init="GV0" /> 
             </cmd> 
@@ -188,7 +186,37 @@
          </accepts>
       </cmds>
    </nodeDef>
+   <nodeDef id="hc_co" nls="nlshc_co">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="hccomode"/>
+         <st id="GV2" editor="seasonmode"/>
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="MODE" > 
+               <p id="" editor="set_hccomode" init="GV1" /> 
+            </cmd> 
+
+
+
+            <!--
+            <cmd id="SCHEDULEON" > 
+               <p id="" editor="set_enable" init="GV2" /> 
+            </cmd> 
+            -->
+         </accepts>
+      </cmds>
+   </nodeDef>
 
    <!--
    <nodeDef id="EnergyS0" nls="nlsEnergyS0">
@@ -226,25 +254,6 @@
          </accepts>
       </cmds>
    </nodeDef> 
-   <nodeDef id="BufTanks0" nls="nlsBufTanks0">
-      <editors />
-      <sts>
-         <st id="GV1" editor="BUFTANKS0_1" />
-         <st id="GV2" editor="BUFTANKS0_2" />
-         <st id="GV3" editor="BUFTANKS0_3" />
-         <st id="GV4" editor="BUFTANKS0_4" />
-         <st id="GV5" editor="BUFTANKS0_5" />
-      </sts>
-      <cmds>
-         <sends>
-         </sends>
-         <accepts>
-            <cmd id="SET_STATUS" /> 
-            <cmd id="UPDATE" /> 
-            <cmd id="SET_MODE" /> 
-            <cmd id="SET_TEMPMODE" /> 
-         </accepts>
-      </cmds>
-   </nodeDef> 
+
    -->
 </nodeDefs>

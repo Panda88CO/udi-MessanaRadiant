@@ -23,7 +23,7 @@ except ImportError:
 #from Messana_Info import messana_control
 from Messana_Node import messana_node
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
-class messana_buffertank(messana_node):
+class messana_hc_co(messana_node):
     def __init__(self, hc_co_nbr, messana_info):
         super().__init__(messana_info, 'hc', hc_co_nbr)
         logging.info('init bufferTHot Cold CO:' )
@@ -33,6 +33,6 @@ class messana_buffertank(messana_node):
         self.stateList = [0,1]
         self.messana_temp_unit = self.GET_system_data('tempUnit')
         
-        #self.get_all()
+  
 
     

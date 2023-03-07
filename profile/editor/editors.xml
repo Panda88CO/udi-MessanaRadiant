@@ -69,15 +69,25 @@
       <range  uom="25" subset="0-1,98,99" nls="onoff"/>
   </editor>
   <editor id = "bttempmode" > 
-      <range  uom="25" subset="0-2,98,99" nls="onoff"/>
+      <range  uom="25" subset="0-2,98,99" nls="bttempmode"/>
   </editor>
 
   <editor id = "set_btmode" > 
-      <range  uom="25" subset="0-1" nls="onoff"/>
+      <range  uom="25" subset="0-1" nls="setbtmode"/>
   </editor>
   <editor id = "set_bttempmode" > 
-      <range  uom="25" subset="0-2" nls="onoff"/>
+      <range  uom="25" subset="0-2" nls="settempmode"/>
   </editor>
 
+  <editor id = "hccomode" > 
+      <range  uom="25" subset="0-2,98,99" nls="onoff"/>
+  </editor>
+    <editor id = "seasonmode" > 
+      <range  uom="25" subset="0-1,98,99" nls="onoff"/>
+  </editor>
+  
+  <editor id = "set_hccomode" > 
+      <range  uom="25" subset="0-2" nls="onoff"/>
+  </editor>
 
 </editors> 

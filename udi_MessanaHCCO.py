@@ -3,7 +3,7 @@
 import time
 import re
 #from MessanaInfo import messana_info
-from Messana_HCCO import messana_hc_co
+from Messana_HC_CO import messana_hc_co
 
 try:
     import udi_interface
@@ -23,10 +23,9 @@ class udi_messana_hc_co(udi_interface.Node):
 
     '''
        drivers = [
-            'GV0' = buffertank status
+            'GV0' = adaptiveConfort
             'GV1' = mode
-            'GV2' = Temp mpde
-            'CLITEMP' = air_temp
+            'GV2' = executiveSeason
             'ST' = System Status
             ]
     '''
@@ -36,7 +35,6 @@ class udi_messana_hc_co(udi_interface.Node):
         {'driver': 'GV0', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
 
@@ -79,13 +77,8 @@ class udi_messana_hc_co(udi_interface.Node):
 
     def updateISY_shortpoll(self):
         Val = self.hc_co.get_status()
-        logging.debug('hc_co Status (GV0): {}'.format(Val))
+        logging.debug('hc_co adaptiveComfort Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
-
-        Val = self.hc_co.get_temp()
-        logging.debug('get_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
 
 
 
@@ -93,26 +86,23 @@ class udi_messana_hc_co(udi_interface.Node):
     def updateISY_longpoll(self):
         logging.debug('update_system - zone {} Status:'.format(self.hc_co_nbr))
 
-        Val = self.hc_co.get_status()
-        logging.debug('hc_co Status (GV0): {}'.format(Val))
+        Val = self.hc_co.get_adaptive_comf_status()
+        logging.debug('hc_co adaptiveComfort Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.hc_co.get_hc_co_mode()
-        logging.debug('hc_co temp(GV1): {}'.format(Val))
+        logging.debug('hc_co Mode(GV1): {}'.format(Val))
         self.node.setDriver('GV1', self.isy_value(Val))
 
-        Val = self.hc_co.get_hc_co_temp_mode()
-        logging.debug('Schedule Mode(GV2): {}'.format(Val))
+        Val = self.hc_co.get_hc_co_mode()
+        logging.debug('hc_co executiveSeason (GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 
-        Val = self.hc_co.get_temp()
-        logging.debug('get_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
 
 
 
-    def set_status(self, command):
+
+    def set_adaptive_comf(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called {} for zone: {}'.format(status, self.hc_co_nbr))
         if self.hc_co.set_status(status):
@@ -128,21 +118,13 @@ class udi_messana_hc_co(udi_interface.Node):
         else:
             logging.error('Error calling set_energy_save')
         
-    def set_hc_co_temp_mode(self, command):
-        mode = int(command.get('value'))
-        logging.debug('set_hc_co_temp_mode {} for BT {}'.format(mode, self.hc_co_nbr))   
-        if self.hc_co.set_hc_co_temp_mode(mode):
-            self.node.setDriver('GV2', mode)
-        else:
-            logging.error('Error calling set_setpoint')
 
 
     
     commands = { 'UPDATE': updateISY_longpoll
-                ,'STATUS': set_status
+                ,'STATUS': set_adaptive_comf
                 #,'ENERGYSAVE': set_energy_save
-                ,'MODE' : set_hc_co_mode
-                ,'TEMPMODE' : set_hc_co_temp_mode        
+                ,'MODE' : set_hc_co_mode 
      #           ,'SCHEDULEON' : set_schedule
                 
                 }
