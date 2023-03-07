@@ -6,7 +6,7 @@ from Messana_System import messana_system
 from udi_MessanaZone import udi_messana_zone
 from udi_MessanaMacrozone import udi_messana_macrozone
 from udi_MessanaATU import udi_messana_atu
-#from udi_MessanaBuffertank import udi_messanaBuffertank
+from udi_MessanaBuffertank import udi_messana_buffertank
 #from udi_MessanaEnergySource import udi_messanaEnergySource
 #from udi_MessanaFanCoil import  udi_messanaFanCoil
 #from udi_MessanaHotColdCO import udi_messanaHcCo
@@ -172,7 +172,8 @@ class MessanaController(udi_interface.Node):
             logging.debug('Creating buffer tanks {}'.format(buffertank_nbr))
             address = 'buffertank'+str(buffertank_nbr)
             name = 'dummy_name'
-            self.buffertank[buffertank_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
+            self.buffertanks[buffertank_nbr] = udi_messana_buffertank(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
+
         '''
         for energy_source_nbr in range(0, self.messana.nbr_energy_source ):
             logging.debug('Creating energy_source {}'.format(energy_source_nbr))
