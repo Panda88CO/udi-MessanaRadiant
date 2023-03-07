@@ -125,7 +125,6 @@
          <st id="GV7" editor="onoff" />
          <st id="GV8" editor="enable" />
          <st id="GV9" editor="onoff" />
-         <st id="GV10" editor="onoff" />
          <st id="GV11" editor="alarm" />
          <st id="ST" editor="running" />
       </sts>
@@ -154,8 +153,8 @@
             </cmd> 
          </accepts>
       </cmds>
-   <!--
    </nodeDef> 
+   <!--
    <nodeDef id="EnergyS0" nls="nlsEnergyS0">
       <editors />
       <sts>
@@ -212,4 +211,4 @@
       </cmds>
    </nodeDef> 
    -->
-</nodeDefs>  
+</nodeDefs>
