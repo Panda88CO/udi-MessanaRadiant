@@ -7,9 +7,10 @@ from udi_MessanaZone import udi_messana_zone
 from udi_MessanaMacrozone import udi_messana_macrozone
 from udi_MessanaATU import udi_messana_atu
 from udi_MessanaBuffertank import udi_messana_buffertank
+from udi_MessanaHC_CO import udi_messana_hc_co
 #from udi_MessanaEnergySource import udi_messanaEnergySource
 #from udi_MessanaFanCoil import  udi_messanaFanCoil
-#from udi_MessanaHotColdCO import udi_messanaHcCo
+
 #from udi_MessanaHotWater import udi_messanaHotWater
 
 import time
@@ -174,6 +175,13 @@ class MessanaController(udi_interface.Node):
             name = 'dummy_name'
             self.buffertanks[buffertank_nbr] = udi_messana_buffertank(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
 
+        for hc_co_nbr in range(0, self.messana.nbr_energy_source ):
+            logging.debug('Creating hot cold change over {}'.format(hc_co_nbr))
+            address = 'hcco'+str(energy_source_nbr)
+            name = 'dummy_name'
+            self.macrozones[hc_co_nbr] = udi_messana_hc_co(self.poly, self.primary, address, name, hc_co_nbr, self.messana_info)
+
+       
         '''
         for energy_source_nbr in range(0, self.messana.nbr_energy_source ):
             logging.debug('Creating energy_source {}'.format(energy_source_nbr))
