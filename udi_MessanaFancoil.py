@@ -73,11 +73,11 @@ class udi_messana_fancoil(udi_interface.Node):
         self.messana_temp_unit = self.fancoil.messana_temp_unit
 
     def start(self):
-        logging.info('udiMessanaZone Start ')
+        logging.info('udiMessanaFanCoil Start ')
         self.updateISY_longpoll()
 
     def stop(self):
-        logging.info('udiMessanaZone Stop ')
+        logging.info('udiMessanaFanCoil Stop ')
 
     def updateISY_shortpoll(self):
         Val = self.fancoil.get_status()
@@ -85,11 +85,11 @@ class udi_messana_fancoil(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.fancoil.get_fancoil_heat_speed()
-        logging.debug('buffertanl get_fancoil_heat_speed(GV2): {}'.format(Val))
+        logging.debug('Fancoil get_fancoil_heat_speed(GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 
         Val = self.fancoil.get_fancoil_cool_speed()
-        logging.debug('buffertanl get_fancoil_cool_speed(GV3): {}'.format(Val))
+        logging.debug('Fancoil get_fancoil_cool_speed(GV3): {}'.format(Val))
         self.node.setDriver('GV3', self.isy_value(Val))
 
         Val = self.fancoil.get_alarmOn()
@@ -101,7 +101,7 @@ class udi_messana_fancoil(udi_interface.Node):
 
 
     def updateISY_longpoll(self):
-        logging.debug('update_system - zone {} Status:'.format(self.fancoil_nbr))
+        logging.debug('update_system - Fancoil {} Status:'.format(self.fancoil_nbr))
 
         Val = self.fancoil.get_status()
         logging.debug('fancoil Status (GV0): {}'.format(Val))
@@ -112,11 +112,11 @@ class udi_messana_fancoil(udi_interface.Node):
         self.node.setDriver('GV3', self.isy_value(Val))
 
         Val = self.fancoil.get_fancoil_heat_speed()
-        logging.debug('buffertanl get_fancoil_heat_speed(GV2): {}'.format(Val))
+        logging.debug('Fancoil get_fancoil_heat_speed(GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 
         Val = self.fancoil.get_fancoil_cool_speed()
-        logging.debug('buffertanl get_fancoil_cool_speed(GV3): {}'.format(Val))
+        logging.debug('Fancoil get_fancoil_cool_speed(GV3): {}'.format(Val))
         self.node.setDriver('GV3', self.isy_value(Val))
 
         Val = self.fancoil.get_alarmOn()
@@ -137,7 +137,7 @@ class udi_messana_fancoil(udi_interface.Node):
     def set_heat_speed(self, command):
         speed = int(command.get('value'))
         logging.debug('set_heat_speed Called {} for FC {}'.format(speed, self.fancoil_nbr))
-        if self.fancoil.set_fancoil_heat(speed):
+        if self.fancoil.set_fancoil_heat_speed(speed):
             self.node.setDriver('GV1', speed)
         else:
             logging.error('Error calling set_energy_save')
@@ -145,7 +145,7 @@ class udi_messana_fancoil(udi_interface.Node):
     def set_cool_speed(self, command):
         speed = int(command.get('value'))
         logging.debug('set_cool_speed {} for FC {}'.format(speed, self.fancoil_nbr))   
-        if self.fancoil.set_fancoil_cool(speed):
+        if self.fancoil.set_fancoil_cool_speed(speed):
             self.node.setDriver('GV2', speed)
         else:
             logging.error('Error calling set_setpoint')

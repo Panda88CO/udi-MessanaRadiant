@@ -74,11 +74,11 @@ class udi_messana_macrozone(udi_interface.Node):
         self.messana_temp_unit = self.macrozone.messana_temp_unit
 
     def start(self):
-        logging.info('udiMessanaZone Start ')
+        logging.info('udiMessanaMacrozone Start ')
         self.updateISY_longpoll()
 
     def stop(self):
-        logging.info('udiMessanaZone Stop ')
+        logging.info('udiMessanaMacrozone Stop ')
 
     def updateISY_shortpoll(self):
         Val = self.macrozone.get_status()

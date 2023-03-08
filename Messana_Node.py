@@ -316,3 +316,20 @@ class messana_node(messana_control):
             time.sleep(0.5)
         return(self.get_fancoil_heat_speed())
 
+    def get_energy_source_dhwStatus(self):
+        logging.debug('{} {} - get_energy_source_dhwStatus'.format(self.type, self.nbr))
+        return(self.__get_node_data('dhwStatus'))
+
+    def get_energy_source_type(self):
+        logging.debug('{} {} - get_energy_source_type'.format(self.type, self.nbr))
+        return(self.__get_node_data('type'))
+
+    def get_target_temp(self):
+        logging.debug('{} {} - get_target_temp'.format(self.type, self.nbr))
+        return(self.__get_node_data('targetTemperature'))
+    
+    def set_target_temp(self, speed):
+        logging.debug('{} {} - set_target_temp {} '.format(self.type, self.nbr, speed))
+        if self.__put_node_data('targetTemperature', speed):
+            time.sleep(0.5)
+        return(self.get_target_temp())

@@ -244,26 +244,43 @@
          </accepts>
       </cmds>
    </nodeDef>
-
-   <!--
-   <nodeDef id="EnergyS0" nls="nlsEnergyS0">
+   <nodeDef id="energy_source" nls="nlsenergy_source">
       <editors />
       <sts>
-         <st id="GV1" editor="ENERGYS0_1" />
-         <st id="GV2" editor="ENERGYS0_2" />
-         <st id="GV3" editor="ENERGYS0_3" />
-         <st id="GV4" editor="ENERGYS0_4" />
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="onoff"/>
+         <st id="GV2" editor="estype"/>
+         <st id="GV3" editor="alarm" />         
+         <st id="ST" editor="running" />
       </sts>
       <cmds>
          <sends>
          </sends>
          <accepts>
-            <cmd id="SET_STATUS" /> 
             <cmd id="UPDATE" /> 
          </accepts>
       </cmds>
-   </nodeDef> 
-
-
-   -->
+   </nodeDef>
+   <nodeDef id="dhw" nls="nlsdhw">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="CLITEMP" editor="temp"/>
+         <st id="GV1" editor="temp" />         
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="TARGETTEMP" > 
+               <p id="" editor="set_temp" init="GV1" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
 </nodeDefs>

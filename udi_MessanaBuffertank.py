@@ -26,7 +26,7 @@ class udi_messana_buffertank(udi_interface.Node):
             'GV0' = buffertank status
             'GV1' = mode
             'GV2' = Temp mpde
-            'GV3' = executive mode
+            'GV3' = alarm
             'ST' = System Status
             ]
     '''
@@ -87,11 +87,13 @@ class udi_messana_buffertank(udi_interface.Node):
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 
-
+        Val = self.buffertank.get_alarmOn()
+        logging.debug('buffertank Alarm (GV3): {}'.format(Val))
+        self.node.setDriver('GV3', self.isy_value(Val))
 
 
     def updateISY_longpoll(self):
-        logging.debug('update_system - zone {} Status:'.format(self.buffertank_nbr))
+        logging.debug('update_system - buffertank {} Status:'.format(self.buffertank_nbr))
 
         Val = self.buffertank.get_status()
         logging.debug('buffertank Status (GV0): {}'.format(Val))
@@ -110,6 +112,9 @@ class udi_messana_buffertank(udi_interface.Node):
         #self.node.setDriver('GV4', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'CLITEMP')
 
+        Val = self.buffertank.get_alarmOn()
+        logging.debug('buffertank Alarm (GV3): {}'.format(Val))
+        self.node.setDriver('GV3', self.isy_value(Val))
 
 
     def set_status(self, command):

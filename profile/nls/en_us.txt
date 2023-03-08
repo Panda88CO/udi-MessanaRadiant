@@ -116,6 +116,7 @@ CMD-nlsbuffertank-TEMPMODE-NAME = Buffertank Temperature Mode
 ST-nlsbuffertank-GV0-NAME = State
 ST-nlsbuffertank-GV1-NAME = Buffertank Mode
 ST-nlsbuffertank-GV2-NAME = Buffertank temperature Mode
+ST-nlsbuffertank-GV3-NAME = Buffertank Alarm
 ST-nlsbuffertank-CLITEMP-NAME = Buffertank Temperature
 ST-nlsbuffertank-ST-NAME = Node Running
 
@@ -163,20 +164,28 @@ set_hccomode-0 = Heating Mode
 set_hccomode-1 = Cooling Mode
 set_hccomode-2 = Auto Mode
 
-ND-fancoil-NAME = Messana Fan Coil
-ND-fancoil-ICON = TempSensor
-CMD-nlsfancoil-UPDATE-NAME = Update System Data
-CMD-nlsfancoil-STATUS-NAME = Fan Coil State
-CMD-nlsfancoil-HEATSPEED-NAME = FanCoil Heating Speed
-CMD-nlsfancoil-COOLSPEED-NAME = FanCoil Cooling Speed
-ST-nlsfancoil-GV0-NAME = Fan Coil State
-ST-nlsfancoil-GV1-NAME = Fan Coil Heating Speed
-ST-nlsfancoil-GV2-NAME = Fan Coil Cooling Speed
-ST-nlsfancoil-GV3-NAME = Fan Coil Type
-ST-nlsfancoil-ST-NAME = Node Running
+ND-energy_source-NAME = Messana Fan Coil
+ND-energy_source-ICON = TempSensor
+CMD-nlsenergy_source-UPDATE-NAME = Update System Data
+ST-nlsenergy_source-GV0-NAME = Energy Source State
+ST-nlsenergy_source-GV1-NAME = Hot Water Status 
+ST-nlsenergy_source-GV2-NAME = Energy Source Type
+ST-nlsenergy_source-GV3-NAME = Energy Source Alarm
+ST-nlsenergy_source-ST-NAME = Node Running
 
-fctype-0 = Radiator
-fctype-1 = Digital Fan Coil (on/off)
-fctype-2 = Digital Fan Coil (multi speedf)
-fctype-3 = Analog Fan Coil
-fctype-99 = Unknown
+estype-0 = Boiler
+estype-1 = Heat Pump Cool
+estype-2 = Heat Pump Heat
+estype-3 = Hat Pump Heat/Cool
+estype-99 = Unknown
+
+ND-dhw-NAME = Domestic Hot Water
+ND-dhw-ICON = TempSensor
+CMD-nlsdhw-UPDATE-NAME = Update System Data
+CMD-nlsdhw-STATUS-NAME = Hot Water State
+CMD-nlsdhw-TARGETTEMP-NAME = Target Water Temperature
+ST-nlsdhw-GV0-NAME = Hot Water State
+ST-nlsdhw-CLITEMP-NAME = Hot Water Temperature
+ST-nlsdhw-GV1-NAME = Target Hot Water Temperature
+ST-nlsdhw-ST-NAME = Node Running
+

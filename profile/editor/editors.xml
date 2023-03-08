@@ -99,5 +99,8 @@
    <editor id = "fctype" > 
       <range  uom="25" subset="0-3,99" nls="onoff"/>
   </editor>
+     <editor id = "estype" > 
+      <range  uom="25" subset="0-3,99" nls="onoff"/>
+  </editor>
   
 </editors> 
