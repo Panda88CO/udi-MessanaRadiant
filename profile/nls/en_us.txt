@@ -163,3 +163,20 @@ set_hccomode-0 = Heating Mode
 set_hccomode-1 = Cooling Mode
 set_hccomode-2 = Auto Mode
 
+ND-fancoil-NAME = Messana Fan Coil
+ND-fancoil-ICON = TempSensor
+CMD-nlsfancoil-UPDATE-NAME = Update System Data
+CMD-nlsfancoil-STATUS-NAME = Fan Coil State
+CMD-nlsfancoil-HEATSPEED-NAME = FanCoil Heating Speed
+CMD-nlsfancoil-COOLSPEED-NAME = FanCoil Cooling Speed
+ST-nlsfancoil-GV0-NAME = Fan Coil State
+ST-nlsfancoil-GV1-NAME = Fan Coil Heating Speed
+ST-nlsfancoil-GV2-NAME = Fan Coil Cooling Speed
+ST-nlsfancoil-GV3-NAME = Fan Coil Type
+ST-nlsfancoil-ST-NAME = Node Running
+
+fctype-0 = Radiator
+fctype-1 = Digital Fan Coil (on/off)
+fctype-2 = Digital Fan Coil (multi speedf)
+fctype-3 = Analog Fan Coil
+fctype-99 = Unknown

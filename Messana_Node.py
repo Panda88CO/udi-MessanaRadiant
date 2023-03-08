@@ -285,21 +285,34 @@ class messana_node(messana_control):
         if self.__put_node_data('mode', temp_mode):
             time.sleep(0.5)
         return(self.get_hc_co_mode())
-    
-    
+
     def get_hc_co_season_mode(self):
         logging.debug('{} {} - get_hc_co_season_mode'.format(self.type, self.nbr))
         return(self.__get_node_data('executiveSeason'))
 
 
+    def get_fctype(self):
+        logging.debug('{} {} - get_fc type'.format(self.type, self.nbr))
+        return(self.__get_node_data('type'))
 
 
-'''
-                ,'HRVEN' : heat_recovery_en
-                ,'HUMEN' : humidification_en
-                ,'DEHUMEN' : dehumidification_en
-                ,'CONVEN' : convection_en
-                ,'SET_FLOW' : set_flow,
-                
-                }
-'''        
+    def get_fancoil_heat_speed(self):
+        logging.debug('{} {} - get_fancoil_heat_speed'.format(self.type, self.nbr))
+        return(self.__get_node_data('heatingSpeed'))
+
+    def set_fancoil_heat_speed(self, speed):
+        logging.debug('{} {} -     def set_fancoil_heat_speed(self, temp_mode):{} '.format(self.type, self.nbr, speed))
+        if self.__put_node_data('heatingSpeed', speed):
+            time.sleep(0.5)
+        return(self.get_fancoil_heat_speed())
+
+    def get_fancoil_cool_speed(self):
+        logging.debug('{} {} - get_fancoil_cool_speed'.format(self.type, self.nbr))
+        return(self.__get_node_data('coolingSpeed'))
+
+    def set_fancoil_cool_speed(self, speed):
+        logging.debug('{} {} - set_fancoil_cool_speed {} '.format(self.type, self.nbr, speed))
+        if self.__put_node_data('coolingSpeed', speed):
+            time.sleep(0.5)
+        return(self.get_fancoil_heat_speed())
+

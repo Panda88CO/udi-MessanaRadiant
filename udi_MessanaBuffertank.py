@@ -26,7 +26,7 @@ class udi_messana_buffertank(udi_interface.Node):
             'GV0' = buffertank status
             'GV1' = mode
             'GV2' = Temp mpde
-            'GV2' = executive mode
+            'GV3' = executive mode
             'ST' = System Status
             ]
     '''

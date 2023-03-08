@@ -7,9 +7,11 @@ from udi_MessanaZone import udi_messana_zone
 from udi_MessanaMacrozone import udi_messana_macrozone
 from udi_MessanaATU import udi_messana_atu
 from udi_MessanaBuffertank import udi_messana_buffertank
-from udi_MessanaHC_CO import udi_messana_hc_co
+from udi_MessanaHCCO import udi_messana_hc_co
+from udi_MessanaFancoil import  udi_messana_fancoil
+
 #from udi_MessanaEnergySource import udi_messanaEnergySource
-#from udi_MessanaFanCoil import  udi_messanaFanCoil
+#
 
 #from udi_MessanaHotWater import udi_messanaHotWater
 
@@ -51,7 +53,7 @@ class MessanaController(udi_interface.Node):
         self.macrozones = {}
         self.atus = {}
         self.buffertanks = {}
-        self.fan_coils = {}
+        self.fancoils = {}
         self.hot_cold_change_overs = {}
         self.energy_sources = {}
         self.hotwaters = {}
@@ -177,11 +179,15 @@ class MessanaController(udi_interface.Node):
 
         for hc_co_nbr in range(0, self.messana.nbr_energy_source ):
             logging.debug('Creating hot cold change over {}'.format(hc_co_nbr))
-            address = 'hcco'+str(energy_source_nbr)
+            address = 'hcco'+str(hc_co_nbr)
             name = 'dummy_name'
-            self.macrozones[hc_co_nbr] = udi_messana_hc_co(self.poly, self.primary, address, name, hc_co_nbr, self.messana_info)
+            self.hot_cold_change_overs[hc_co_nbr] = udi_messana_hc_co(self.poly, self.primary, address, name, hc_co_nbr, self.messana_info)
 
-       
+        for fancoil_nbr in range(0, self.messana.nbr_fancoil ):
+            logging.debug('Creating fan coils {}'.format(fancoil_nbr))
+            address = 'fancoil'+str(fancoil_nbr)
+            name = 'dummy_name'
+            self.fancoils[fancoil_nbr] = udi_messana_fancoil(self.poly, self.primary, address, name, fancoil_nbr, self.messana_info)
         '''
         for energy_source_nbr in range(0, self.messana.nbr_energy_source ):
             logging.debug('Creating energy_source {}'.format(energy_source_nbr))
@@ -402,7 +408,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.95')
+        polyglot.start('0.0.96')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

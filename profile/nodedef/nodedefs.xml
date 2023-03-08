@@ -217,6 +217,33 @@
          </accepts>
       </cmds>
    </nodeDef>
+   <nodeDef id="fancoil" nls="nlsfancoil">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="fanspeed"/>
+         <st id="GV2" editor="fanspeed"/>
+         <st id="GV3" editor="fctype"/>
+         <st id="GV4" editor="alarm" />         
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="HEATSPEED" > 
+               <p id="" editor="setspeed" init="GV1" /> 
+            </cmd> 
+            <cmd id="COOLSPEED" > 
+               <p id="" editor="setspeed" init="GV2" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
 
    <!--
    <nodeDef id="EnergyS0" nls="nlsEnergyS0">
@@ -236,24 +263,7 @@
          </accepts>
       </cmds>
    </nodeDef> 
-   <nodeDef id="HcCo0" nls="nlsHcCo0">
-      <editors />
-      <sts>
-         <st id="GV1" editor="HCCO0_1" />
-         <st id="GV2" editor="HCCO0_2" />
-         <st id="GV3" editor="HCCO0_3" />
-      </sts>
-      <cmds>
-         <sends>
-         </sends>
-         <accepts>
-            <cmd id="UPDATE" /> 
-            <cmd id="SET_ADAPTIVE_COMFORT" > 
-               <p id="" editor="HCCO0_3" init="GV3" /> 
-            </cmd> 
-         </accepts>
-      </cmds>
-   </nodeDef> 
+
 
    -->
 </nodeDefs>
