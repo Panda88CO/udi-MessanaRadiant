@@ -167,11 +167,11 @@ class udi_messana_zone(udi_interface.Node):
             self.node.setDriver('GV6', self.isy_value(Val))
 
         Val = self.zone.get_co2()
-        logging.debug('get_co2 (GV7): {}'.format(Val))
+        logging.debug('get_co2 (CO2LVL): {}'.format(Val))
         if Val == -1 or Val == None:
-             self.node.setDriver('GV7', 98, True, True, 25)
+             self.node.setDriver('CO2LVL', 98, True, True, 25)
         else:
-            self.node.setDriver('GV7', self.isy_value(Val))
+            self.node.setDriver('CO2LVL', self.isy_value(Val))
 
         Val = self.zone.get_energy_saving()
         logging.debug('get_energy_saving On (GV8): {}'.format(Val))

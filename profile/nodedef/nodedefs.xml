@@ -156,6 +156,7 @@
       <editors />
       <sts>
          <st id="GV0" editor="enable" />
+         <st id="CLITEMP" editor="temp" />
          <st id="GV1" editor="btmode"/>
          <st id="GV2" editor="bttempmode"/>
          <st id="CLITEMP" editor="temp" />
