@@ -204,7 +204,7 @@ class MessanaController(udi_interface.Node):
             name = self.poly.getValidName(tmp_name)
             self.energy_source[energy_source_nbr] = udi_messana_energy_source(self.poly, self.primary, address, name, energy_source_nbr, self.messana_info)
 
-        for hotwater_nbr in range(0, self.messana.nbr_atus ):
+        for hotwater_nbr in range(0, self.messana.nbr_dhwater ):
             logging.debug('Creating domestic hot water {}'.format(hotwater_nbr))
             address = self.poly.getValidAddress('hotwater'+str(hotwater_nbr))
             tmp_name= self.messana.get_hotwater_name(hotwater_nbr)
@@ -406,7 +406,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.101')
+        polyglot.start('0.0.102')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
