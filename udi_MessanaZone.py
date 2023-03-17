@@ -57,16 +57,12 @@ class udi_messana_zone(udi_interface.Node):
     def __init__(self, polyglot, primary, address, name, zone_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
         logging.info('init Messana Zone {}:'.format(zone_nbr) )
-        #self.node_type = 'zone'
-        #self.parent = primary
+
         self.primary = primary
-        #self.id = 'zone'
         self.zone_nbr = zone_nbr
         self.zone = messana_zone(self.zone_nbr, messana_info)
 
         self.address = address
-        tmp_name = self.zone.name
-        self.name = self.getValidName(tmp_name)
         self.poly = polyglot
         #self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
@@ -74,7 +70,7 @@ class udi_messana_zone(udi_interface.Node):
         self.poly.subscribe(polyglot.STOP, self.stop)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
         
-        logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
+        logging.debug('setup node: {} {} {} {}'.format(self.address, name, self.id, self.primary))
         self.poly.ready()
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()

@@ -50,9 +50,7 @@ class udi_messana_macrozone(udi_interface.Node):
         self.primary = primary  
         self.macrozone_nbr = macrozone_nbr
         self.macrozone = messana_macrozone(self.macrozone_nbr, messana_info)
-        self.address =self.getValidAddress(address)
-        tmp_name = self.macrozone.name
-        self.name = self.getValidName(tmp_name)
+        self.address = address
         self.poly = polyglot
         #self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
@@ -61,7 +59,7 @@ class udi_messana_macrozone(udi_interface.Node):
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
 
         
-        logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
+        logging.debug('setup node: {} {} {} {}'.format(self.address, name, self.id, self.primary))
         self.poly.ready()
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()

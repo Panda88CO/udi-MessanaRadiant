@@ -45,9 +45,7 @@ class udi_messana_hot_water(udi_interface.Node):
         self.primary = primary  
         self.dhw_nbr = dhw_nbr
         self.dhw = messana_hot_water(self.dhw_nbr, messana_info)
-        self.address =self.getValidAddress(address)
-        tmp_name = self.dhw.name
-        self.name = self.getValidName(tmp_name)
+        self.address = address
         self.poly = polyglot
         #self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
@@ -56,7 +54,7 @@ class udi_messana_hot_water(udi_interface.Node):
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
 
         
-        logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
+        logging.debug('setup node: {} {} {} {}'.format(self.address, name, self.id, self.primary))
         self.poly.ready()
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()

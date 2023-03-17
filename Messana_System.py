@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-import requests
+#import requests
 #from subprocess import call
-import json
-import os
+#import json
+#import os
 
 
 try:
@@ -80,3 +80,34 @@ class messana_system(messana_control):
     def get_external_alarm(self):
         return(self.GET_system_data('externalAlarm'))
 
+    def get_zone_name(self, node_nbr):
+        logging.debug('Getting Messana name for zone {}'.format(node_nbr))
+        return(self.GET_node_data('name','zone', node_nbr))
+
+    def get_macrozone_name(self, node_nbr):
+        logging.debug('Getting Messana name for macrozone {}'.format(node_nbr))
+        return(self.GET_node_data('name','macrozone', node_nbr))
+
+    def get_hc_co_name(self, node_nbr):
+        logging.debug('Getting Messana name for hot/cold_change over {}'.format(node_nbr))
+        return(self.GET_node_data('name','hc', node_nbr))
+            
+    def get_fancoil_name(self, node_nbr):
+        logging.debug('Getting Messana name for fancoil {}'.format(node_nbr))
+        return(self.GET_node_data('name','fcu', node_nbr))    
+
+    def get_atu_name(self, node_nbr):
+        logging.debug('Getting Messana name for atu {}'.format(node_nbr))
+        return(self.GET_node_data('name','atu', node_nbr))
+
+    def get_energy_source_name(self, node_nbr):
+        logging.debug('Getting Messana name for energy source {}'.format(node_nbr))
+        return(self.GET_node_data('name','energySource', node_nbr))
+    
+    def get_buffertank_name(self, node_nbr):
+        logging.debug('Getting Messana name for buffer tank {}'.format(node_nbr))
+        return(self.GET_node_data('name','bufferTank', node_nbr))
+    
+    def get_hotwater_name(self, node_nbr):
+        logging.debug('Getting Messana name for hotwater {}'.format(node_nbr))
+        return(self.GET_node_data('name','dhw', node_nbr))     

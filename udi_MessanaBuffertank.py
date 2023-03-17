@@ -46,13 +46,12 @@ class udi_messana_buffertank(udi_interface.Node):
         super().__init__(polyglot, primary, address, name)
         logging.info('init Messana buffertank {}:'.format(buffertank_nbr) )
         self.poly = polyglot
-        self.primary = primary  
+        self.primary = primary
+        self.address = address
         self.buffertank_nbr = buffertank_nbr
         self.buffertank = messana_buffertank(self.buffertank_nbr, messana_info)
-        self.address =self.poly.getValidAddress(address)
-        tmp_name = self.buffertank.name
-        self.name = self.poly.getValidName(tmp_name)
-        
+
+
         #self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
         self.poly.subscribe(polyglot.START, self.start, self.address)
@@ -60,7 +59,7 @@ class udi_messana_buffertank(udi_interface.Node):
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
 
         
-        logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
+        logging.debug('setup node: {} {} {} {}'.format(address, name, self.id, self.primary))
         self.poly.ready()
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()

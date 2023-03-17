@@ -64,22 +64,22 @@ class udi_messana_atu(udi_interface.Node):
         self.poly = polyglot
         self.primary = primary
         self.atu_nbr = atu_nbr
-        self.address =self.getValidAddress(address)
+        self.address = address
 
         self.atu = messana_atu(self.atu_nbr, messana_info)
-        tmp_name = self.atu.name
-        logging.debug('ATU {} name : {}'.format(atu_nbr, tmp_name ))
-        self.name = self.getValidName(tmp_name)        
+        #self.name = name
+        logging.debug('ATU {} name : {}'.format(atu_nbr, name ))
+       
 
         
         #self.Parameters = Custom(self.poly, 'customparams')
         self.n_queue = []
-        self.poly.subscribe(polyglot.START, self.start, self.address)
+        self.poly.subscribe(polyglot.START, self.start, address)
         self.poly.subscribe(polyglot.STOP, self.stop)
         self.poly.subscribe(self.poly.ADDNODEDONE, self.node_queue)
 
         
-        logging.debug('setup node: {} {} {} {}'.format(self.address, self.name, self.id, self.primary))
+        logging.debug('setup node: {} {} {} {}'.format(address, name, self.id, primary))
         self.poly.ready()
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()
