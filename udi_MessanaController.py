@@ -154,62 +154,61 @@ class MessanaController(udi_interface.Node):
             
             self.updateISY_longpoll()
             time.sleep(1)
-
         for zone_nbr in range(0, self.messana.nbr_zones ):
             logging.debug('Creating zone {}'.format(zone_nbr))
             address = self.poly.getValidAddress('zone'+str(zone_nbr))
             tmp_name= self.messana.get_zone_name(zone_nbr)
-            name = self.poly.getValidName(tmp_name)
-            self.zone[zone_nbr] = udi_messana_zone(self.poly, address, address, name, zone_nbr, self.messana_info)
+            name = self.poly.getValidName('zone '+ tmp_name)
+            self.zone[zone_nbr] = udi_messana_zone(self.poly, self.primary, address, name, zone_nbr, self.messana_info)
         
         for macrozone_nbr in range(0, self.messana.nbr_macrozones ):
             logging.debug('Creating macrozone {}'.format(macrozone_nbr))
             address = self.poly.getValidAddress('macrozone'+str(macrozone_nbr))
             tmp_name= self.messana.get_macrozone_name(macrozone_nbr)
-            name = self.poly.getValidName(tmp_name)
-            self.macrozone[macrozone_nbr] = udi_messana_macrozone(self.poly, address, address, name, macrozone_nbr, self.messana_info)
+            name = self.poly.getValidName('macrozone '+tmp_name)
+            self.macrozone[macrozone_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, macrozone_nbr, self.messana_info)
 
         for atu_nbr in range(0, self.messana.nbr_atus ):
             logging.debug('Creating atus {}'.format(atu_nbr))
             address = self.poly.getValidAddress('atu'+str(atu_nbr))
             tmp_name= self.messana.get_atu_name(atu_nbr)
-            name = self.poly.getValidName(tmp_name)
-            self.atu[atu_nbr] = udi_messana_atu(self.poly, address, address, name, atu_nbr, self.messana_info)
+            name = self.poly.getValidName('atu '+tmp_name)
+            self.atu[atu_nbr] = udi_messana_atu(self.poly, self.primary, address, name, atu_nbr, self.messana_info)
 
         for buffertank_nbr in range(0, self.messana.nbr_buffer_tank ):
             logging.debug('Creating buffer tanks {}'.format(buffertank_nbr))
             address = self.poly.getValidAddress('buffertank'+str(buffertank_nbr))
             tmp_name= self.messana.get_buffertank_name(buffertank_nbr)
-            name = self.poly.getValidName(tmp_name)
-            self.buffertank[buffertank_nbr] = udi_messana_buffertank(self.poly, address, address, name, buffertank_nbr, self.messana_info)
+            name = self.poly.getValidName('buffertank '+tmp_name)
+            self.buffertank[buffertank_nbr] = udi_messana_buffertank(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
 
         for hc_co_nbr in range(0, self.messana.nbr_energy_source ):
             logging.debug('Creating hot cold change over {}'.format(hc_co_nbr))
             address = self.poly.getValidAddress('hcco'+str(hc_co_nbr))
             tmp_name= self.messana.get_hc_co_name(hc_co_nbr)
-            name = self.poly.getValidName(tmp_name)
-            self.hot_cold_change_over[hc_co_nbr] = udi_messana_hc_co(self.poly, address, address, name, hc_co_nbr, self.messana_info)
+            name = self.poly.getValidName('hcco '+tmp_name)
+            self.hot_cold_change_over[hc_co_nbr] = udi_messana_hc_co(self.poly, self.primary, address, name, hc_co_nbr, self.messana_info)
 
         for fancoil_nbr in range(0, self.messana.nbr_fancoil ):
             logging.debug('Creating fan coils {}'.format(fancoil_nbr))
             address = self.poly.getValidAddress('fancoil'+str(fancoil_nbr))
             tmp_name= self.messana.get_fancoil_name(fancoil_nbr)
-            name = self.poly.getValidName(tmp_name)
-            self.fancoil[fancoil_nbr] = udi_messana_fancoil(self.poly, address, address, name, fancoil_nbr, self.messana_info)
+            name = self.poly.getValidName('fancoil '+tmp_name)
+            self.fancoil[fancoil_nbr] = udi_messana_fancoil(self.poly, self.primary, address, name, fancoil_nbr, self.messana_info)
 
         for energy_source_nbr in range(0, self.messana.nbr_energy_source ):
             logging.debug('Creating energy_source {}'.format(energy_source_nbr))
             address = self.poly.getValidAddress('energysource'+str(energy_source_nbr))
             tmp_name= self.messana.get_energy_source_name(energy_source_nbr)
-            name = self.poly.getValidName(tmp_name)
-            self.energy_source[energy_source_nbr] = udi_messana_energy_source(self.poly, address, address, name, energy_source_nbr, self.messana_info)
+            name = self.poly.getValidName('energy source '+tmp_name)
+            self.energy_source[energy_source_nbr] = udi_messana_energy_source(self.poly, self.primary, address, name, energy_source_nbr, self.messana_info)
 
         for hotwater_nbr in range(0, self.messana.nbr_dhwater ):
             logging.debug('Creating domestic hot water {}'.format(hotwater_nbr))
             address = self.poly.getValidAddress('hotwater'+str(hotwater_nbr))
             tmp_name= self.messana.get_hotwater_name(hotwater_nbr)
-            name = self.poly.getValidName(tmp_name)
-            self.hotwater[hotwater_nbr] = udi_messana_hot_water(self.poly, address, address, name, hotwater_nbr, self.messana_info)
+            name = self.poly.getValidName('hotwater '+tmp_name)
+            self.hotwater[hotwater_nbr] = udi_messana_hot_water(self.poly, self.primary, address, name, hotwater_nbr, self.messana_info)
                                              
         #self.updateISY_longpoll()
         #self.updateISYdrivers('all')
@@ -406,7 +405,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.104')
+        polyglot.start('0.0.105')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

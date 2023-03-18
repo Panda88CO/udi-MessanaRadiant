@@ -245,6 +245,7 @@ class udi_messana_atu(udi_interface.Node):
 
     commands = { 'UPDATE': updateISY_longpoll
                 ,'STATUS': set_status
+                ,'HRVEN' : heat_recovery_en
                 ,'HUMEN' : humidification_en
                 ,'DEHUMEN' : dehumidification_en
                 ,'CONVEN' : convection_en
