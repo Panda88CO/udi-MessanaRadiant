@@ -157,7 +157,7 @@ class udi_messana_zone(udi_interface.Node):
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        if Val == -1:
+        if Val == -1 or Val == None:
              self.node.setDriver('GV6', 98, True, True, 25)
         else:
             self.node.setDriver('GV6', self.isy_value(Val))
@@ -205,23 +205,13 @@ class udi_messana_zone(udi_interface.Node):
             self.node.setDriver('GV3', set_point)
         else:
             logging.error('Error calling set_setpoint')
-    '''
-    def set_setpoint_co2(self, command):
-        set_point = round(round(command.get('value')*2,0)/2,1)
-        logging.debug('set_setpoint_co2 {} for zone {}'.format(set_point, self.zone_nbr))   
-        if self.zone.set_setpoint_co2(set_point):
-            self.node.setDriver('GV3', set_point)
-        else:
-            logging.error('Error calling set_setpoint_co2')
-   
 
-    def set_schedule(self, command):
-        schedule = int(command.get('value'))
-        logging.debug('set_schedule: {}'.format(schedule))
+    def update(self, command):
+        logging.debug('update')
+        self.updateISY_longpoll()
 
-    '''
     
-    commands = { 'UPDATE': updateISY_longpoll
+    commands = { 'UPDATE': update
                 ,'STATUS': set_status
                 ,'ENERGYSAVE': set_energy_save
                 ,'SETPOINT' : set_setpoint

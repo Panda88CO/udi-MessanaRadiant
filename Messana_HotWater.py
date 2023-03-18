@@ -30,7 +30,6 @@ class messana_hot_water(messana_node):
         self.type = 'dhw'
         self.nbr = dhw_nbr
         self.name = self.get_name()
-        self.stateList = [0,1]
         self.messana_temp_unit = self.GET_system_data('tempUnit')
         
         #self.get_all()

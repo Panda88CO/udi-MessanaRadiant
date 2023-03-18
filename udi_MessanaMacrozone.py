@@ -157,9 +157,12 @@ class udi_messana_macrozone(udi_interface.Node):
         schedule = int(command.get('value'))
         logging.debug('set_schedule: {}'.format(schedule))
 
+    def update(self, command):
+        logging.debug('update')
+        self.updateISY_longpoll()
+
     
-    commands = { 'UPDATE': updateISY_longpoll
-                ,'STATUS': set_status
+    commands = { 'UPDATE': update
                 #,'ENERGYSAVE': set_energy_save
                 ,'SETPOINT' : set_setpoint
      #           ,'SETPOINTCO2' : set_setpoint_co2        

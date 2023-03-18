@@ -155,7 +155,7 @@
    <nodeDef id="buffertank" nls="nlsbuffertank">
       <editors />
       <sts>
-         <st id="GV0" editor="enable" />
+         <st id="GV0" editor="btenable" />
          <st id="CLITEMP" editor="temp" />
          <st id="GV1" editor="btmode"/>
          <st id="GV2" editor="bttempmode"/>
@@ -167,7 +167,6 @@
          </sends>
          <accepts>
             <cmd id="UPDATE" /> 
-
             <cmd id="STATUS" > 
                <p id="" editor="set_enable" init="GV0" /> 
             </cmd> 
@@ -177,13 +176,6 @@
             <cmd id="TEMPMODE" > 
                <p id="" editor="set_bttempmode" init="GV2" /> 
             </cmd> 
-
-
-            <!--
-            <cmd id="SCHEDULEON" > 
-               <p id="" editor="set_enable" init="GV2" /> 
-            </cmd> 
-            -->
          </accepts>
       </cmds>
    </nodeDef>

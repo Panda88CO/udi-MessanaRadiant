@@ -21,6 +21,9 @@
   <editor id = "enable" > 
      <range  uom="25" subset="0-1,99" nls="enabled"/>
   </editor>
+    <editor id = "btenable" > 
+     <range  uom="25" subset="0-2,99" nls="btenabled"/>
+  </editor>
   <editor id = "thermalmode" > 
      <range  uom="25" subset="0-3,99" nls="thermalmode"/>
   </editor>  

@@ -241,9 +241,11 @@ class udi_messana_atu(udi_interface.Node):
             time.sleep(0.2)
             self.node.setDriver('GV2', self.atu.get_flow_level())
 
+    def update(self, command):
+        logging.debug('update')
+        self.updateISY_longpoll()
 
-
-    commands = { 'UPDATE': updateISY_longpoll
+    commands = { 'UPDATE': update
                 ,'STATUS': set_status
                 ,'HRVEN' : heat_recovery_en
                 ,'HUMEN' : humidification_en

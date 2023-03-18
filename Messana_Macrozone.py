@@ -30,7 +30,4 @@ class messana_macrozone(messana_node):
         self.type = 'macrozone'
         self.nbr = macrozone_nbr
         self.name = self.get_name()
-        self.stateList = [0,1]
         self.messana_temp_unit = self.GET_system_data('tempUnit')
-        
-      

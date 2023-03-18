@@ -117,10 +117,13 @@ class udi_messana_hc_co(udi_interface.Node):
         else:
             logging.error('Error calling set_energy_save')
         
+    def update(self, command):
+        logging.debug('update')
+        self.updateISY_longpoll()
 
 
     
-    commands = { 'UPDATE': updateISY_longpoll
+    commands = { 'UPDATE': update 
                 ,'STATUS': set_adaptive_comf
                 #,'ENERGYSAVE': set_energy_save
                 ,'MODE' : set_hc_co_mode 

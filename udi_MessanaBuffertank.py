@@ -38,7 +38,6 @@ class udi_messana_buffertank(udi_interface.Node):
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
-
         {'driver': 'ST', 'value': 0, 'uom': 25},
         ]
 
@@ -142,9 +141,12 @@ class udi_messana_buffertank(udi_interface.Node):
         else:
             logging.error('Error calling set_setpoint')
 
+    def update(self, command):
+        logging.debug('update')
+        self.updateISY_longpoll()
 
     
-    commands = { 'UPDATE': updateISY_longpoll
+    commands = { 'UPDATE': update
                 ,'STATUS': set_status
                 #,'ENERGYSAVE': set_energy_save
                 ,'MODE' : set_buffertank_mode

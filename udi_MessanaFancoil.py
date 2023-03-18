@@ -149,9 +149,12 @@ class udi_messana_fancoil(udi_interface.Node):
         else:
             logging.error('Error calling set_setpoint')
 
+    def update(self, command):
+        logging.debug('update')
+        self.updateISY_longpoll()
 
     
-    commands = { 'UPDATE': updateISY_longpoll
+    commands = { 'UPDATE': update 
                 ,'STATUS': set_status
                 ,'HEATSPEED' : set_heat_speed
                 ,'COOLSPEED' : set_cool_speed     

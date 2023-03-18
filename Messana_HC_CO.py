@@ -30,7 +30,6 @@ class messana_hc_co(messana_node):
         self.type = 'hc'
         self.nbr = hc_co_nbr
         self.name = self.get_name()
-        self.stateList = [0,1]
         self.messana_temp_unit = self.GET_system_data('tempUnit')
         
         #self.get_all()

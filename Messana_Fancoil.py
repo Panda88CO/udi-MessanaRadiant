@@ -30,7 +30,6 @@ class messana_fancoil(messana_node):
         self.type = 'fcu'
         self.nbr = fancoil_nbr
         self.name = self.get_name()
-        self.stateList = [0,1]
         self.messana_temp_unit = self.GET_system_data('tempUnit')
         
         #self.get_all()

@@ -113,12 +113,15 @@ class udi_messana_energy_source(udi_interface.Node):
 
 
 
+    def update(self, command):
+        logging.debug('update')
+        self.updateISY_longpoll()
 
 
 
 
     
-    commands = { 'UPDATE': updateISY_longpoll
+    commands = { 'UPDATE': update
 
                 }
         

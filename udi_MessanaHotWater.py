@@ -122,8 +122,12 @@ class udi_messana_hot_water(udi_interface.Node):
         else:
             logging.error('Error calling set_energy_save')        
 
-    
-    commands = { 'UPDATE': updateISY_longpoll
+    def update(self, command):
+        logging.debug('update')
+        self.updateISY_longpoll()
+
+
+    commands = { 'UPDATE': update 
                 ,'STATUS': set_status
                 ,'TEMPMODE' : set_target_temp
                 

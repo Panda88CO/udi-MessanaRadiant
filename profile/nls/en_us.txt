@@ -25,6 +25,11 @@ status-99 = Unknown
 enabled-0 = Disabled
 enabled-1 = Enabled
 enabled-99 = Unknown
+btenabled-0 = Off
+btenabled-1 = Disabled
+btenabled-2 = On
+btenabled-99 = Unknown
+
 alarm-0 = No Alarm
 alarm-1 = Alarm
 alarm-99 = Unknown
