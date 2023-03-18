@@ -41,16 +41,16 @@ class messana_control(object):
         self.IPstr ='http://'+ self.IPaddress        
         self.mTemp_unit = self.GET_system_data('tempUnit')
 
-        self.temp_unit = self.GET_system_data('status')
-        self.temp_unit = self.GET_system_data('tempUnit')
-        self.nbr_zones = self.GET_system_data('zoneCount')
-        self.nbr_atus = self.GET_system_data('atuCount')
-        self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
-        self.nbr_energy_source = self.GET_system_data('energySourceCount')
-        self.nbr_fancoil = self.GET_system_data('fancoilCount')
-        self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
-        self.nbr_macrozone = self.GET_system_data('macroZoneCount')
-        self.name = self.GET_system_data('name')
+        #self.temp_unit = self.GET_system_data('status')
+        #self.temp_unit = self.GET_system_data('tempUnit')
+        #self.nbr_zones = self.GET_system_data('zoneCount')
+        #self.nbr_atus = self.GET_system_data('atuCount')
+        #self.nbr_buffer_tank = self.GET_system_data('bufferTankCount')
+        #self.nbr_energy_source = self.GET_system_data('energySourceCount')
+        #self.nbr_fancoil = self.GET_system_data('fancoilCount')
+        #self.nbr_HCgroup = self.GET_system_data('HCgroupCount')
+        #self.nbr_macrozone = self.GET_system_data('macroZoneCount')
+        #self.name = self.GET_system_data('name')
 
 
 
