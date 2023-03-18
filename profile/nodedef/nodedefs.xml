@@ -159,7 +159,7 @@
          <st id="CLITEMP" editor="temp" />
          <st id="GV1" editor="btmode"/>
          <st id="GV2" editor="bttempmode"/>
-         <st id="CLITEMP" editor="temp" />
+         <st id="GV3" editor="alarm" />
          <st id="ST" editor="running" />
       </sts>
       <cmds>
