@@ -114,16 +114,16 @@ opoff-99 = Unknown
 
 ND-buffertank-NAME = Messana Buffertank
 ND-buffertank-ICON = Irrigation
-CMD-nlsbuffertank-UPDATE-NAME = Update System Data
-CMD-nlsbuffertank-STATUS-NAME = Buffertank Status
-CMD-nlsbuffertank-MODE-NAME = Buffertank Mode
-CMD-nlsbuffertank-TEMPMODE-NAME = Buffertank Temperature Mode
-ST-nlsbuffertank-GV0-NAME = State
-ST-nlsbuffertank-GV1-NAME = Buffertank Mode
-ST-nlsbuffertank-GV2-NAME = Buffertank temperature Mode
-ST-nlsbuffertank-GV3-NAME = Buffertank Alarm
-ST-nlsbuffertank-CLITEMP-NAME = Buffertank Temperature
-ST-nlsbuffertank-ST-NAME = Node Running
+CMD-nlsbuftank-UPDATE-NAME = Update System Data
+CMD-nlsbuftank-STATUS-NAME = Buffertank Status
+CMD-nlsbuftank-MODE-NAME = Buffertank Mode
+CMD-nlsbuftank-TEMPMODE-NAME = Buffertank Temperature Mode
+ST-nlsbuftank-GV0-NAME = State
+ST-nlsbuftank-GV1-NAME = Buffertank Mode
+ST-nlsbuftank-GV2-NAME = Buffertank temperature Mode
+ST-nlsbuftank-GV3-NAME = Buffertank Alarm
+ST-nlsbuftank-CLITEMP-NAME = Buffertank Temperature
+ST-nlsbuftank-ST-NAME = Node Running
 
 btmode-0 = Manual
 btmode-1 = Automatic
@@ -194,3 +194,16 @@ ST-nlsdhw-CLITEMP-NAME = Hot Water Temperature
 ST-nlsdhw-GV1-NAME = Target Hot Water Temperature
 ST-nlsdhw-ST-NAME = Node Running
 
+ND-fancoil-NAME = Fan Copiil
+ND-fancoil-ICON = TempSensor
+CMD-nlsfancoil-UPDATE-NAME = Update System Data
+CMD-nlsfancoil-STATUS-NAME = Fan CoilState
+CMD-nlsfancoil-HEATSPEED-NAME = Fan Coil Heat Speed
+CMD-nlsfancoil-COOLSPEED-NAME = Fan Coil Heat Speed
+
+ST-nlsfancoil-GV0-NAME = Fan Coil State
+ST-nlsfancoil-GV1-NAME = Fan Coil Cool Speed
+ST-nlsfancoil-GV2-NAME = Fan Coil Heat Speed
+ST-nlsfancoil-GV3-NAME = Fan Coil Type
+ST-nlsfancoil-GV4-NAME = Fan Coil Alarm
+ST-nlsfancoil-ST-NAME = Node Running

@@ -152,7 +152,7 @@
          </accepts>
       </cmds>
    </nodeDef> 
-   <nodeDef id="buffertank" nls="nlsbuffertank">
+   <nodeDef id="buffertank" nls="nlsbuftank">
       <editors />
       <sts>
          <st id="GV0" editor="btenable" />
