@@ -199,14 +199,6 @@
             <cmd id="MODE" > 
                <p id="" editor="set_hccomode" init="GV1" /> 
             </cmd> 
-
-
-
-            <!--
-            <cmd id="SCHEDULEON" > 
-               <p id="" editor="set_enable" init="GV2" /> 
-            </cmd> 
-            -->
          </accepts>
       </cmds>
    </nodeDef>
