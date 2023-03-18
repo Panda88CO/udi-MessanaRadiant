@@ -296,8 +296,8 @@ class MessanaController(udi_interface.Node):
         logging.debug('Nbr Zones{}'.format(self.messana.nbr_zones))
         self.node.setDriver('GV3', self.messana.nbr_zones)
 
-        logging.debug('Nbr macrozones{}'.format(self.messana.nbr_macrozone))
-        self.node.setDriver('GV4', self.messana.nbr_macrozone)
+        logging.debug('Nbr macrozones{}'.format(self.messana.nbr_macrozones))
+        self.node.setDriver('GV4', self.messana.nbr_macrozones)
 
         logging.debug('Nbr atu{}'.format(self.messana.nbr_atus))
         self.node.setDriver('GV5', self.messana.nbr_atus)
@@ -405,7 +405,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.108')
+        polyglot.start('0.0.109')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
