@@ -294,28 +294,52 @@ class MessanaController(udi_interface.Node):
         self.node.setDriver('GV12', tmp, True, True)
 
         logging.debug('Nbr Zones{}'.format(self.messana.nbr_zones))
-        self.node.setDriver('GV3', self.messana.nbr_zones)
+        if 0 == self.messana.nbr_zones:
+            self.node.setDriver('GV3', 98, True, False, 25)
+        else:
+            self.node.setDriver('GV3', self.messana.nbr_zones, True, False, 107)
 
         logging.debug('Nbr macrozones{}'.format(self.messana.nbr_macrozones))
-        self.node.setDriver('GV4', self.messana.nbr_macrozones)
+        if 0 == self.messana.nbr_macrozones:
+            self.node.setDriver('GV4', 98, True, False, 25)
+        else:
+            self.node.setDriver('GV4', self.messana.nbr_macrozones, True, False, 107)
 
         logging.debug('Nbr atu{}'.format(self.messana.nbr_atus))
-        self.node.setDriver('GV5', self.messana.nbr_atus)
+        if 0 == self.messana.nbr_atus:
+            self.node.setDriver('GV5', 98, True, False, 25)
+        else:
+            self.node.setDriver('GV5', self.messana.nbr_atus, True, False, 107)
 
         logging.debug('Nbr Hot Cold{}'.format(self.messana.nbr_HCgroup))
-        self.node.setDriver('GV6', self.messana.nbr_HCgroup)
+        if 0 == self.messana.nbr_HCgroup:
+            self.node.setDriver('GV6', 98, True, False, 25)
+        else:
+            self.node.setDriver('GV6', self.messana.nbr_HCgroup, True, False, 107)
 
         logging.debug('Nbr fan coil{}'.format(self.messana.nbr_fancoil))
-        self.node.setDriver('GV7', self.messana.nbr_fancoil)
+        if 0 == self.messana.nbr_fancoil:
+            self.node.setDriver('GV7', 98, True, False, 25)
+        else:
+            self.node.setDriver('GV7', self.messana.nbr_fancoil, True, False, 107)
 
         logging.debug('Nbr domestic Hot Water{}'.format(self.messana.nbr_dhwater))
-        self.node.setDriver('GV8', self.messana.nbr_dhwater)
+        if 0 == self.messana.nbr_dhwater:
+            self.node.setDriver('GV8', 98, True, False, 25)
+        else:
+            self.node.setDriver('GV8', self.messana.nbr_dhwater, True, False, 107)
 
         logging.debug('Nbr buffer Tank {}'.format(self.messana.nbr_buffer_tank))
-        self.node.setDriver('GV9', self.messana.nbr_buffer_tank)
+        if 0 == self.messana.nbr_buffer_tank:
+            self.node.setDriver('GV9', 98, True, False, 25)
+        else
+            self.node.setDriver('GV9', self.messana.nbr_buffer_tank, True, False, 107)
 
         logging.debug('Nbr energy source{}'.format(self.messana.nbr_energy_source))
-        self.node.setDriver('GV10', self.messana.nbr_energy_source)
+        if 0 == self.messana.nbr_energy_source:
+            self.node.setDriver('GV10', 98, True, False, 25)
+        else:
+            self.node.setDriver('GV10', self.messana.nbr_energy_source, True, False, 107)
 
         tmp = self.messana.get_external_alarm()
         logging.debug('Alarm Status{}'.format(tmp))
@@ -405,7 +429,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.111')
+        polyglot.start('0.0.112')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

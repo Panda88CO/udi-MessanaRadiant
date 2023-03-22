@@ -48,9 +48,6 @@
   <editor id = "alarm" > 
      <range  uom="25" subset="0-1,99" nls="alarm"/>
   </editor>
-  <editor id = "connected" > 
-     <range  uom="25" subset="0-1,99" nls="connected"/>
-  </editor>
   <editor id = "running" > 
      <range  uom="25" subset="0-1, 99" nls="running"/>
   </editor>
