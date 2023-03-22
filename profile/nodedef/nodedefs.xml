@@ -229,7 +229,7 @@
          </accepts>
       </cmds>
    </nodeDef>
-   <nodeDef id="energy_source" nls="nlsenergy_source">
+   <nodeDef id="energy" nls="nlsenergy">
       <editors />
       <sts>
          <st id="GV0" editor="enable" />

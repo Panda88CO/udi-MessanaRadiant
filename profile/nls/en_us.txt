@@ -169,14 +169,14 @@ set_hccomode-0 = Heating Mode
 set_hccomode-1 = Cooling Mode
 set_hccomode-2 = Auto Mode
 
-ND-energy_source-NAME = Messana Fan Coil
-ND-energy_source-ICON = TempSensor
-CMD-nlsenergy_source-UPDATE-NAME = Update System Data
-ST-nlsenergy_source-GV0-NAME = Energy Source State
-ST-nlsenergy_source-GV1-NAME = Hot Water Status 
-ST-nlsenergy_source-GV2-NAME = Energy Source Type
-ST-nlsenergy_source-GV3-NAME = Energy Source Alarm
-ST-nlsenergy_source-ST-NAME = Node Running
+ND-energy-NAME = Messana Fan Coil
+ND-energy-ICON = TempSensor
+CMD-nlsenergy-UPDATE-NAME = Update System Data
+ST-nlsenergy-GV0-NAME = Energy Source State
+ST-nlsenergy-GV1-NAME = Hot Water Status 
+ST-nlsenergy-GV2-NAME = Energy Source Type
+ST-nlsenergy-GV3-NAME = Energy Source Alarm
+ST-nlsenergy-ST-NAME = Node Running
 
 estype-0 = Boiler
 estype-1 = Heat Pump Cool
