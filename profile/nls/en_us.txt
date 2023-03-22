@@ -169,7 +169,7 @@ set_hccomode-0 = Heating Mode
 set_hccomode-1 = Cooling Mode
 set_hccomode-2 = Auto Mode
 
-ND-energy-NAME = Messana Fan Coil
+ND-energy-NAME = Messana Energy Source
 ND-energy-ICON = TempSensor
 CMD-nlsenergy-UPDATE-NAME = Update System Data
 ST-nlsenergy-GV0-NAME = Energy Source State

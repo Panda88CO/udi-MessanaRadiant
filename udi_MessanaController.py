@@ -332,7 +332,7 @@ class MessanaController(udi_interface.Node):
         logging.debug('Nbr buffer Tank {}'.format(self.messana.nbr_buffer_tank))
         if 0 == self.messana.nbr_buffer_tank:
             self.node.setDriver('GV9', 98, True, False, 25)
-        else
+        else:
             self.node.setDriver('GV9', self.messana.nbr_buffer_tank, True, False, 107)
 
         logging.debug('Nbr energy source{}'.format(self.messana.nbr_energy_source))
