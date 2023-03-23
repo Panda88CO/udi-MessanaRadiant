@@ -25,16 +25,16 @@
          <accepts>
             <cmd id="UPDATE" /> 
             <cmd id="STATUS" > 
-               <p id="" editor="status" init="GV0" /> 
+               <p id="" editor="set_status" init="GV0" /> 
             </cmd> 
             <cmd id="ENERGYSAVE" > 
-               <p id="" editor="set_enable" init="GV2" /> 
+               <p id="" editor="set_enable" init="GV12" /> 
             </cmd> 
             <cmd id="SETBACK_OFFSET" > 
                <p id="" editor="set_temp" init="GV1" /> 
             </cmd> 
             <cmd id="SETBACK" > 
-               <p id="" editor="set_enable" init="GV1" /> 
+               <p id="" editor="set_enable" init="GV2" /> 
             </cmd>             
          </accepts>
       </cmds>

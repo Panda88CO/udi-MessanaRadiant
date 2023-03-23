@@ -82,15 +82,16 @@ class messana_control(object):
 
     def PUT_system_data(self, mKey, value):
         mData = {}
-        PUTstr = self.IPstr + self.systemAPI+'/'+ mKey
+        PUTstr = self.IPstr + self.systemAPI+'/'+ mKey + '?' + self.apiStr
         mData = {'value':value, 'apikey': self.apiStr}
-        logging.debug('PUT_system_data :{} {}'.format(PUTstr, value) )
+        mData = {'value':value }
+        logging.debug('PUT_system_data : {} {} {}'.format(PUTstr, mData, value) )
         try:
             resp = requests.put(PUTstr, json=mData)
             return( str(resp) == self.RESPONSE_OK)
 
         except Exception as e:
-            logging.error('Error PUT_system_data {}: {}'.format(PUTstr, e))
+            logging.error('Error PUT_system_data {} {}: {}'.format(PUTstr, mData, e))
             return
   
 
@@ -120,8 +121,9 @@ class messana_control(object):
 
     def PUT_node_data(self, mKey, value, node_type, node_nbr):
         mData = {}
-        PUTstr = self.IPstr +'/api/'+ node_type +'/'+mKey+'/'+str(node_nbr)
-        mData = {'id':node_nbr, 'value': value, 'apikey' : self.apiKey }
+        PUTstr = self.IPstr +'/api/'+ node_type +'/'+mKey+'/'+str(node_nbr)+'?'+ self.apiStr
+        #mData = {'id':node_nbr, 'value': value, 'apikey' : self.apiKey }
+        mData = {'id':node_nbr, 'value': value }
         logging.debug('PUT_node_data :{} {}'.format(PUTstr, mData) )
         try:
             resp = requests.put(PUTstr, json=mData)

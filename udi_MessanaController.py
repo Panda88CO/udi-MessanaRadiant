@@ -33,6 +33,26 @@ except ImportError:
 
 class MessanaController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, convert_temp_unit, send_rel_temp_to_isy
+  
+    id = 'system'
+
+    drivers = [
+            {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
+            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback diff Temp
+            {'driver': 'GV2', 'value':99, 'uom':25 }, # Setback Enabled
+            {'driver': 'GV12', 'value':99, 'uom':25 }, # Energy Saving
+            {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
+            {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
+            {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
+            {'driver': 'GV6', 'value':99, 'uom':25 }, # HotCold count
+            {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
+            {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
+            {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
+            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count
+            {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
+            {'driver': 'ST', 'value':0, 'uom':25 }, #state
+            ]
+    
 
     def __init__(self, polyglot, primary, address, name):
         super().__init__(polyglot, primary, address, name)
@@ -399,22 +419,7 @@ class MessanaController(udi_interface.Node):
         self.updateISY_longpoll()
         #self.reportDrivers()
 
-    drivers = [
-            {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
-            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback diff Temp
-            {'driver': 'GV2', 'value':99, 'uom':25 }, # Setback Enabled
-            {'driver': 'GV12', 'value':99, 'uom':25 }, # Energy Saving
-            {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
-            {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
-            {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
-            {'driver': 'GV6', 'value':99, 'uom':25 }, # HotCold count
-            {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
-            {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
-            {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
-            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count
-            {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
-            {'driver': 'ST', 'value':0, 'uom':25 }, #state
-            ]
+
 
     commands = { 'UPDATE': ISYupdate
                 ,'STATUS': setStatus
@@ -423,13 +428,13 @@ class MessanaController(udi_interface.Node):
                 ,'SETBACK_OFFSET' : setSetbackOffset
                 }
 
-    id = 'system'
+
 
 if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.113')
+        polyglot.start('0.0.114')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
