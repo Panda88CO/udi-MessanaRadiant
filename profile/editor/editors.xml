@@ -97,14 +97,14 @@
   </editor>
 
   <editor id = "hccomode" > 
-      <range  uom="25" subset="0-2,98,99" nls="onoff"/>
+      <range  uom="25" subset="0-2,98,99" nls="hccomode"/>
   </editor>
    <editor id = "seasonmode" > 
-      <range  uom="25" subset="0-1,98,99" nls="onoff"/>
+      <range  uom="25" subset="0-1,98,99" nls="seasonmode"/>
   </editor>
   
   <editor id = "set_hccomode" > 
-      <range  uom="25" subset="0-2" nls="onoff"/>
+      <range  uom="25" subset="0-2" nls="set_hccomode"/>
   </editor>
   <editor id = "fanspeed" > 
       <range  uom="89" min="0" max="1000" setp = "1" prec = "0"/>
