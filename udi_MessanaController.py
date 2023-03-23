@@ -240,7 +240,12 @@ class MessanaController(udi_interface.Node):
     def stop(self):
         #self.removeNoticesAll()
         logging.info('stop - Cleaning up')
+        nodes = self.poly.getNodes()
+        for nde in nodes:
+            logging.debug('Stop node {}'.format(nde))
+            nodes[nde].stop()
         self.node.setDriver('ST', 0, True, True)
+        self.poly.stop()
 
 
     def handleLevelChange(self, level):
@@ -434,7 +439,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.114')
+        polyglot.start('0.0.115')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

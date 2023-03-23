@@ -31,7 +31,7 @@
                <p id="" editor="set_enable" init="GV12" /> 
             </cmd> 
             <cmd id="SETBACK_OFFSET" > 
-               <p id="" editor="set_temp" init="GV1" /> 
+               <p id="" editor="set_tempoffset" init="GV1" /> 
             </cmd> 
             <cmd id="SETBACK" > 
                <p id="" editor="set_enable" init="GV2" /> 
