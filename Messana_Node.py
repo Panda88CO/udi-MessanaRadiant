@@ -48,7 +48,7 @@ class messana_node(messana_control):
         return(self.__get_node_data('name'))
 
     def get_status(self):
-        logging.debug('{} {} get_status'.format(self.type, self.nbr))    
+        logging.debug('{} {} get_status'.format(self.type, self.nbr))
         return(self.__get_node_data('status'))
 
     def set_status(self, state):
@@ -63,7 +63,7 @@ class messana_node(messana_control):
 
     def get_setpoint(self):
         logging.debug('{} {} - get_setpoint'.format(self.type, self.nbr))
-        return(self.__get_node_data( 'setpoint'))
+        return(self.__get_node_data('setpoint'))
 
 
     def set_setpoint(self, setpoint):
