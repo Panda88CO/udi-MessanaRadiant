@@ -32,6 +32,7 @@
             </cmd> 
             <cmd id="SETBACK_OFFSET" > 
                <p id="" editor="set_tempoffset" init="GV1" /> 
+               <p id="uom" editor="tempuom"  /> 
             </cmd> 
             <cmd id="SETBACK" > 
                <p id="" editor="set_enable" init="GV2" /> 

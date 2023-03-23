@@ -110,5 +110,7 @@
      <editor id = "estype" > 
       <range  uom="25" subset="0-3,99" nls="onoff"/>
   </editor>
-  
+     <editor id = "tempuom" > 
+      <range  uom="25" subset="4,17,26" nls="onoff"/>
+  </editor>
 </editors> 

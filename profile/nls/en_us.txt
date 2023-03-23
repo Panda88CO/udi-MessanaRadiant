@@ -30,6 +30,10 @@ btenabled-1 = Disabled
 btenabled-2 = On
 btenabled-99 = Unknown
 
+tempuom-4 = Ce
+tempuom-4 = F
+tempuom-26 = K
+
 alarm-0 = No Alarm
 alarm-1 = Alarm
 alarm-99 = Unknown
