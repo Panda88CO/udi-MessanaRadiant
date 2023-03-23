@@ -23,7 +23,7 @@
     <range uom="26" min="0" max="25" step="0.5" prec="1" />
   </editor>
   <editor id = "set_temp_os" > 
-    <range uom="2" min="0" max="50" step="1" prec="0" />
+    <range uom="2" min="0" max="50" step="1"  />
   </editor>
   <editor id = "tempuom" > 
       <range  uom="25" subset="4,17,26" nls="tempuom"/>

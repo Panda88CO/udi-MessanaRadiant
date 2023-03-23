@@ -410,10 +410,10 @@ class MessanaController(udi_interface.Node):
         else:
             logging.error('Error calling setSetback')
 
-    def setSetbackOffset(self, command, temp_uom):
+    def setSetbackOffset(self, command):
         setback_diff = int(command.get('value'))
-        setback_unit = int(temp_uom.get('value'))
-        logging.debug('setSetbackOffset Called: {} {}'.format(setback_diff, setback_unit))
+        #setback_unit = int(temp_uom.get('value'))
+        logging.debug('setSetbackOffset Called: {}'.format(setback_diff))
 
         if  self.messana.set_setback_diff(setback_diff):
             self.send_rel_temp_to_isy(setback_diff, 'GV1')
