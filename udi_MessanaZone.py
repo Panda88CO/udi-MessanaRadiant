@@ -200,9 +200,10 @@ class udi_messana_zone(udi_interface.Node):
         
     def set_setpoint(self, command):
         set_point = round(round(int(command.get('value'))*2,0)/2,1)
-        logging.debug('set_setpoint {} for zone {}'.format(set_point, self.zone_nbr))   
-        if self.zone.set_setpoint(set_point):
-            self.node.setDriver('GV3', set_point)
+        logging.debug('set_setpoint {} for zone {}'.format(set_point, self.zone_nbr))
+        new_SP = self.zone.set_setpoint(set_point)
+        if new_SP:
+            self.node.setDriver('GV3', new_SP)
         else:
             logging.error('Error calling set_setpoint')
 

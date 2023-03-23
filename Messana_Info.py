@@ -103,8 +103,10 @@ class messana_control(object):
         #logging.debug('GET_node_data: {} '.format(GETstr))
         try:
             nTemp = requests.get(GETstr)
+            logging.debug('nTemp = {}'.format(nTemp))
             if str(nTemp) == self.RESPONSE_OK:
                 nData = nTemp.json()
+                logging.debug('nData : {}'.format(nData))
                 data   = nData[str(list(nData.keys())[0])]
                 logging.debug('GET_node_data node {} - data: {}'.format(node_type, data))
                 if data in self.NaNlist or data == self.RESPONSE_NO_SUPPORT:

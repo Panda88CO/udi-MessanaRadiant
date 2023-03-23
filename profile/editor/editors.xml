@@ -2,7 +2,7 @@
 
   <editor id = "temp" > 
     <range uom="4" min="-50" max="75" step="0.5" prec="1" />
-    <range uom="17" min="-50" max="150" step="1" prec="1" />
+    <range uom="17" min="-50" max="150" step="0.5" prec="1" />
     <range uom="25" subset="98-99" nls="UNKNOWN" />
   </editor>
   <editor id = "set_temp" > 
