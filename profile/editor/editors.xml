@@ -79,7 +79,7 @@
       <range  uom="25" subset="98,99" nls="UNKNOWN"/>
   </editor>  
   <editor id = "set_flowlvl" > 
-      <range  uom="7"  min="0" max="1000" step="10" prec="0" />
+      <range  uom="7"  min="60" max="350" step="10" prec="0" />
   </editor>  
 
   <editor id = "btmode" > 
