@@ -14,7 +14,7 @@ import numbers
 
 TEMP_C = 0
 TEMP_F = 1
-TEMP_K = 2
+
 def node_queue(self, data):
     self.n_queue.append(data['address'])
 
@@ -66,13 +66,8 @@ def send_rel_temp_to_isy(self, temperature, stateVar):
             temp =  round(temperature,1)
         logging.debug('Farenheit : {}  = {}'.format( temperature, temp ))
         self.node.setDriver(stateVar, temp, True, True, 17)
-    else: # kelvin
-        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
-            temp = round(temperature,1)
-        else:
-            temp = round((temperature)*9/5,1)
-        logging.debug('Kelvin : {}  = {}'.format( temperature, temp ))
-        self.node.setDriver(stateVar, temp , True, True, 26)
+    else:
+        logging.error('Wring temp unit: {}'.format(self.ISY_temp_unit))
 
 
 def send_temp_to_isy(self, temperature, stateVar):
@@ -92,20 +87,11 @@ def send_temp_to_isy(self, temperature, stateVar):
             temp = round(temperature,1)
         logging.debug('Farenheit : {}  = {}'.format( temperature, temp ))            
         self.node.setDriver(stateVar,temp , True, True, 17)
-    else: # kelvin
-        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
-            temp = round(temperature+273.15,1)
-        else:
-             temp = round((temperature+273.15-32)*9/5,1)
-        logging.debug('Kelvin : {}  = {}'.format( temperature, temp ))
-        self.node.setDriver(stateVar, temp, True, True, 26)
-
-
+    else:
+        logging.error('Wring temp unit: {}'.format(self.ISY_temp_unit))
 
 def convert_temp_unit(self, tempStr):
     if tempStr.capitalize()[:1] == 'F':
         return(TEMP_F)
-    elif tempStr.capitalize()[:1] == 'K':
-        return(TEMP_K)
     else:
         return(TEMP_C)

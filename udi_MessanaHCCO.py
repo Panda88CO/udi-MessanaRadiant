@@ -19,7 +19,7 @@ except ImportError:
 class udi_messana_hc_co(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'hc_co'
+    id = 'hcco'
 
     '''
        drivers = [

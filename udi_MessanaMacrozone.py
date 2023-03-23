@@ -105,9 +105,9 @@ class udi_messana_macrozone(udi_interface.Node):
         logging.debug('Macrozone Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.macrozone.get_scheduleOn()
-        logging.debug('Schedule Mode(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
+        #Val = self.macrozone.get_scheduleOn()
+        #logging.debug('Schedule Mode(GV2): {}'.format(Val))
+        #self.node.setDriver('GV2', self.isy_value(Val))
 
         Val = self.macrozone.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
@@ -146,7 +146,7 @@ class udi_messana_macrozone(udi_interface.Node):
             logging.error('Error calling set_energy_save')
         
     def set_setpoint(self, command):
-        set_point = round(round(command.get('value')*2,0)/2,1)
+        set_point = round(round(int(command.get('value')*2),0)/2,1)
         logging.debug('set_setpoint {} for macrozone {}'.format(set_point, self.macrozone_nbr))   
         if self.macrozone.set_setpoint(set_point):
             self.node.setDriver('GV3', set_point)
@@ -165,7 +165,7 @@ class udi_messana_macrozone(udi_interface.Node):
     commands = { 'UPDATE': update
                 #,'ENERGYSAVE': set_energy_save
                 ,'SETPOINT' : set_setpoint
-     #           ,'SETPOINTCO2' : set_setpoint_co2        
+     #           ,'SETPOINTCO2' : set_setpoint_co2
      #           ,'SCHEDULEON' : set_schedule
                 
                 }

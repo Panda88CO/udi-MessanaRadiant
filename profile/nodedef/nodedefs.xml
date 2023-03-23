@@ -148,7 +148,7 @@
                <p id="" editor="set_enable" init="GV8" /> 
             </cmd> 
             <cmd id="SET_FLOW" > 
-               <p id="" editor="flowlvl" init="GV1" /> 
+               <p id="" editor="set_flowlvl" init="GV1" /> 
             </cmd> 
          </accepts>
       </cmds>
@@ -180,7 +180,7 @@
          </accepts>
       </cmds>
    </nodeDef>
-   <nodeDef id="hc_co" nls="nlshc_co">
+   <nodeDef id="hcco" nls="nlshcco">
       <editors />
       <sts>
          <st id="GV0" editor="enable" />

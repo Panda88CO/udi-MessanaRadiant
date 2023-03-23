@@ -70,7 +70,7 @@ class MessanaController(udi_interface.Node):
         self.hb = 0
         self.TEMP_C = self.convert_temp_unit('C')
         self.TEMP_F = self.convert_temp_unit('F')
-        self.TEMP_K = self.convert_temp_unit('K')
+    
         self.ISYTempUnit = self.TEMP_C
         self.nodeDefineDone = False
         self.nodeConfigDone = False
@@ -419,11 +419,11 @@ class MessanaController(udi_interface.Node):
         #setback_unit = int(temp_uom.get('value'))
         logging.debug('setSetbackOffset Called: {}'.format(setback_diff))
         messana_diff = setback_diff
-        if self.messana_temp_unit == self.TEMP_C or self.messana_temp_unit == self.TEMP_K:
+        if self.messana_temp_unit == self.TEMP_C :
             if self.ISY_temp_unit == self.TEMP_F:
                 messana_diff = (setback_diff - 32)*5/9
         elif  self.messana_temp_unit == self.TEMP_F:
-            if self.ISY_temp_unit == self.TEMP_C or self.messana_temp_unit == self.TEMP_K:
+            if self.ISY_temp_unit == self.TEMP_C :
                 messana_diff = setback_diff*9/5 + 32
 
         if  self.messana.set_setback_diff(messana_diff):
@@ -454,7 +454,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.120')
+        polyglot.start('0.0.121')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

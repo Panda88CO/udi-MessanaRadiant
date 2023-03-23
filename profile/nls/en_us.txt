@@ -147,16 +147,16 @@ setbttempmode-0 = FIxed Temperature
 setbttempmode-1 = Follow Heat/Cool loads
 setbttempmode-2 = Outdoor Temperature
 
-ND-hc_co-NAME = Messana Hot Cold Changeover
-ND-hc_co-ICON = Switch
-CMD-nlshc_co-UPDATE-NAME = Update System Data
-CMD-nlshc_co-STATUS-NAME = Adaptive Comfort State
-CMD-nlshc_co-MODE-NAME = Changeover Mode
-CMD-nlshc_co-TEMPMODE-NAME = Changeover Temperature Mode
-ST-nlshc_co-GV0-NAME = Adaptive Comfort State
-ST-nlshc_co-GV1-NAME = Changeover Mode
-ST-nlshc_co-GV2-NAME = Changeover Temperature Mode
-ST-nlshc_co-ST-NAME = Node Running
+ND-hcco-NAME = Messana Hot Cold Changeover
+ND-hcco-ICON = Switch
+CMD-nlshcco-UPDATE-NAME = Update System Data
+CMD-nlshcco-STATUS-NAME = Adaptive Comfort State
+CMD-nlshcco-MODE-NAME = Changeover Mode
+CMD-nlshcco-TEMPMODE-NAME = Changeover Temperature Mode
+ST-nlshcco-GV0-NAME = Adaptive Comfort State
+ST-nlshcco-GV1-NAME = Changeover Mode
+ST-nlshcco-GV2-NAME = Changeover Temperature Mode
+ST-nlshcco-ST-NAME = Node Running
 
 hccomode-0 = Heating Mode 
 hccomode-1 = Cooling Mode
