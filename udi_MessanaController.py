@@ -243,7 +243,8 @@ class MessanaController(udi_interface.Node):
         nodes = self.poly.getNodes()
         for nde in nodes:
             logging.debug('Stop node {}'.format(nde))
-            nodes[nde].stop()
+            if nde != 'system':
+                nodes[nde].stop()
         self.node.setDriver('ST', 0, True, True)
         self.poly.stop()
 
