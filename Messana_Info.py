@@ -98,7 +98,7 @@ class messana_control(object):
 
 
     def GET_node_data(self, mKey, node_type, node_nbr):
-        logging.debug('GETNodeData: ' + mKey + ' ' + str(node_nbr)+ ' ' + mKey)
+        logging.debug('GETNodeData: {}, {}, {}'.format(mKey, node_type, node_nbr))
         GETstr = self.IPstr +'/api/'+ node_type+'/'+mKey+'/'+str(node_nbr)+'?'+ self.apiStr
         #logging.debug('GET_node_data: {} '.format(GETstr))
         try:
@@ -123,7 +123,7 @@ class messana_control(object):
 
     def PUT_node_data(self, mKey, value, node_type, node_nbr):
         mData = {}
-        PUTstr = self.IPstr +'/api/'+ node_type +'/'+mKey+'/'+str(node_nbr)+'?'+ self.apiStr
+        PUTstr = self.IPstr +'/api/'+ node_type +'/'+mKey+'?'+ self.apiStr
         #mData = {'id':node_nbr, 'value': value, 'apikey' : self.apiKey }
         mData = {'id':node_nbr, 'value': value }
         logging.debug('PUT_node_data :{} {}'.format(PUTstr, mData) )
