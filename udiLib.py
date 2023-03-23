@@ -12,6 +12,9 @@ import time
 import re
 import numbers
 
+TEMP_C = 0
+TEMP_F = 1
+TEMP_K = 2
 def node_queue(self, data):
     self.n_queue.append(data['address'])
 
@@ -49,22 +52,22 @@ def handleParams (self, userParam ):
 def send_rel_temp_to_isy(self, temperature, stateVar):
     logging.debug('send_rel_temp_to_isy - {} {}'.format(temperature, stateVar))
     logging.debug('ISYunit={}, Mess_unit={}'.format(self.ISY_temp_unit , self.messana_temp_unit ))
-    if self.ISY_temp_unit == 0: # Celsius in ISY
-        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
+    if self.ISY_temp_unit == TEMP_C: # Celsius in ISY
+        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp = round(temperature,1),
         else: # messana = Farenheit
             temp = round(temperature*5/9,1)
         logging.debug('Celsius : {}  = {}'.format( temperature, temp ))  
         self.node.setDriver(stateVar, temp, True, True, 4)
-    elif  self.ISY_temp_unit == 1: # Farenheit in ISY
-        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
+    elif  self.ISY_temp_unit == TEMP_F: # Farenheit in ISY
+        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp =  round((temperature*9/5),1)
         else:
             temp =  round(temperature,1)
         logging.debug('Farenheit : {}  = {}'.format( temperature, temp ))
         self.node.setDriver(stateVar, temp, True, True, 17)
     else: # kelvin
-        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
+        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp = round(temperature,1)
         else:
             temp = round((temperature)*9/5,1)
@@ -75,22 +78,22 @@ def send_rel_temp_to_isy(self, temperature, stateVar):
 def send_temp_to_isy(self, temperature, stateVar):
     logging.debug('send_temp_to_isy -{} {}'.format(temperature, stateVar ))
     logging.debug('ISYunit={}, Mess_unit={}'.format(self.ISY_temp_unit , self.messana_temp_unit ))
-    if self.ISY_temp_unit == 0: # Celsius in ISY
-        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
+    if self.ISY_temp_unit == TEMP_C: # Celsius in ISY
+        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp = round(temperature,1)
         else: # messana = Farenheit
             temp = round((temperature-32)*5/9,1)
         logging.debug('Celsius : {}  = {}'.format( temperature, temp ))  
         self.node.setDriver(stateVar, temp, True, True, 4)
-    elif  self.ISY_temp_unit == 1: # Farenheit in ISY
-        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
+    elif  self.ISY_temp_unit == TEMP_F: # Farenheit in ISY
+        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp = round((temperature*9/5+32),1)
         else:
             temp = round(temperature,1)
         logging.debug('Farenheit : {}  = {}'.format( temperature, temp ))            
         self.node.setDriver(stateVar,temp , True, True, 17)
     else: # kelvin
-        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == 0:
+        if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp = round(temperature+273.15,1)
         else:
              temp = round((temperature+273.15-32)*9/5,1)
@@ -98,10 +101,11 @@ def send_temp_to_isy(self, temperature, stateVar):
         self.node.setDriver(stateVar, temp, True, True, 26)
 
 
+
 def convert_temp_unit(self, tempStr):
     if tempStr.capitalize()[:1] == 'F':
-        return(1)
+        return(TEMP_F)
     elif tempStr.capitalize()[:1] == 'K':
-        return(2)
+        return(TEMP_K)
     else:
-        return(0)
+        return(TEMP_C)

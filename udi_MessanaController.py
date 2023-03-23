@@ -68,7 +68,10 @@ class MessanaController(udi_interface.Node):
         self.address = address
 
         self.hb = 0
-        self.ISYTempUnit = 0
+        self.TEMP_C = self.convert_temp_unit('C')
+        self.TEMP_F = self.convert_temp_unit('F')
+        self.TEMP_K = self.convert_temp_unit('K')
+        self.ISYTempUnit = self.TEMP_C
         self.nodeDefineDone = False
         self.nodeConfigDone = False
         self.zone = {}
@@ -107,6 +110,7 @@ class MessanaController(udi_interface.Node):
         logging.debug('drivers: {}'.format(self.drivers))
 
         logging.debug('MessanaRadiant init DONE')
+
         self.nodeDefineDone = True
 
     def _configdone_handler(self):
@@ -149,7 +153,7 @@ class MessanaController(udi_interface.Node):
             logging.debug( 'Temp Unit {} '.format(self.Parameters['TEMP_UNIT']) )
             self.ISY_temp_unit = self.convert_temp_unit(self.Parameters['TEMP_UNIT'])
         else:
-            self.ISY_temp_unit = 0
+            self.ISY_temp_unit = self.TEMP_C
             self.Parameters['TEMP_UNIT'] = 'C'
             logging.debug('TEMP_UNIT: {}'.format(self.ISY_temp_unit ))
        
@@ -414,9 +418,17 @@ class MessanaController(udi_interface.Node):
         setback_diff = int(command.get('value'))
         #setback_unit = int(temp_uom.get('value'))
         logging.debug('setSetbackOffset Called: {}'.format(setback_diff))
+        messana_diff = setback_diff
+        if self.messana_temp_unit == self.TEMP_C or self.messana_temp_unit == self.TEMP_K:
+            if self.ISY_temp_unit == self.TEMP_F:
+                messana_diff = (setback_diff - 32)*5/9
+        elif  self.messana_temp_unit == self.TEMP_F:
+            if self.ISY_temp_unit == self.TEMP_C or self.messana_temp_unit == self.TEMP_K:
+                messana_diff = setback_diff*9/5 + 32
 
-        if  self.messana.set_setback_diff(setback_diff):
+        if  self.messana.set_setback_diff(messana_diff):
             self.send_rel_temp_to_isy(setback_diff, 'GV1')
+
             #self.node.setDriver('GV1', setback_diff)
         else:
             logging.error('Error calling setSetbackOffset')
@@ -442,7 +454,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.119')
+        polyglot.start('0.0.120')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events
