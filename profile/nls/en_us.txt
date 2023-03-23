@@ -5,6 +5,7 @@ CMD-nlssystem-STATUS-NAME = System Status
 CMD-nlssystem-ENERGYSAVE-NAME = Energy Saving
 CMD-nlssystem-SETBACK_OFFSET-NAME = Setback Offset
 CMD-nlssystem-SETBACK-NAME = Setback
+CMDPN-nlssysyem-temp_uom-NAME = Temp Unit
 ST-nlssystem-GV0-NAME = System state
 ST-nlssystem-GV1-NAME = Setback Temp Offset
 ST-nlssystem-GV2-NAME = Setback
@@ -31,7 +32,7 @@ btenabled-2 = On
 btenabled-99 = Unknown
 
 tempuom-4 = Ce
-tempuom-4 = F
+tempuom-17 = F
 tempuom-26 = K
 
 alarm-0 = No Alarm
