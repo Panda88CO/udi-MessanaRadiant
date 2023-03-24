@@ -148,7 +148,7 @@ class udi_messana_macrozone(udi_interface.Node):
             logging.error('Error calling set_energy_save')
         
     def set_setpoint(self, command):
-        set_point = round(round(int(command.get('value')*2),0)/2,1)
+        set_point = round(round(float(command.get('value')*2),0)/2,1)
         logging.debug('set_setpoint {} for macrozone {}'.format(set_point, self.macrozone_nbr))   
         temp = self.macrozone.set_setpoint(set_point)
         if temp is not None:
