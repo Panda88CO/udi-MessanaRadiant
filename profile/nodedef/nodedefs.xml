@@ -46,7 +46,7 @@
       <sts>
          <st id="GV0" editor="enable" />
          <st id="GV1" editor="thermalmode" />
-         <st id="GV2" editor="status" />
+         <!--<st id="GV2" editor="status" />-->
          <st id="GV3" editor="temp"/>
          <st id="CLITEMP" editor="temp" />
          <st id="CLIHUM" editor="humidity" />

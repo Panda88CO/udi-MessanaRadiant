@@ -132,24 +132,27 @@ class udi_messana_macrozone(udi_interface.Node):
     def set_status(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called {} for macrozone: {}'.format(status, self.macrozone_nbr))
-        if self.macrozone.set_status(status):
-            self.node.setDriver('GV0', status)
+        temp = self.macrozone.set_status(status)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
         else:
             logging.error('Error calling setStatus')
 
     def set_energy_save(self, command):
         energy_save = int(command.get('value'))
         logging.debug('setEnergySave Called {} for macrozone {}'.format(energy_save, self.macrozone_nbr))
-        if self.macrozone.set_energy_saving(energy_save):
-            self.node.setDriver('GV8', energy_save)
+        temp = self.macrozone.set_energy_saving(energy_save)
+        if temp is not None:
+            self.node.setDriver('GV8', temp)
         else:
             logging.error('Error calling set_energy_save')
         
     def set_setpoint(self, command):
         set_point = round(round(int(command.get('value')*2),0)/2,1)
         logging.debug('set_setpoint {} for macrozone {}'.format(set_point, self.macrozone_nbr))   
-        if self.macrozone.set_setpoint(set_point):
-            self.node.setDriver('GV3', set_point)
+        temp = self.macrozone.set_setpoint(set_point)
+        if temp is not None:
+            self.node.setDriver('GV3', temp)
         else:
             logging.error('Error calling set_setpoint')
 

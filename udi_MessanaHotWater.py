@@ -109,16 +109,18 @@ class udi_messana_hot_water(udi_interface.Node):
     def set_status(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called {} for zone: {}'.format(status, self.dhw_nbr))
-        if self.dhw.set_status(status):
-            self.node.setDriver('GV0', status)
+        temp = self.dhw.set_status(status)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
         else:
             logging.error('Error calling setStatus')
 
     def set_target_temp(self, command):
         mode = int(command.get('value'))
         logging.debug('set_dhw_target_temp Called {} for DHW {}'.format(mode, self.dhw_nbr))
-        if self.dhw.set_target_temp(mode):
-            self.node.setDriver('GV1', mode)
+        temp = self.dhw.set_target_temp(mode)
+        if temp is not None:
+            self.node.setDriver('GV1', temp)
         else:
             logging.error('Error calling set_energy_save')        
 

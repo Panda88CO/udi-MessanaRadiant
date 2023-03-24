@@ -193,53 +193,60 @@ class udi_messana_atu(udi_interface.Node):
     def set_status(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called {} for atu: {}'.format(status, self.atu_nbr))
-        if self.atu.set_status(status):
-            self.node.setDriver('GV0', status)
+        
+        temp = self.atu.set_status(status)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
         else:
             logging.error('Error calling setStatus')
 
     def heat_recovery_en(self, command):
         val = int(command.get('value'))
         logging.debug('heat_recovery_en: {}'.format(val))
-        if self.atu.set_activate_HRV(val):
+        temp = self.atu.set_activate_HRV(val)
+        if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV2', self.atu.get_HRV_status())
-            self.node.setDriver('GV3', self.atu.get_activate_HRV())
+            self.node.setDriver('GV3', temp)
 
     def humidification_en(self, command):
         val = int(command.get('value'))
         logging.debug('humidification_en: {}'.format(val))
-        if self.atu.set_humidification_enable(val):
+        temp = self.atu.set_humidification_enable(val)
+        if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV4', self.atu.get_humidification_status())
-            self.node.setDriver('GV5', self.atu.get_humidification_enable())
+            self.node.setDriver('GV5', temp)
 
 
 
     def dehumidification_en(self, command):
         val = int(command.get('value'))
         logging.debug('dehumidification_en: {}'.format(val))
-        if self.atu.set_dehumidification_enable(val):
+        temp = self.atu.set_dehumidification_enable(val)
+        if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV6', self.atu.get_dehumidification_status())
-            self.node.setDriver('GV7', self.atu.get_dehumidification_enable())
+            self.node.setDriver('GV7', temp)
 
 
     def convection_en(self, command):
         val = int(command.get('value'))
         logging.debug('convection_en: {}'.format(val))
-        if self.atu. set_convection_enable(val):
+        temp = self.atu. set_convection_enable(val)
+        if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV2', self.atu.get_convection_status())
-            self.node.setDriver('GV3', self.atu.get_convection_enable())
+            self.node.setDriver('GV3', temp)
 
 
     def set_flow(self, command):
         val = int(command.get('value'))
         logging.debug('set_flow: {}'.format(val))
-        if self.atu.set_flow_level(val):
+        temp = self.atu.set_flow_level(val) 
+        if  temp is not None:
             time.sleep(0.2)
-            self.node.setDriver('GV2', self.atu.get_flow_level())
+            self.node.setDriver('GV2', temp)
 
     def update(self, command):
         logging.debug('update')

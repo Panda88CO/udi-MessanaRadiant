@@ -128,24 +128,27 @@ class udi_messana_fancoil(udi_interface.Node):
     def set_status(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called {} for FC: {}'.format(status, self.fancoil_nbr))
-        if self.fancoil.set_status(status):
-            self.node.setDriver('GV0', status)
+        temp = self.fancoil.set_status(status)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
         else:
             logging.error('Error calling setStatus')
 
     def set_heat_speed(self, command):
         speed = int(command.get('value'))
         logging.debug('set_heat_speed Called {} for FC {}'.format(speed, self.fancoil_nbr))
-        if self.fancoil.set_fancoil_heat_speed(speed):
-            self.node.setDriver('GV1', speed)
+        temp = self.fancoil.set_fancoil_heat_speed(speed)
+        if temp is not None:
+            self.node.setDriver('GV1', temp)
         else:
             logging.error('Error calling set_energy_save')
         
     def set_cool_speed(self, command):
         speed = int(command.get('value'))
         logging.debug('set_cool_speed {} for FC {}'.format(speed, self.fancoil_nbr))   
-        if self.fancoil.set_fancoil_cool_speed(speed):
-            self.node.setDriver('GV2', speed)
+        temp = self.fancoil.set_fancoil_cool_speed(speed)
+        if temp is not None :
+            self.node.setDriver('GV2', temp)
         else:
             logging.error('Error calling set_setpoint')
 

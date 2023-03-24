@@ -104,16 +104,18 @@ class udi_messana_hc_co(udi_interface.Node):
     def set_adaptive_comf(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called {} for zone: {}'.format(status, self.hc_co_nbr))
-        if self.hc_co.set_status(status):
-            self.node.setDriver('GV0', status)
+        temp = self.hc_co.set_status(status)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
         else:
             logging.error('Error calling setStatus')
 
     def set_hc_co_mode(self, command):
         mode = int(command.get('value'))
         logging.debug('set_hc_co_mode Called {} for BT {}'.format(mode, self.hc_co_nbr))
-        if self.hc_co.set_hc_co_mode(mode):
-            self.node.setDriver('GV1', mode)
+        temp = self.hc_co.set_hc_co_mode(mode)
+        if temp is not None:
+            self.node.setDriver('GV1', temp)
         else:
             logging.error('Error calling set_energy_save')
         

@@ -41,7 +41,7 @@ class udi_messana_zone(udi_interface.Node):
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
-        {'driver': 'GV2', 'value': 99, 'uom': 25},
+        #{'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
         {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
         {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
@@ -132,9 +132,9 @@ class udi_messana_zone(udi_interface.Node):
         logging.debug('Thermal Mode(GV1): {}'.format(Val))
         self.node.setDriver('GV1', self.isy_value(Val))
 
-        Val = self.zone.get_scheduleOn()
-        logging.debug('Schedule Mode(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
+        #Val = self.zone.get_scheduleOn()
+        #logging.debug('Schedule Mode(GV2): {}'.format(Val))
+        #self.node.setDriver('GV2', self.isy_value(Val))
 
         Val = self.zone.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
@@ -185,9 +185,9 @@ class udi_messana_zone(udi_interface.Node):
     def set_status(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called {} for zone: {}'.format(status, self.zone_nbr))
-        new_status = int(self.zone.set_status(status))
+        new_status = self.zone.set_status(status)
         logging.debug('new_status {}'.format(new_status))
-        if new_status:
+        if new_status != None:
             self.node.setDriver('GV0', new_status)
         else:
             logging.error('Error calling setStatus')
@@ -195,9 +195,9 @@ class udi_messana_zone(udi_interface.Node):
     def set_energy_save(self, command):
         energy_save = int(command.get('value'))
         logging.debug('setEnergySave Called {} for zone {}'.format(energy_save, self.zone_nbr))
-        new_es = int(self.zone.set_energy_saving(energy_save))
+        new_es = self.zone.set_energy_saving(energy_save)
         logging.debug('new_es {}'.format(new_es))
-        if new_es:
+        if new_es != None:
             self.node.setDriver('GV8', new_es)
         else:
             logging.error('Error calling set_energy_save')
@@ -205,9 +205,9 @@ class udi_messana_zone(udi_interface.Node):
     def set_setpoint(self, command):
         set_point = round(round(int(command.get('value'))*2,0)/2,1)
         logging.debug('set_setpoint {} for zone {}'.format(set_point, self.zone_nbr))
-        new_SP = round(float(self.zone.set_setpoint(set_point)),1)
+        new_SP = self.zone.set_setpoint(set_point)
         logging.debug('new SP: {}'.format(new_SP))
-        if new_SP:
+        if new_SP != None:
             self.node.setDriver('GV3', new_SP)
         else:
             logging.error('Error calling set_setpoint')

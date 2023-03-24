@@ -391,8 +391,9 @@ class MessanaController(udi_interface.Node):
     def setStatus(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called: {}'.format(status))
-        if self.messana.set_status(status):
-            self.node.setDriver('GV0', status)
+        temp = self.messana.set_status(status) 
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
         else:
             logging.error('Error calling setStatus')
 
@@ -400,8 +401,9 @@ class MessanaController(udi_interface.Node):
     def setEnergySave(self, command): 
         energy_save = int(command.get('value'))
         logging.debug('setEnergySave Called: {}'.format(energy_save))
-        if  self.messana.set_energy_saving(energy_save):
-            self.node.setDriver('GV12', energy_save)
+        temp = self.messana.set_energy_saving(energy_save)
+        if   temp is not None:
+            self.node.setDriver('GV12', temp)
         else:
             logging.error('Error calling setEnergySave')
 
@@ -409,8 +411,9 @@ class MessanaController(udi_interface.Node):
     def setSetback(self, command):
         setback = int(command.get('value'))
         logging.debug('setSetback Called: {}'.format(setback))
-        if  self.messana.set_energy_saving(setback):
-            self.node.setDriver('GV2', setback)
+        temp = self.messana.set_energy_saving(setback)
+        if temp is not None:
+            self.node.setDriver('GV2', temp)
         else:
             logging.error('Error calling setSetback')
 
@@ -425,9 +428,9 @@ class MessanaController(udi_interface.Node):
         elif  self.messana_temp_unit == self.TEMP_F:
             if self.ISY_temp_unit == self.TEMP_C :
                 messana_diff = setback_diff*9/5 + 32
-
-        if  self.messana.set_setback_diff(messana_diff):
-            self.send_rel_temp_to_isy(setback_diff, 'GV1')
+        temp = self.messana.set_setback_diff(messana_diff)
+        if temp is not None:
+            self.send_rel_temp_to_isy(temp, 'GV1')
 
             #self.node.setDriver('GV1', setback_diff)
         else:
@@ -454,7 +457,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.0.126')
+        polyglot.start('0.0.127')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

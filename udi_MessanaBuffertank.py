@@ -120,24 +120,27 @@ class udi_messana_buffertank(udi_interface.Node):
     def set_status(self, command):
         status = int(command.get('value'))
         logging.debug('set Status Called {} for zone: {}'.format(status, self.buffertank_nbr))
-        if self.buffertank.set_status(status):
-            self.node.setDriver('GV0', status)
+        temp = self.buffertank.set_status(status)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
         else:
             logging.error('Error calling setStatus')
 
     def set_buffertank_mode(self, command):
         mode = int(command.get('value'))
         logging.debug('set_buffertank_mode Called {} for BT {}'.format(mode, self.buffertank_nbr))
-        if self.buffertank.set_buffertank_mode(mode):
-            self.node.setDriver('GV1', mode)
+        temp = self.buffertank.set_buffertank_mode(mode)
+        if temp is not None:
+            self.node.setDriver('GV1', temp)
         else:
             logging.error('Error calling set_energy_save')
         
     def set_buffertank_temp_mode(self, command):
         mode = int(command.get('value'))
         logging.debug('set_buffertank_temp_mode {} for BT {}'.format(mode, self.buffertank_nbr))   
-        if self.buffertank.set_buffertank_temp_mode(mode):
-            self.node.setDriver('GV2', mode)
+        temp = self.buffertank.set_buffertank_temp_mode(mode)
+        if temp is not None:
+            self.node.setDriver('GV2', temp)
         else:
             logging.error('Error calling set_setpoint')
 
