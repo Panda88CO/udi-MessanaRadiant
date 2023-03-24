@@ -53,10 +53,9 @@ CMD-nlszone-UPDATE-NAME = Update System Data
 CMD-nlszone-SETPOINT-NAME = Set Temperature
 CMD-nlszone-STATUS-NAME = Zone State
 CMD-nlszone-ENERGYSAVE-NAME = Energy Saving
-CMD-nlszone-SCHEDULEON-NAME = Schedule Status
 ST-nlszone-GV0-NAME = Zone State
 ST-nlszone-GV1-NAME = Thermal Mode
-ST-nlszone-GV2-NAME = Zone Schedule 
+
 ST-nlszone-GV3-NAME = Setpoint
 ST-nlszone-CLITEMP-NAME = Room Temperature
 ST-nlszone-CLIHUM-NAME = Humidity
@@ -79,9 +78,9 @@ ND-macrozone-ICON = TempSensor
 CMD-nlsmacrozone-UPDATE-NAME = Update System Data
 CMD-nlsmacrozone-SETPOINT-NAME = Set Temperature
 CMD-nlsmacrozone-STATUS-NAME = Macrozone State
-CMD-nlsmacrozone-SCHEDULEON-NAME = Schedule Status
+
 ST-nlsmacrozone-GV0-NAME = State
-ST-nlsmacrozone-GV2-NAME = Schedule 
+
 ST-nlsmacrozone-GV3-NAME = Setpoint
 ST-nlsmacrozone-CLITEMP-NAME = Macrozone Temperature
 ST-nlsmacrozone-CLIHUM-NAME = Humidity

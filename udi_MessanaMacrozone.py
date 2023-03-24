@@ -133,8 +133,9 @@ class udi_messana_macrozone(udi_interface.Node):
 
         
     def set_setpoint(self, command):
-        set_point = round(round(float(command.get('value')*2),0)/2,1)
-        logging.debug('set_setpoint {} for macrozone {}'.format(set_point, self.macrozone_nbr))   
+        temp_1 = float(command.get('value'))
+        set_point = round(round(temp_1*2,0)/2,1)
+        logging.debug('set_setpoint {} = {} for macrozone {}'.format(temp_1, set_point, self.macrozone_nbr))   
         temp = self.macrozone.set_setpoint(set_point)
         if temp is not None:
             self.node.setDriver('GV3', temp)
