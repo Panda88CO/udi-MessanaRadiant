@@ -78,9 +78,7 @@ ND-macrozone-ICON = TempSensor
 CMD-nlsmacrozone-UPDATE-NAME = Update System Data
 CMD-nlsmacrozone-SETPOINT-NAME = Set Temperature
 CMD-nlsmacrozone-STATUS-NAME = Macrozone State
-
 ST-nlsmacrozone-GV0-NAME = State
-
 ST-nlsmacrozone-GV3-NAME = Setpoint
 ST-nlsmacrozone-CLITEMP-NAME = Macrozone Temperature
 ST-nlsmacrozone-CLIHUM-NAME = Humidity
