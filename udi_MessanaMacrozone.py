@@ -129,8 +129,6 @@ class udi_messana_macrozone(udi_interface.Node):
 
 
 
-
-
         
     def set_setpoint(self, command):
         temp_1 = float(command.get('value'))
@@ -152,8 +150,8 @@ class udi_messana_macrozone(udi_interface.Node):
 
     def set_status(self, command):
         status = int(command.get('value'))
-        logging.debug('set Status Called {} for zone: {}'.format(status, self.zone_nbr))
-        new_status = self.zone.set_status(status)
+        logging.debug('set Status Called {} for macrozone: {}'.format(status, self.macrozone_nbr))
+        new_status = self.macrozone.set_status(status)
         logging.debug('new_status {}'.format(new_status))
         if new_status != None:
             self.node.setDriver('GV0', new_status)
