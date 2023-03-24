@@ -35,7 +35,7 @@ class udi_messana_macrozone(udi_interface.Node):
     
     drivers = [
         {'driver': 'GV0', 'value': 99, 'uom': 25},
-        {'driver': 'GV2', 'value': 99, 'uom': 25},
+        #{'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
         {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
         {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
@@ -129,23 +129,8 @@ class udi_messana_macrozone(udi_interface.Node):
 
 
 
-    def set_status(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called {} for macrozone: {}'.format(status, self.macrozone_nbr))
-        temp = self.macrozone.set_status(status)
-        if temp is not None:
-            self.node.setDriver('GV0', temp)
-        else:
-            logging.error('Error calling setStatus')
 
-    def set_energy_save(self, command):
-        energy_save = int(command.get('value'))
-        logging.debug('setEnergySave Called {} for macrozone {}'.format(energy_save, self.macrozone_nbr))
-        temp = self.macrozone.set_energy_saving(energy_save)
-        if temp is not None:
-            self.node.setDriver('GV8', temp)
-        else:
-            logging.error('Error calling set_energy_save')
+
         
     def set_setpoint(self, command):
         set_point = round(round(float(command.get('value')*2),0)/2,1)
@@ -164,9 +149,19 @@ class udi_messana_macrozone(udi_interface.Node):
         logging.debug('update')
         self.updateISY_longpoll()
 
-    
+    def set_status(self, command):
+        status = int(command.get('value'))
+        logging.debug('set Status Called {} for zone: {}'.format(status, self.zone_nbr))
+        new_status = self.zone.set_status(status)
+        logging.debug('new_status {}'.format(new_status))
+        if new_status != None:
+            self.node.setDriver('GV0', new_status)
+        else:
+            logging.error('Error calling setStatus')
+
+
     commands = { 'UPDATE': update
-                #,'ENERGYSAVE': set_energy_save
+                ,'STATUS': set_status
                 ,'SETPOINT' : set_setpoint
      #           ,'SETPOINTCO2' : set_setpoint_co2
      #           ,'SCHEDULEON' : set_schedule
