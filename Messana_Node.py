@@ -158,8 +158,14 @@ class messana_node(messana_control):
     def get_alarmOn(self):
         logging.debug('{} {} -get_alarmOn'.format(self.type, self.nbr))
         alarm = self.__get_node_data('alarmOn')
+        logging.debug('get_alarmOn: {}'.format(alarm))
+
         if alarm != 0:
-            logging.info('Alarm set : {}'.format(self.__get_node_data('alarms')))
+            alarm_code = self.__get_node_data('alarms')
+            logging.debug('alarmc codes: {}'.format(alarm_code))
+            logging.info('Alarm set : {}'.format(alarm_code))
+            if len(alarm_code) == 0:
+                alarm = 0
         return(alarm)
 
 

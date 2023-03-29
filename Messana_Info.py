@@ -98,7 +98,7 @@ class messana_control(object):
 
 
     def GET_node_data(self, mKey, node_type, node_nbr):
-        logging.debug('GETNodeData: {}, {}, {}'.format(mKey, node_type, node_nbr))
+        logging.debug('GETNodeData: {}, type {},node nbr {}'.format(mKey, node_type, node_nbr))
         GETstr = self.IPstr +'/api/'+ node_type+'/'+mKey+'/'+str(node_nbr)+'?'+ self.apiStr
         #logging.debug('GET_node_data: {} '.format(GETstr))
         try:
@@ -106,7 +106,7 @@ class messana_control(object):
             logging.debug('nTemp = {}'.format(nTemp))
             if str(nTemp) == self.RESPONSE_OK:
                 nData = nTemp.json()
-                #logging.debug('nData : {}'.format(nData))
+                logging.debug('nData : {}'.format(nData))
                 data   = nData[str(list(nData.keys())[0])]
                 logging.debug('GET_node_data node {} - data: {}'.format(node_type, data))
                 if data in self.NaNlist or data == self.RESPONSE_NO_SUPPORT:

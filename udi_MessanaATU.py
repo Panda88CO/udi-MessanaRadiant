@@ -168,11 +168,11 @@ class udi_messana_atu(udi_interface.Node):
 
 
         Val = self.atu.get_dehumidification_status()
-        logging.debug('get_humidification_status(GV4): {}'.format(Val))
+        logging.debug('get_humidification_status(6): {}'.format(Val))
         self.node.setDriver('GV6', self.isy_value(Val))
 
         Val = self.atu.get_dehumidification_enable()
-        logging.debug('get_humidification_enable(GV5): {}'.format(Val))
+        logging.debug('get_humidification_enable(7): {}'.format(Val))
         self.node.setDriver('GV7', self.isy_value(Val))
 
         Val = self.atu.get_convection_status()
