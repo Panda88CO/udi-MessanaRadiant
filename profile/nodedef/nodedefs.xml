@@ -1,0 +1,271 @@
+<nodeDefs> 
+   <nodeDef id="system" nls="nlssystem">
+      <editors />
+      <sts>
+         <st id="GV0" editor="status" />
+         <st id="GV1" editor="tempoffset" />
+         <st id="GV2" editor="enable" />
+         <st id="GV12" editor="enable" />
+         <st id="GV3" editor="count" />         
+         <st id="GV4" editor="count" />
+         <st id="GV5" editor="count" />
+         <st id="GV6" editor="count" />
+         <st id="GV7" editor="count" />
+         <st id="GV8" editor="count" />
+         <st id="GV9" editor="count" />
+         <st id="GV10" editor="count" />         
+         <st id="GV11" editor="alarm" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+            <cmd id="DON" /> 
+            <cmd id="DOF" /> 
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_status" init="GV0" /> 
+            </cmd> 
+            <cmd id="ENERGYSAVE" > 
+               <p id="" editor="set_enable" init="GV12" /> 
+            </cmd> 
+            <cmd id="SETBACK_OFFSET" > 
+               <p id="" editor="set_tempos" init="GV1" /> 
+               <!--<p id="temp_uom" editor="tempuom"  /> -->
+            </cmd> 
+            <cmd id="SETBACK" > 
+               <p id="" editor="set_enable" init="GV2" /> 
+            </cmd>             
+         </accepts>
+      </cmds>
+   </nodeDef>
+
+   <nodeDef id="zone" nls="nlszone">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="thermalmode" />
+         <st id="GV3" editor="temp"/>
+         <st id="CLITEMP" editor="temp" />
+         <st id="CLIHUM" editor="humidity" />
+         <st id="DEWPT" editor="temp" />
+         <st id="GV6" editor="airq" />
+         <st id="CO2LVL" editor="co2" />
+         <st id="GV8" editor="enable" />
+         <st id="GV9" editor="alarm" />
+         <st id="GV10" editor="temp" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SETPOINT" > 
+               <p id="" editor="set_temp" init="GV3" /> 
+            </cmd> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="ENERGYSAVE" > 
+               <p id="" editor="set_enable" init="GV8" /> 
+            </cmd> 
+            <!--
+            <cmd id="SCHEDULEON" > 
+               <p id="" editor="set_enable" init="GV2" /> 
+            </cmd> 
+            -->
+         </accepts>
+      </cmds>
+   </nodeDef>
+   <nodeDef id="macrozone" nls="nlsmacrozone">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV3" editor="temp"/>
+         <st id="CLITEMP" editor="temp" />
+         <st id="CLIHUM" editor="humidity" />
+         <st id="DEWPT" editor="temp" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="SETPOINT" > 
+               <p id="" editor="set_temp" init="GV3" /> 
+            </cmd> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <!--
+            <cmd id="SCHEDULEON" > 
+               <p id="" editor="set_enable" init="GV2" /> 
+            </cmd> 
+            -->
+         </accepts>
+      </cmds>
+   </nodeDef>
+
+   <nodeDef id="atu" nls="nlsatu">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="CLITEMP" editor="temp" />         
+         <st id="GV1" editor="flowlvl" />
+         <st id="GV2" editor="enable" />
+         <st id="GV3" editor="onoff" />
+         <st id="GV4" editor="enable" />
+         <st id="GV5" editor="onoff" />
+         <st id="GV6" editor="enable" />
+         <st id="GV7" editor="onoff" />
+         <st id="GV8" editor="enable" />
+         <st id="GV9" editor="onoff" />
+         <st id="GV11" editor="alarm" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="HRVEN" > 
+               <p id="" editor="set_enable" init="GV2" /> 
+            </cmd> 
+            <cmd id="HUMEN" > 
+               <p id="" editor="set_enable" init="GV4" /> 
+            </cmd> 
+            <cmd id="DEHUMEN" > 
+               <p id="" editor="set_enable" init="GV6" /> 
+            </cmd> 
+            <cmd id="CONVEN" > 
+               <p id="" editor="set_enable" init="GV8" /> 
+            </cmd> 
+            <cmd id="SET_FLOW" > 
+               <p id="" editor="set_flowlvl" init="GV1" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef> 
+   <nodeDef id="buffertank" nls="nlsbuftank">
+      <editors />
+      <sts>
+         <st id="GV0" editor="btenable" />
+         <st id="CLITEMP" editor="temp" />
+         <st id="GV1" editor="btmode"/>
+         <st id="GV2" editor="bttempmode"/>
+         <st id="GV3" editor="alarm" />
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="MODE" > 
+               <p id="" editor="set_btmode" init="GV1" /> 
+            </cmd> 
+            <cmd id="TEMPMODE" > 
+               <p id="" editor="set_bttempmode" init="GV2" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+   <nodeDef id="hcco" nls="nlshcco">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="hccomode"/>
+         <st id="GV2" editor="seasonmode"/>
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="MODE" > 
+               <p id="" editor="set_hccomode" init="GV1" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+   <nodeDef id="fancoil" nls="nlsfancoil">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="fanspeed"/>
+         <st id="GV2" editor="fanspeed"/>
+         <st id="GV3" editor="fctype"/>
+         <st id="GV4" editor="alarm" />         
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="HEATSPEED" > 
+               <p id="" editor="setspeed" init="GV1" /> 
+            </cmd> 
+            <cmd id="COOLSPEED" > 
+               <p id="" editor="setspeed" init="GV2" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+   <nodeDef id="energy" nls="nlsenergy">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="GV1" editor="onoff"/>
+         <st id="GV2" editor="estype"/>
+         <st id="GV3" editor="alarm" />         
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+   <nodeDef id="dhw" nls="nlsdhw">
+      <editors />
+      <sts>
+         <st id="GV0" editor="enable" />
+         <st id="CLITEMP" editor="temp"/>
+         <st id="GV1" editor="temp" />         
+         <st id="ST" editor="running" />
+      </sts>
+      <cmds>
+         <sends>
+         </sends>
+         <accepts>
+            <cmd id="UPDATE" /> 
+            <cmd id="STATUS" > 
+               <p id="" editor="set_enable" init="GV0" /> 
+            </cmd> 
+            <cmd id="TARGETTEMP" > 
+               <p id="" editor="set_temp" init="GV1" /> 
+            </cmd> 
+         </accepts>
+      </cmds>
+   </nodeDef>
+</nodeDefs>

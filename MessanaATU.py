@@ -3,7 +3,7 @@ import time
 
 try:
     import udi_interface
-    logging = udi_interface.logging
+    logging = udi_interface.LOGGER
     Custom = udi_interface.Custom
 
 except ImportError:
@@ -12,10 +12,10 @@ except ImportError:
     #logging = logging.getlogging('testLOG')
 
 #from subprocess import call
-from MessanaInfo import messanaInfo
+from Temp.MessanaInfo import messana_control
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
-class messanaAtu(messanaInfo):
+class messanaAtu(messana_control):
     def __init__(self, messanaIP, messanaKey, atuNbr):
         super().__init__(messanaIP, messanaKey)
         logging.info('init Zone:' )
@@ -26,7 +26,7 @@ class messanaAtu(messanaInfo):
         self.node_nbr = atuNbr
         self.stateList = [0,1]
 
-        self.update_all()
+        #self.update_all()
 
 
 def update_active(self):

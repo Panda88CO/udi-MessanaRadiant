@@ -1,0 +1,123 @@
+<editors> 
+
+  <editor id = "temp" > 
+    <range uom="4" min="-50" max="75" step="0.5" prec="1" />
+    <range uom="17" min="-50" max="150" step="0.5" prec="1" />
+    <range uom="25" subset="98-99" nls="UNKNOWN" />
+  </editor>
+  <editor id = "set_temp" > 
+    <range uom="4" min="10" max="35" step="0.5" prec="1" />
+    <range uom="17" min="50" max="100" step="1" prec="1" />
+  </editor>
+  <editor id = "tempoffset" > 
+    <range uom="4" min="0" max="25" step="0.5" prec="1" />
+    <range uom="17" min="0" max="50" step="1" prec="1" />
+    <range  uom="25" subset="98-99" nls="UNKNOWN" />
+  </editor>
+  <!--
+  <editor id = "set_tempoffset" > 
+    <range uom="4" min="0" max="25" step="0.5" prec="1" />
+    <range uom="17" min="0" max="50" step="1" prec="1" />
+    <range uom="26" min="0" max="25" step="0.5" prec="1" />
+  </editor>
+  -->
+  <editor id = "set_tempos" > 
+    <range uom="0" min="0" max="40" step="0.5" prec="1" />
+  </editor>
+  <editor id = "tempuom" > 
+      <range  uom="25" subset="4,17,26" nls="tempuom"/>
+  </editor>
+  <editor id = "enable" > 
+     <range  uom="25" subset="0-1,99" nls="enabled"/>
+  </editor>
+  <editor id = "set_enable" > 
+      <range  uom="25" subset="0-1" nls="enabled"/>
+  </editor>
+    <editor id = "btenable" > 
+     <range  uom="25" subset="0-2,99" nls="btenabled"/>
+  </editor>
+  <editor id = "thermalmode" > 
+     <range  uom="25" subset="0-3,99" nls="thermalmode"/>
+  </editor>  
+  <editor id = "status" > 
+     <range  uom="25" subset="0-1,99" nls="status"/>
+  </editor>
+  <editor id = "set_status" > 
+     <range  uom="25" subset="0-1" nls="status"/>
+  </editor>
+  <editor id = "humidity" > 
+     <range uom="21" min="0" max="100" step="0.5" prec="1" />
+     <range uom="25" subset="98-99" nls="UNKNOWN"/>
+  </editor>
+  <editor id = "airq" > 
+     <range uom="56" min="0" max="1000" step="1" prec="0" />
+     <range uom="25" subset="98-99" nls="UNKNOWN"/>
+  </editor>
+  <editor id = "co2" > 
+     <range uom="56" min="0" max="1000" step="1" prec="0" />
+     <range uom="25" subset="98-99" nls="UNKNOWN"/>
+  </editor>
+  <editor id = "connected" > 
+     <range  uom="25" subset="0-1,99" nls="connected"/>
+  </editor>
+  <editor id = "alarm" > 
+     <range  uom="25" subset="0-1,99" nls="alarm"/>
+  </editor>
+  <editor id = "running" > 
+     <range  uom="25" subset="0-1, 99" nls="running"/>
+  </editor>
+  <editor id = "count" > 
+      <range  uom="107" min="0" max="127" setp = "1" prec = "0"/>
+      <range  uom="25" subset="98,99" nls="count"/>
+  </editor>
+
+  <editor id = "onoff" > 
+      <range  uom="25" subset="0-1,98,99" nls="onoff"/>
+  </editor>
+  <editor id = "flowlvl" > 
+      <range  uom="7"  min="0" max="1000" step="10" prec="0" />
+      <range  uom="25" subset="98,99" nls="UNKNOWN"/>
+  </editor>  
+  <editor id = "set_flowlvl" > 
+      <range  uom="7"  min="60" max="350" step="10" prec="0" />
+  </editor>  
+
+  <editor id = "btmode" > 
+      <range  uom="25" subset="0-1,98,99" nls="onoff"/>
+  </editor>
+  <editor id = "bttempmode" > 
+      <range  uom="25" subset="0-2,98,99" nls="bttempmode"/>
+  </editor>
+
+  <editor id = "set_btmode" > 
+      <range  uom="25" subset="0-1" nls="setbtmode"/>
+  </editor>
+  <editor id = "set_bttempmode" > 
+      <range  uom="25" subset="0-2" nls="setbttempmode"/>
+  </editor>
+
+  <editor id = "hccomode" > 
+      <range  uom="25" subset="0-2,98,99" nls="hccomode"/>
+  </editor>
+   <editor id = "seasonmode" > 
+      <range  uom="25" subset="0-1,98,99" nls="seasonmode"/>
+  </editor>
+  
+  <editor id = "set_hccomode" > 
+      <range  uom="25" subset="0-2" nls="set_hccomode"/>
+  </editor>
+  <editor id = "fanspeed" > 
+      <range  uom="89" min="0" max="1000" setp = "1" prec = "0"/>
+      <range  uom="25" subset="98,99" nls="count"/>
+  </editor>
+  <editor id = "setspeed" > 
+      <range  uom="89" min="0" max="1000" setp = "1" prec = "0"/>
+  </editor>
+   <editor id = "fctype" > 
+      <range  uom="25" subset="0-3,99" nls="onoff"/>
+  </editor>
+     <editor id = "estype" > 
+      <range  uom="25" subset="0-3,99" nls="onoff"/>
+  </editor>
+
+</editors> 
