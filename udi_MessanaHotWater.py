@@ -131,7 +131,7 @@ class udi_messana_hot_water(udi_interface.Node):
 
     commands = { 'UPDATE': update 
                 ,'STATUS': set_status
+                ,'TARGETTEMP' : set_target_temp
                 ,'TEMPMODE' : set_target_temp
-                
                 }
         

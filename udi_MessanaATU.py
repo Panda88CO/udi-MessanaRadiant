@@ -233,11 +233,11 @@ class udi_messana_atu(udi_interface.Node):
     def convection_en(self, command):
         val = int(command.get('value'))
         logging.debug('convection_en: {}'.format(val))
-        temp = self.atu. set_convection_enable(val)
+        temp = self.atu.set_convection_enable(val)
         if temp is not None:
             time.sleep(0.2)
-            self.node.setDriver('GV2', self.atu.get_convection_status())
-            self.node.setDriver('GV3', temp)
+            self.node.setDriver('GV8', self.atu.get_convection_status())
+            self.node.setDriver('GV9', temp)
 
 
     def set_flow(self, command):
@@ -246,7 +246,7 @@ class udi_messana_atu(udi_interface.Node):
         temp = self.atu.set_flow_level(val) 
         if  temp is not None:
             time.sleep(0.2)
-            self.node.setDriver('GV2', temp)
+            self.node.setDriver('GV1', temp)
 
     def update(self, command):
         logging.debug('update')
@@ -258,7 +258,7 @@ class udi_messana_atu(udi_interface.Node):
                 ,'HUMEN' : humidification_en
                 ,'DEHUMEN' : dehumidification_en
                 ,'CONVEN' : convection_en
-                ,'SET_FLOW' : set_flow,
-                
+                ,'SET_FLOW' : set_flow
+                ,'SETFLOW' : set_flow
                 }
         

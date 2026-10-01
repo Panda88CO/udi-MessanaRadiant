@@ -449,6 +449,7 @@ class MessanaController(udi_interface.Node):
                 ,'ENERGYSAVE': setEnergySave
                 ,'SETBACK' : setSetback
                 ,'SETBACK_OFFSET' : setSetbackOffset
+                ,'SETBACKOFFSET' : setSetbackOffset
                 }
 
 
@@ -457,7 +458,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.1.0')
+        polyglot.start('0.2.1')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

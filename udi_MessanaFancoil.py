@@ -83,18 +83,17 @@ class udi_messana_fancoil(udi_interface.Node):
         logging.debug('fancoil Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
+        Val = self.fancoil.get_fancoil_cool_speed()
+        logging.debug('Fancoil get_fancoil_cool_speed(GV1): {}'.format(Val))
+        self.node.setDriver('GV1', self.isy_value(Val))
+
         Val = self.fancoil.get_fancoil_heat_speed()
         logging.debug('Fancoil get_fancoil_heat_speed(GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 
-        Val = self.fancoil.get_fancoil_cool_speed()
-        logging.debug('Fancoil get_fancoil_cool_speed(GV3): {}'.format(Val))
-        self.node.setDriver('GV3', self.isy_value(Val))
-
         Val = self.fancoil.get_alarmOn()
         logging.debug('fancoil get_alarmOn(GV4): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'GV4')
+        self.node.setDriver('GV4', self.isy_value(Val))
 
 
 
@@ -106,22 +105,21 @@ class udi_messana_fancoil(udi_interface.Node):
         logging.debug('fancoil Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
 
-        Val = self.fancoil.get_fctype()
-        logging.debug('get_fctype(GV3): {}'.format(Val))
-        self.node.setDriver('GV3', self.isy_value(Val))
+        Val = self.fancoil.get_fancoil_cool_speed()
+        logging.debug('Fancoil get_fancoil_cool_speed(GV1): {}'.format(Val))
+        self.node.setDriver('GV1', self.isy_value(Val))
 
         Val = self.fancoil.get_fancoil_heat_speed()
         logging.debug('Fancoil get_fancoil_heat_speed(GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 
-        Val = self.fancoil.get_fancoil_cool_speed()
-        logging.debug('Fancoil get_fancoil_cool_speed(GV3): {}'.format(Val))
+        Val = self.fancoil.get_fctype()
+        logging.debug('get_fctype(GV3): {}'.format(Val))
         self.node.setDriver('GV3', self.isy_value(Val))
 
         Val = self.fancoil.get_alarmOn()
         logging.debug('fancoil get_alarmOn(GV4): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'GV4')
+        self.node.setDriver('GV4', self.isy_value(Val))
 
 
 
@@ -139,18 +137,18 @@ class udi_messana_fancoil(udi_interface.Node):
         logging.debug('set_heat_speed Called {} for FC {}'.format(speed, self.fancoil_nbr))
         temp = self.fancoil.set_fancoil_heat_speed(speed)
         if temp is not None:
-            self.node.setDriver('GV1', temp)
+            self.node.setDriver('GV2', temp)
         else:
-            logging.error('Error calling set_energy_save')
+            logging.error('Error calling set_heat_speed')
         
     def set_cool_speed(self, command):
         speed = int(command.get('value'))
         logging.debug('set_cool_speed {} for FC {}'.format(speed, self.fancoil_nbr))   
         temp = self.fancoil.set_fancoil_cool_speed(speed)
-        if temp is not None :
-            self.node.setDriver('GV2', temp)
+        if temp is not None:
+            self.node.setDriver('GV1', temp)
         else:
-            logging.error('Error calling set_setpoint')
+            logging.error('Error calling set_cool_speed')
 
     def update(self, command):
         logging.debug('update')

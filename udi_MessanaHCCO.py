@@ -93,7 +93,7 @@ class udi_messana_hc_co(udi_interface.Node):
         logging.debug('hc_co Mode(GV1): {}'.format(Val))
         self.node.setDriver('GV1', self.isy_value(Val))
 
-        Val = self.hc_co.get_hc_co_mode()
+        Val = self.hc_co.get_hc_co_season_mode()
         logging.debug('hc_co executiveSeason (GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
 

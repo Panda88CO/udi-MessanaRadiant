@@ -320,7 +320,7 @@ class messana_node(messana_control):
         logging.debug('{} {} - set_fancoil_cool_speed {} '.format(self.type, self.nbr, speed))
         if self.__put_node_data('coolingSpeed', speed):
             time.sleep(0.5)
-        return(self.get_fancoil_heat_speed())
+        return(self.get_fancoil_cool_speed())
 
     def get_energy_source_dhwStatus(self):
         logging.debug('{} {} - get_energy_source_dhwStatus'.format(self.type, self.nbr))
