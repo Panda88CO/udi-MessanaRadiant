@@ -21,6 +21,7 @@ import time
 import re
 import json
 from profile_def import build_profile_definition
+from version import __version__
 
 try:
     import udi_interface
@@ -60,7 +61,7 @@ class MessanaController(udi_interface.Node):
     def __init__(self, polyglot, primary, address, name):
         super().__init__(polyglot, primary, address, name)
 
-        logging.info('_init_ Messsana Controller')
+        logging.info(f'_init_ Messana Controller v{__version__}')
         self.messanaImportOK = 0
         self.ISYforced = False
         self.name = 'Messana Main'
@@ -125,7 +126,7 @@ class MessanaController(udi_interface.Node):
 
 
     def start(self):
-        logging.info('Start Messana Main NEW')
+        logging.info(f'Start Messana Main v{__version__}')
         self.poly.Notices.clear()
         while not self.nodeDefineDone:
             time.sleep(2)

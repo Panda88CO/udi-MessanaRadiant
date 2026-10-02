@@ -255,6 +255,47 @@ class TestStaticXmlProfile(unittest.TestCase):
         self.assertIn("ST-NLSZONE-GV7-NAME", entries)
         self.assertIn("VOC", entries["ST-NLSZONE-GV7-NAME"])
 
+    def test_common_version_consistency(self):
+        """Verify version.py, version.txt, profile/version.txt, and server.json are all in sync."""
+        import json
+        from version import __version__
+
+        # 1. Check version.txt
+        root_v_path = os.path.join(self.BASE_DIR, "version.txt")
+        with open(root_v_path, "r", encoding="utf-8") as f:
+            root_v = f.read().strip()
+        self.assertEqual(
+            root_v,
+            __version__,
+            f"version.txt ({root_v}) does not match version.py ({__version__})",
+        )
+
+        # 2. Check profile/version.txt
+        prof_v_path = os.path.join(self.PROFILE_DIR, "version.txt")
+        with open(prof_v_path, "r", encoding="utf-8") as f:
+            prof_v = f.read().strip()
+        self.assertEqual(
+            prof_v,
+            __version__,
+            f"profile/version.txt ({prof_v}) does not match version.py ({__version__})",
+        )
+
+        # 3. Check server.json
+        server_json_path = os.path.join(self.BASE_DIR, "server.json")
+        with open(server_json_path, "r", encoding="utf-8") as f:
+            server_data = json.load(f)
+        self.assertEqual(
+            server_data.get("profile_version"),
+            __version__,
+            f"server.json profile_version ({server_data.get('profile_version')}) does not match {__version__}",
+        )
+        self.assertEqual(
+            server_data.get("credits", [{}])[0].get("version"),
+            __version__,
+            f"server.json credits version does not match {__version__}",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
+
