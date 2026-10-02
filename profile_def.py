@@ -25,50 +25,54 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
     tempoffset_editor = "TEMPOFFSETF" if is_f else "TEMPOFFSETC"
     settempos_editor = "SETTEMPOSF" if is_f else "SETTEMPOSC"
 
-    tempc_ranges = [
-        {"uom": "4", "min": -50, "max": 75, "step": 0.5, "prec": 1},
-        {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
-    ]
-    tempf_ranges = [
-        {"uom": "17", "min": -50, "max": 150, "step": 0.5, "prec": 1},
-        {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
-    ]
-    settempc_ranges = [
-        {"uom": "4", "min": 10, "max": 35, "step": 0.5, "prec": 1},
-    ]
-    settempf_ranges = [
-        {"uom": "17", "min": 50, "max": 100, "step": 1, "prec": 1},
-    ]
-    tempoffsetc_ranges = [
-        {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
-        {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
-    ]
-    tempoffsetf_ranges = [
-        {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
-        {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
-    ]
-    settemposc_ranges = [
-        {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
-    ]
-    settemposf_ranges = [
-        {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
-    ]
+    if is_f:
+        temp_ranges = [
+            {"uom": "17", "min": -50, "max": 150, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        settemp_ranges = [
+            {"uom": "17", "min": 50, "max": 100, "step": 1, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        tempoffset_ranges = [
+            {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        settempos_ranges = [
+            {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        temp_editors = [
+            {"id": "TEMPF", "ranges": temp_ranges},
+            {"id": "SETTEMPF", "ranges": settemp_ranges},
+            {"id": "TEMPOFFSETF", "ranges": tempoffset_ranges},
+            {"id": "SETTEMPOSF", "ranges": settempos_ranges},
+        ]
+    else:
+        temp_ranges = [
+            {"uom": "4", "min": -50, "max": 75, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        settemp_ranges = [
+            {"uom": "4", "min": 10, "max": 35, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        tempoffset_ranges = [
+            {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        settempos_ranges = [
+            {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        temp_editors = [
+            {"id": "TEMPC", "ranges": temp_ranges},
+            {"id": "SETTEMPC", "ranges": settemp_ranges},
+            {"id": "TEMPOFFSETC", "ranges": tempoffset_ranges},
+            {"id": "SETTEMPOSC", "ranges": settempos_ranges},
+        ]
 
-    editors = [
-        {"id": "TEMPC", "ranges": tempc_ranges},
-        {"id": "TEMPF", "ranges": tempf_ranges},
-        {"id": "SETTEMPC", "ranges": settempc_ranges},
-        {"id": "SETTEMPF", "ranges": settempf_ranges},
-        {"id": "TEMPOFFSETC", "ranges": tempoffsetc_ranges},
-        {"id": "TEMPOFFSETF", "ranges": tempoffsetf_ranges},
-        {"id": "SETTEMPOSC", "ranges": settemposc_ranges},
-        {"id": "SETTEMPOSF", "ranges": settemposf_ranges},
-        {
-            "id": "TEMPUOM",
-            "ranges": [
-                {"uom": "25", "subset": "4,17,26", "names": {"4": "C", "17": "F", "26": "K"}},
-            ],
-        },
+    editors = temp_editors + [
         {
             "id": "ENABLE",
             "ranges": [

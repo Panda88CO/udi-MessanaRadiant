@@ -40,10 +40,6 @@ BTENABLE-1 = Disabled
 BTENABLE-2 = On
 BTENABLE-99 = Unknown
 
-TEMPUOM-4 = C
-TEMPUOM-17 = F
-TEMPUOM-26 = K
-
 ALARM-0 = No Alarm
 ALARM-1 = Alarm
 ALARM-99 = Unknown

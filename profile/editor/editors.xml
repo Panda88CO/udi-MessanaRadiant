@@ -9,9 +9,11 @@
   </editor>
   <editor id="SETTEMPC">
     <range uom="4" min="10" max="35" step="0.5" prec="1" />
+    <range uom="25" subset="98-99" nls="UNKNOWN" />
   </editor>
   <editor id="SETTEMPF">
     <range uom="17" min="50" max="100" step="1" prec="1" />
+    <range uom="25" subset="98-99" nls="UNKNOWN" />
   </editor>
   <editor id="TEMPOFFSETC">
     <range uom="4" min="0" max="25" step="0.5" prec="1" />
@@ -23,12 +25,11 @@
   </editor>
   <editor id="SETTEMPOSC">
     <range uom="4" min="0" max="25" step="0.5" prec="1" />
+    <range uom="25" subset="98-99" nls="UNKNOWN" />
   </editor>
   <editor id="SETTEMPOSF">
     <range uom="17" min="0" max="50" step="1" prec="1" />
-  </editor>
-  <editor id="TEMPUOM">
-    <range uom="25" subset="4,17,26" nls="TEMPUOM" />
+    <range uom="25" subset="98-99" nls="UNKNOWN" />
   </editor>
   <editor id="ENABLE">
     <range uom="25" subset="0-1,99" nls="ENABLE" />

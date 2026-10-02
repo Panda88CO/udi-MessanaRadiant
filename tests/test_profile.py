@@ -30,7 +30,7 @@ class TestProfileDef(unittest.TestCase):
         # Check editor IDs
         editor_ids = {e["id"] for e in profile["editors"]}
         self.assertIn("TEMPC", editor_ids)
-        self.assertIn("TEMPF", editor_ids)
+        self.assertNotIn("TEMPF", editor_ids)
         self.assertIn("VOC", editor_ids)
         self.assertIn("TIMESTAMP", editor_ids)
 
@@ -44,14 +44,21 @@ class TestProfileDef(unittest.TestCase):
         self.assertEqual(prop_editors["GV7"], "VOC")
         self.assertEqual(prop_editors["TIME"], "TIMESTAMP")
 
-        # Verify Celsius editors have only UOM 4 (no UOM 17)
+        # Verify Celsius editors have only UOM 4 and UOM 25 (no UOM 17)
         editors_by_id = {e["id"]: e for e in profile["editors"]}
-        settempc_uoms = {r["uom"] for r in editors_by_id["SETTEMPC"]["ranges"]}
-        self.assertIn("4", settempc_uoms)
-        self.assertNotIn("17", settempc_uoms)
-        tempc_uoms = {r["uom"] for r in editors_by_id["TEMPC"]["ranges"]}
-        self.assertIn("4", tempc_uoms)
-        self.assertNotIn("17", tempc_uoms)
+        c_temp_editors = ("TEMPC", "SETTEMPC", "TEMPOFFSETC", "SETTEMPOSC")
+        f_temp_editors = ("TEMPF", "SETTEMPF", "TEMPOFFSETF", "SETTEMPOSF")
+        for ed_id in c_temp_editors:
+            self.assertIn(ed_id, editors_by_id, f"Editor {ed_id} missing in Celsius profile")
+            uoms = {r["uom"] for r in editors_by_id[ed_id]["ranges"]}
+            self.assertEqual(uoms, {"4", "25"}, f"Editor {ed_id} must have only uom 4 + 25")
+        for ed_id in f_temp_editors:
+            self.assertNotIn(ed_id, editors_by_id, f"Fahrenheit editor {ed_id} must NOT be in Celsius profile")
+        self.assertNotIn("TEMPUOM", editors_by_id, "TEMPUOM must not be in editors")
+
+        # Zero editors in Celsius profile should contain UOM 17
+        all_uoms = {r["uom"] for e in profile["editors"] for r in e.get("ranges", [])}
+        self.assertNotIn("17", all_uoms, "Celsius profile must not contain UOM 17 anywhere")
 
     def test_build_profile_fahrenheit(self):
         """Test profile generation for Fahrenheit with various parameter formats."""
@@ -76,14 +83,21 @@ class TestProfileDef(unittest.TestCase):
             }
             self.assertEqual(cmd_params["SETPOINT"], "SETTEMPF")
 
-            # Verify Fahrenheit editors have only UOM 17 (no UOM 4)
+            # Verify Fahrenheit editors have only UOM 17 and UOM 25 (no UOM 4)
             editors_by_id = {e["id"]: e for e in profile["editors"]}
-            settempf_uoms = {r["uom"] for r in editors_by_id["SETTEMPF"]["ranges"]}
-            self.assertIn("17", settempf_uoms)
-            self.assertNotIn("4", settempf_uoms)
-            tempf_uoms = {r["uom"] for r in editors_by_id["TEMPF"]["ranges"]}
-            self.assertIn("17", tempf_uoms)
-            self.assertNotIn("4", tempf_uoms)
+            c_temp_editors = ("TEMPC", "SETTEMPC", "TEMPOFFSETC", "SETTEMPOSC")
+            f_temp_editors = ("TEMPF", "SETTEMPF", "TEMPOFFSETF", "SETTEMPOSF")
+            for ed_id in f_temp_editors:
+                self.assertIn(ed_id, editors_by_id, f"Editor {ed_id} missing in Fahrenheit profile")
+                uoms = {r["uom"] for r in editors_by_id[ed_id]["ranges"]}
+                self.assertEqual(uoms, {"17", "25"}, f"Editor {ed_id} must have only uom 17 + 25")
+            for ed_id in c_temp_editors:
+                self.assertNotIn(ed_id, editors_by_id, f"Celsius editor {ed_id} must NOT be in Fahrenheit profile")
+            self.assertNotIn("TEMPUOM", editors_by_id, "TEMPUOM must not be in editors")
+
+            # Zero editors in Fahrenheit profile should contain UOM 4
+            all_uoms = {r["uom"] for e in profile["editors"] for r in e.get("ranges", [])}
+            self.assertNotIn("4", all_uoms, "Fahrenheit profile must not contain UOM 4 anywhere")
 
     def test_all_ids_uppercase_alphanumeric(self):
         """Verify all editor IDs, nodeDef IDs, property IDs, and cmd IDs follow ^[A-Z0-9]+$."""
@@ -177,6 +191,36 @@ class TestProfileDef(unittest.TestCase):
         self.assertIn("DON", macrozone_accepts)
         self.assertIn("DOF", macrozone_accepts)
 
+    def test_temperature_ranges_strict_uom_and_system_sends(self):
+        """Verify dynamic profile temperature editors strictly contain only uom4+25 or uom17+25 and SYSTEM has sends DON/DOF."""
+        # Celsius profile: strictly uom4 + uom25 for all temperature editors
+        prof_c = build_profile_definition(TEMP_C)
+        temp_editors_c = [e for e in prof_c["editors"] if e["id"] in ("TEMPC", "SETTEMPC", "TEMPOFFSETC", "SETTEMPOSC")]
+        self.assertEqual(len(temp_editors_c), 4)
+        for ed in temp_editors_c:
+            uom_set = {r["uom"] for r in ed["ranges"]}
+            self.assertEqual(uom_set, {"4", "25"}, f"Celsius editor {ed['id']} ranges must be strictly uom 4 + 25")
+            uom25_range = next(r for r in ed["ranges"] if r["uom"] == "25")
+            self.assertEqual(uom25_range.get("subset"), "98-99")
+
+        # Fahrenheit profile: strictly uom17 + uom25 for all temperature editors
+        prof_f = build_profile_definition(TEMP_F)
+        temp_editors_f = [e for e in prof_f["editors"] if e["id"] in ("TEMPF", "SETTEMPF", "TEMPOFFSETF", "SETTEMPOSF")]
+        self.assertEqual(len(temp_editors_f), 4)
+        for ed in temp_editors_f:
+            uom_set = {r["uom"] for r in ed["ranges"]}
+            self.assertEqual(uom_set, {"17", "25"}, f"Fahrenheit editor {ed['id']} ranges must be strictly uom 17 + 25")
+            uom25_range = next(r for r in ed["ranges"] if r["uom"] == "25")
+            self.assertEqual(uom25_range.get("subset"), "98-99")
+
+        # SYSTEM controller node sends DON and DOF in both profiles
+        for prof in (prof_c, prof_f):
+            sys_node = next(n for n in prof["nodedefs"] if n["id"] == "SYSTEM")
+            sends_ids = [cmd["id"] for cmd in sys_node.get("cmds", {}).get("sends", [])]
+            self.assertIn("DON", sends_ids)
+            self.assertIn("DOF", sends_ids)
+
+
 
 class TestStaticXmlProfile(unittest.TestCase):
     """Tests for static XML profile files in profile/ directory."""
@@ -225,7 +269,7 @@ class TestStaticXmlProfile(unittest.TestCase):
         self.assertIn("151", ts_uoms)
 
     def test_single_uom_temperature_support(self):
-        """Verify temperature editors in editors.xml define only a single UOM (C has 4, F has 17, none define both)."""
+        """Verify temperature editors in editors.xml define strictly uom4+25 or uom17+25, and TEMPUOM is removed."""
         editors_path = os.path.join(self.PROFILE_DIR, "editor", "editors.xml")
         tree = ET.parse(editors_path)
         root = tree.getroot()
@@ -235,14 +279,13 @@ class TestStaticXmlProfile(unittest.TestCase):
             ed = root.find(f"./editor[@id='{ed_id}']")
             self.assertIsNotNone(ed, f"Editor {ed_id} missing")
             uoms = {r.get("uom") for r in ed.findall("range")}
-            self.assertIn("4", uoms, f"Editor {ed_id} missing UOM 4")
-            self.assertNotIn("17", uoms, f"Editor {ed_id} must not contain UOM 17")
+            self.assertEqual(uoms, {"4", "25"}, f"Editor {ed_id} must have only uom 4 + 25")
         for ed_id in f_editors:
             ed = root.find(f"./editor[@id='{ed_id}']")
             self.assertIsNotNone(ed, f"Editor {ed_id} missing")
             uoms = {r.get("uom") for r in ed.findall("range")}
-            self.assertIn("17", uoms, f"Editor {ed_id} missing UOM 17")
-            self.assertNotIn("4", uoms, f"Editor {ed_id} must not contain UOM 4")
+            self.assertEqual(uoms, {"17", "25"}, f"Editor {ed_id} must have only uom 17 + 25")
+        self.assertIsNone(root.find("./editor[@id='TEMPUOM']"), "TEMPUOM must not exist in editors.xml")
 
     def test_nodedefs_xml_validity_and_references(self):
         """Test profile/nodedef/nodedefs.xml parses cleanly and all editor refs exist."""

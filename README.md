@@ -1,7 +1,7 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.4-blue.svg)](server.json)
-[![Tests](https://img.shields.io/badge/tests-57%20passed-brightgreen.svg)](tests/)
+[![Version](https://img.shields.io/badge/version-0.3.5-blue.svg)](server.json)
+[![Tests](https://img.shields.io/badge/tests-58%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
 
@@ -21,6 +21,14 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 * **Domestic Hot Water (DHW)**: Current and target hot water temperatures.
 
 ---
+
+## What's New in v0.3.5
+
+* **Strict Temperature Range Enforcement (`uom 4 + 25` or `uom 17 + 25`)**:
+  * **Strict Range Isolation**: Every temperature editor range now strictly consists of only `uom="4"` + `uom="25"` (subset `98-99`) for Celsius, or `uom="17"` + `uom="25"` (subset `98-99`) for Fahrenheit. Added `uom="25"` subset `98-99` ("No Support" / "Unknown") to `SETTEMPC`, `SETTEMPF`, `SETTEMPOSC`, and `SETTEMPOSF`.
+  * **Dynamic Unit Filtering**: Dynamic profile generator (`profile_def.py`) now outputs strictly the active temperature unit's editors (zero UOM 17 ranges in Celsius mode; zero UOM 4 ranges in Fahrenheit mode).
+  * **Removed Legacy TEMPUOM**: Completely eliminated the unused `TEMPUOM` editor (`subset="4,17,26"`) across static XML and dynamic profiles.
+  * **Retained Sends DON & DOF for System**: Verified and maintained `<sends><cmd id="DON" /><cmd id="DOF" /></sends>` on the `SYSTEM` controller node for heartbeat event notifications.
 
 ## What's New in v0.3.4
 
