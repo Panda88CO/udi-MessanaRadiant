@@ -98,97 +98,147 @@ class udi_messana_atu(udi_interface.Node):
 
     def stop(self):
         logging.info('udiMessanaATU Stop ')
+        self.node.setDriver('ST', 0, True, True)
 
     def updateISY_shortpoll(self):
+        updated = False
         Val = self.atu.get_status()
         logging.debug('atu Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_air_temp()
         logging.debug('et_air_temp(CLITEMP)): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'CLITEMP'):
+                updated = True
 
         Val = self.atu.get_flow_level()
         logging.debug('get_flow_level(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_HRV_status()
         logging.debug('get_HRV_status(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV2', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_humidification_status()
         logging.debug('get_humidification_status(GV4): {}'.format(Val))
-        self.node.setDriver('GV4', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV4', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_dehumidification_status()
         logging.debug('get_humidification_status(GV4): {}'.format(Val))
-        self.node.setDriver('GV6', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV6', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_convection_status()
         logging.debug('get_convection_status(GV8): {}'.format(Val))
-        self.node.setDriver('GV8', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV8', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_alarmOn()
         logging.debug('get_alarmOn(GV11): {}'.format(Val))
-        self.node.setDriver('GV11', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV11', self.isy_value(Val))
+            updated = True
 
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('ATU {}: No valid data received from API'.format(self.atu_nbr))
+            self.node.setDriver('ST', 0)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - ATU {} Status:'.format(self.atu_nbr))
+        updated = False
 
         Val = self.atu.get_status()
         logging.debug('atu Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_air_temp()
         logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'CLITEMP'):
+                updated = True
 
         Val = self.atu.get_flow_level()
         logging.debug('get_flow_level(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
-
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_HRV_status()
         logging.debug('get_HRV_status(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV2', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_activate_HRV()
         logging.debug('get_activate_HRV(GV3): {}'.format(Val))
-        self.node.setDriver('GV3', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV3', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_humidification_status()
         logging.debug('get_humidification_status(GV4): {}'.format(Val))
-        self.node.setDriver('GV4', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV4', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_humidification_enable()
         logging.debug('get_humidification_enable(GV5): {}'.format(Val))
-        self.node.setDriver('GV5', self.isy_value(Val))
-
+        if Val is not None:
+            self.node.setDriver('GV5', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_dehumidification_status()
         logging.debug('get_humidification_status(6): {}'.format(Val))
-        self.node.setDriver('GV6', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV6', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_dehumidification_enable()
         logging.debug('get_humidification_enable(7): {}'.format(Val))
-        self.node.setDriver('GV7', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV7', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_convection_status()
         logging.debug('get_convection_status(GV8): {}'.format(Val))
-        self.node.setDriver('GV8', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV8', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_convection_enable()
         logging.debug('get_humidification_status(GV9): {}'.format(Val))
-        self.node.setDriver('GV9', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV9', self.isy_value(Val))
+            updated = True
 
         Val = self.atu.get_alarmOn()
         logging.debug('get_alarmOn(GV11): {}'.format(Val))
-        self.node.setDriver('GV11', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV11', self.isy_value(Val))
+            updated = True
+
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('ATU {}: No valid data received from API'.format(self.atu_nbr))
+            self.node.setDriver('ST', 0)
 
 
 

@@ -137,6 +137,13 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
             ],
         },
         {
+            "id": "VOC",
+            "ranges": [
+                {"uom": "96", "min": 0, "max": 10000, "step": 1, "prec": 0},
+                {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+            ],
+        },
+        {
             "id": "ALARM",
             "ranges": [
                 {"uom": "25", "subset": "0-1,99", "names": {"0": "No Alarm", "1": "Alarm", "99": "Unknown"}},
@@ -378,6 +385,7 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
                 {"id": "DEWPT", "name": "Zone Dew Point", "editor": temp_editor},
                 {"id": "GV6", "name": "Zone Air Quality", "editor": "AIRQ"},
                 {"id": "CO2LVL", "name": "Zone CO2 Level", "editor": "CO2"},
+                {"id": "GV7", "name": "Zone VOC Level", "editor": "VOC"},
                 {"id": "GV8", "name": "Zone Energy Saving", "editor": "ENABLE"},
                 {"id": "GV9", "name": "Zone Alarm", "editor": "ALARM"},
                 {"id": "GV10", "name": "Zone System Temperature", "editor": temp_editor},

@@ -73,39 +73,64 @@ class udi_messana_hot_water(udi_interface.Node):
 
     def stop(self):
         logging.info('udiMessanaHotWater Stop ')
+        self.node.setDriver('ST', 0, True, True)
 
     def updateISY_shortpoll(self):
+        updated = False
         Val = self.dhw.get_status()
         logging.debug('dhw Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.dhw.get_temp()
         logging.debug('dhw get_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'CLITEMP'):
+                updated = True
 
         Val = self.dhw.get_target_temp()
         logging.debug('dhw get_target_temp (GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
+
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Hot Water {}: No valid data received from API'.format(self.dhw_nbr))
+            self.node.setDriver('ST', 0)
 
 
     def updateISY_longpoll(self):
         logging.debug('update_system - dhw {} Status:'.format(self.dhw_nbr))
+        updated = False
 
         Val = self.dhw.get_status()
         logging.debug('dhw Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.dhw.get_temp()
         logging.debug('dhw get_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'CLITEMP'):
+                updated = True
 
         Val = self.dhw.get_target_temp()
         logging.debug('dhw get_target_temp (GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
+
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Hot Water {}: No valid data received from API'.format(self.dhw_nbr))
+            self.node.setDriver('ST', 0)
 
 
 

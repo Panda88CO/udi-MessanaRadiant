@@ -75,6 +75,8 @@ class MessanaController(udi_interface.Node):
         self.TEMP_F = self.convert_temp_unit('F')
     
         self.ISYTempUnit = self.TEMP_C
+        self.ISY_temp_unit = self.TEMP_C
+        self.messana_temp_unit = self.TEMP_C
         self.nodeDefineDone = False
         self.nodeConfigDone = False
         self.zone = {}
@@ -381,89 +383,115 @@ class MessanaController(udi_interface.Node):
 
     def updateISY_longpoll(self):
         logging.debug('updateISY_longpoll')
+        updated = False
 
         tmp = self.messana.get_status()
         logging.debug('System State {}'.format(tmp))
-        self.node.setDriver('GV0', tmp, True, True)
+        if tmp is not None:
+            self.node.setDriver('GV0', tmp, True, True)
+            updated = True
 
         tmp = self.messana.get_setback_diff()
         logging.debug('Setback Offset {}'.format(tmp))
-        self.send_rel_temp_to_isy(tmp, 'GV1')
-        #self.node.setDriver('GV1', tmp, True, True)
+        if tmp is not None:
+            if self.send_rel_temp_to_isy(tmp, 'GV1'):
+                updated = True
 
         tmp = self.messana.get_setback()
         logging.debug('Setback Enabled {}'.format(tmp))
-        self.node.setDriver('GV2', tmp, True, True)
+        if tmp is not None:
+            self.node.setDriver('GV2', tmp, True, True)
+            updated = True
 
         tmp = self.messana.get_energy_saving()
         logging.debug('Setback Enabled {}'.format(tmp))
-        self.node.setDriver('GV12', tmp, True, True)
+        if tmp is not None:
+            self.node.setDriver('GV12', tmp, True, True)
+            updated = True
 
-        logging.debug('Nbr Zones{}'.format(self.messana.nbr_zones))
-        if 0 == self.messana.nbr_zones:
-            self.node.setDriver('GV3', 98, True, False, 25)
+        if updated:
+            logging.debug('Nbr Zones{}'.format(self.messana.nbr_zones))
+            if 0 == self.messana.nbr_zones:
+                self.node.setDriver('GV3', 98, True, False, 25)
+            else:
+                self.node.setDriver('GV3', self.messana.nbr_zones, True, False, 107)
+
+            logging.debug('Nbr macrozones{}'.format(self.messana.nbr_macrozones))
+            if 0 == self.messana.nbr_macrozones:
+                self.node.setDriver('GV4', 98, True, False, 25)
+            else:
+                self.node.setDriver('GV4', self.messana.nbr_macrozones, True, False, 107)
+
+            logging.debug('Nbr atu{}'.format(self.messana.nbr_atus))
+            if 0 == self.messana.nbr_atus:
+                self.node.setDriver('GV5', 98, True, False, 25)
+            else:
+                self.node.setDriver('GV5', self.messana.nbr_atus, True, False, 107)
+
+            logging.debug('Nbr Hot Cold{}'.format(self.messana.nbr_HCgroup))
+            if 0 == self.messana.nbr_HCgroup:
+                self.node.setDriver('GV6', 98, True, False, 25)
+            else:
+                self.node.setDriver('GV6', self.messana.nbr_HCgroup, True, False, 107)
+
+            logging.debug('Nbr fan coil{}'.format(self.messana.nbr_fancoil))
+            if 0 == self.messana.nbr_fancoil:
+                self.node.setDriver('GV7', 98, True, False, 25)
+            else:
+                self.node.setDriver('GV7', self.messana.nbr_fancoil, True, False, 107)
+
+            logging.debug('Nbr domestic Hot Water{}'.format(self.messana.nbr_dhwater))
+            if 0 == self.messana.nbr_dhwater:
+                self.node.setDriver('GV8', 98, True, False, 25)
+            else:
+                self.node.setDriver('GV8', self.messana.nbr_dhwater, True, False, 107)
+
+            logging.debug('Nbr buffer Tank {}'.format(self.messana.nbr_buffer_tank))
+            if 0 == self.messana.nbr_buffer_tank:
+                self.node.setDriver('GV9', 98, True, False, 25)
+            else:
+                self.node.setDriver('GV9', self.messana.nbr_buffer_tank, True, False, 107)
+
+            logging.debug('Nbr energy source{}'.format(self.messana.nbr_energy_source))
+            if 0 == self.messana.nbr_energy_source:
+                self.node.setDriver('GV10', 98, True, False, 25)
+            else:
+                self.node.setDriver('GV10', self.messana.nbr_energy_source, True, False, 107)
+
+            tmp = self.messana.get_external_alarm()
+            logging.debug('Alarm Status{}'.format(tmp))
+            if tmp is not None:
+                self.node.setDriver('GV11', tmp, True, True)
+
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
         else:
-            self.node.setDriver('GV3', self.messana.nbr_zones, True, False, 107)
-
-        logging.debug('Nbr macrozones{}'.format(self.messana.nbr_macrozones))
-        if 0 == self.messana.nbr_macrozones:
-            self.node.setDriver('GV4', 98, True, False, 25)
-        else:
-            self.node.setDriver('GV4', self.messana.nbr_macrozones, True, False, 107)
-
-        logging.debug('Nbr atu{}'.format(self.messana.nbr_atus))
-        if 0 == self.messana.nbr_atus:
-            self.node.setDriver('GV5', 98, True, False, 25)
-        else:
-            self.node.setDriver('GV5', self.messana.nbr_atus, True, False, 107)
-
-        logging.debug('Nbr Hot Cold{}'.format(self.messana.nbr_HCgroup))
-        if 0 == self.messana.nbr_HCgroup:
-            self.node.setDriver('GV6', 98, True, False, 25)
-        else:
-            self.node.setDriver('GV6', self.messana.nbr_HCgroup, True, False, 107)
-
-        logging.debug('Nbr fan coil{}'.format(self.messana.nbr_fancoil))
-        if 0 == self.messana.nbr_fancoil:
-            self.node.setDriver('GV7', 98, True, False, 25)
-        else:
-            self.node.setDriver('GV7', self.messana.nbr_fancoil, True, False, 107)
-
-        logging.debug('Nbr domestic Hot Water{}'.format(self.messana.nbr_dhwater))
-        if 0 == self.messana.nbr_dhwater:
-            self.node.setDriver('GV8', 98, True, False, 25)
-        else:
-            self.node.setDriver('GV8', self.messana.nbr_dhwater, True, False, 107)
-
-        logging.debug('Nbr buffer Tank {}'.format(self.messana.nbr_buffer_tank))
-        if 0 == self.messana.nbr_buffer_tank:
-            self.node.setDriver('GV9', 98, True, False, 25)
-        else:
-            self.node.setDriver('GV9', self.messana.nbr_buffer_tank, True, False, 107)
-
-        logging.debug('Nbr energy source{}'.format(self.messana.nbr_energy_source))
-        if 0 == self.messana.nbr_energy_source:
-            self.node.setDriver('GV10', 98, True, False, 25)
-        else:
-            self.node.setDriver('GV10', self.messana.nbr_energy_source, True, False, 107)
-
-        tmp = self.messana.get_external_alarm()
-        logging.debug('Alarm Status{}'.format(tmp))
-        self.node.setDriver('GV11', tmp, True, True)
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+            logging.warning('Messana System: No valid data received from API')
+            self.node.setDriver('ST', 0)
 
     def updateISY_shortpoll(self):
         logging.debug('updateISY_shortpoll')
         self.heartbeat()
+        updated = False
 
         tmp = self.messana.get_status()
         logging.debug('System State {}'.format(tmp))
-        self.node.setDriver('GV0', tmp)
+        if tmp is not None:
+            self.node.setDriver('GV0', tmp)
+            updated = True
 
         tmp = self.messana.get_external_alarm()
         logging.debug('Alarm Status{}'.format(tmp))
-        self.node.setDriver('GV11', tmp)
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if tmp is not None:
+            self.node.setDriver('GV11', tmp)
+            updated = True
+
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Messana System: No valid data received from API')
+            self.node.setDriver('ST', 0)
 
 
     def setStatus(self, command):

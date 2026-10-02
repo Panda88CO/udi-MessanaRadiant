@@ -74,31 +74,51 @@ class udi_messana_hc_co(udi_interface.Node):
 
     def stop(self):
         logging.info('udiMessanaHCCO Stop ')
+        self.node.setDriver('ST', 0, True, True)
 
     def updateISY_shortpoll(self):
+        updated = False
         Val = self.hc_co.get_status()
         logging.debug('hc_co adaptiveComfort Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
-
-
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('HCCO {}: No valid data received from API'.format(self.hc_co_nbr))
+            self.node.setDriver('ST', 0)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - HCCO {} Status:'.format(self.hc_co_nbr))
+        updated = False
 
         Val = self.hc_co.get_adaptive_comf_status()
         logging.debug('hc_co adaptiveComfort Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.hc_co.get_hc_co_mode()
         logging.debug('hc_co Mode(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
 
         Val = self.hc_co.get_hc_co_season_mode()
         logging.debug('hc_co executiveSeason (GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV2', self.isy_value(Val))
+            updated = True
+
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('HCCO {}: No valid data received from API'.format(self.hc_co_nbr))
+            self.node.setDriver('ST', 0)
 
 
 

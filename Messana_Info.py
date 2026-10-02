@@ -68,15 +68,16 @@ class messana_control(object):
                 systemTemp = systemTemp.json()
                 data = systemTemp[str(list(systemTemp.keys())[0])]
                 logging.debug('GET_system_data - data: {}'.format(data))
+                if data in self.NaNlist:
+                    return None
+                else:
+                    return data
             else:
                 logging.error('GET_system_data error {} {}'.format(mKey, str(systemTemp)))
-            if data in self.NaNlist:
-                return (None)
-            else:
-                return(data) #No data for given keyword - remove from list
+                return None
         except Exception as e:
             logging.error('System GET_system_data operation failed for {}: {}'.format(mKey, e))
-            return
+            return None
 
 
 

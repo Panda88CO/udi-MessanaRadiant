@@ -76,43 +76,69 @@ class udi_messana_energy_source(udi_interface.Node):
 
     def stop(self):
         logging.info('udiMessana Energy Source  Stop ')
+        self.node.setDriver('ST', 0, True, True)
 
     def updateISY_shortpoll(self):
+        updated = False
         Val = self.energy_source.get_status()
         logging.debug('energy_source Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.energy_source.get_energy_source_dhwStatus()
         logging.debug('get_energy_source_dhwStatus(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
 
         Val = self.energy_source.get_alarmOn()
         logging.debug('energy_source get_alarmOn(GV3): {}'.format(Val))
-        self.node.setDriver('GV3', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV3', self.isy_value(Val))
+            updated = True
 
-
-
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Energy Source {}: No valid data received from API'.format(self.energy_source_nbr))
+            self.node.setDriver('ST', 0)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - Energy Source {} Status:'.format(self.energy_source_nbr))
+        updated = False
 
         Val = self.energy_source.get_status()
         logging.debug('energy_source Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.energy_source.get_energy_source_dhwStatus()
         logging.debug('get_energy_source_dhwStatus(GV2): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
 
         Val = self.energy_source.get_energy_source_type()
         logging.debug('get_energy_source_type(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV2', self.isy_value(Val))
+            updated = True
 
         Val = self.energy_source.get_alarmOn()
         logging.debug('energy_source get_alarmOn(GV3): {}'.format(Val))
-        self.node.setDriver('GV3', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV3', self.isy_value(Val))
+            updated = True
+
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Energy Source {}: No valid data received from API'.format(self.energy_source_nbr))
+            self.node.setDriver('ST', 0)
 
 
 

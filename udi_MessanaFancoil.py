@@ -78,51 +78,81 @@ class udi_messana_fancoil(udi_interface.Node):
 
     def stop(self):
         logging.info('udiMessanaFanCoil Stop ')
+        self.node.setDriver('ST', 0, True, True)
 
     def updateISY_shortpoll(self):
+        updated = False
         Val = self.fancoil.get_status()
         logging.debug('fancoil Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
-        Val = self.fancoil.get_fancoil_cool_speed()
+        Val = self.fancoil.get_cool_speed() if hasattr(self.fancoil, 'get_cool_speed') else self.fancoil.get_fancoil_cool_speed()
         logging.debug('Fancoil get_fancoil_cool_speed(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
 
-        Val = self.fancoil.get_fancoil_heat_speed()
+        Val = self.fancoil.get_heat_speed() if hasattr(self.fancoil, 'get_heat_speed') else self.fancoil.get_fancoil_heat_speed()
         logging.debug('Fancoil get_fancoil_heat_speed(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV2', self.isy_value(Val))
+            updated = True
 
         Val = self.fancoil.get_alarmOn()
         logging.debug('fancoil get_alarmOn(GV4): {}'.format(Val))
-        self.node.setDriver('GV4', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV4', self.isy_value(Val))
+            updated = True
 
-
-
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Fancoil {}: No valid data received from API'.format(self.fancoil_nbr))
+            self.node.setDriver('ST', 0)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - Fancoil {} Status:'.format(self.fancoil_nbr))
+        updated = False
 
         Val = self.fancoil.get_status()
         logging.debug('fancoil Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.fancoil.get_fancoil_cool_speed()
         logging.debug('Fancoil get_fancoil_cool_speed(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
 
         Val = self.fancoil.get_fancoil_heat_speed()
         logging.debug('Fancoil get_fancoil_heat_speed(GV2): {}'.format(Val))
-        self.node.setDriver('GV2', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV2', self.isy_value(Val))
+            updated = True
 
         Val = self.fancoil.get_fctype()
         logging.debug('get_fctype(GV3): {}'.format(Val))
-        self.node.setDriver('GV3', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV3', self.isy_value(Val))
+            updated = True
 
         Val = self.fancoil.get_alarmOn()
         logging.debug('fancoil get_alarmOn(GV4): {}'.format(Val))
-        self.node.setDriver('GV4', self.isy_value(Val))
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            self.node.setDriver('GV4', self.isy_value(Val))
+            updated = True
+
+        if updated:
+            self.node.setDriver('ST', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Fancoil {}: No valid data received from API'.format(self.fancoil_nbr))
+            self.node.setDriver('ST', 0)
 
 
 

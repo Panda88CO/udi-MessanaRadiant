@@ -23,19 +23,20 @@ class udi_messana_zone(udi_interface.Node):
 
     '''
        drivers = [
+            'ST' = Room Temperature
             'GV0' = Zone status
             'GV1' = Thermal Operation (0-3)
-            'GV2' = Schedule State
+            'GV2' = System Running
             'GV3' = Setpoint
-            'CLITEMP' = air_temp
             'CLIHUM' = humidity
             'DEWPT' = dewpoint
             'GV6' = AirQuality
             'CO2LVL' = CO2
+            'GV7' = VOC Level
             'GV8' = energy_saving
             'GV9' = AlarmOn
-            'CLITEMP' = system_temperature
-            'ST' = System Status
+            'GV10' = system_temperature
+            'TIME' = Last Update
             ]
     '''
     drivers = [
@@ -48,6 +49,7 @@ class udi_messana_zone(udi_interface.Node):
         {'driver': 'DEWPT', 'value': 99, 'uom': 25},
         {'driver': 'GV6', 'value': 99, 'uom': 25},
         {'driver': 'CO2LVL', 'value': 99, 'uom': 25},
+        {'driver': 'GV7', 'value': 99, 'uom': 25},
         {'driver': 'GV8', 'value': 99, 'uom': 25},
         {'driver': 'GV9', 'value': 99, 'uom': 25},
         {'driver': 'GV10', 'value': 99, 'uom': 25},
@@ -91,47 +93,65 @@ class udi_messana_zone(udi_interface.Node):
         self.node.setDriver('GV2', 0, True, True)
 
     def updateISY_shortpoll(self):
+        updated = False
         Val = self.zone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.zone.get_air_temp()
         logging.debug('get_air_temp(ST): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'ST')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'ST'):
+                updated = True
 
         Val = self.zone.get_humidity()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        self.node.setDriver('CLIHUM', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('CLIHUM', self.isy_value(Val))
+            updated = True
 
         Val = self.zone.get_dewpoint()
         logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'DEWPT')
-
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'DEWPT'):
+                updated = True
 
         Val = self.zone.get_air_quality()
         logging.debug('get_air_quality (GV6): {}'.format(Val))
-        if Val == None:
-             self.node.setDriver('GV6', 98, True, True, 25)
-        else:
+        if Val is not None:
             self.node.setDriver('GV6', self.isy_value(Val))
+            updated = True
 
         Val = self.zone.get_alarmOn()
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
-        self.node.setDriver('GV9', self.isy_value(Val), True, True)
+        if Val is not None:
+            self.node.setDriver('GV9', self.isy_value(Val), True, True)
+            updated = True
 
-        self.node.setDriver('GV2', 1)
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if updated:
+            self.node.setDriver('GV2', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Zone {}: No valid data received from API'.format(self.zone_nbr))
+            self.node.setDriver('GV2', 0)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - zone {} Status:'.format(self.zone_nbr))
+        updated = False
 
         Val = self.zone.get_status()
         logging.debug('Zone Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.zone.get_thermal_status()
         logging.debug('Thermal Mode(GV1): {}'.format(Val))
-        self.node.setDriver('GV1', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV1', self.isy_value(Val))
+            updated = True
 
         #Val = self.zone.get_scheduleOn()
         #logging.debug('Schedule Mode(GV2): {}'.format(Val))
@@ -139,50 +159,73 @@ class udi_messana_zone(udi_interface.Node):
 
         Val = self.zone.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'GV3')
-        #self.node.setDriver('GV3', self.isy_value(Val))
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'GV3'):
+                updated = True
 
         Val = self.zone.get_air_temp()
         logging.debug('get_air_temp(ST): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'ST')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'ST'):
+                updated = True
 
         Val = self.zone.get_humidity()
         logging.debug('get_humidity(CLIHUM)): {}'.format(Val))
-        self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
-        
+        if Val is not None:
+            self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
+            updated = True
+
         Val = self.zone.get_dewpoint()
         logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'DEWPT')
-
-
-        Val = self.zone.get_air_quality()
-        logging.debug('get_air_quality (GV6): {}'.format(Val))
-        if Val == -1 or Val == None:
-             self.node.setDriver('GV6', 98, True, True, 25)
-        else:
-            self.node.setDriver('GV6', self.isy_value(Val), True, False, 56)
-
-        Val = self.zone.get_co2()
-        logging.debug('get_co2 (CO2LVL): {}'.format(Val))
-        if Val == -1 or Val == None:
-             self.node.setDriver('CO2LVL', 98, True, True, 25)
-        else:
-            self.node.setDriver('CO2LVL', self.isy_value(Val), True, False, 56)
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'DEWPT'):
+                updated = True
 
         Val = self.zone.get_energy_saving()
         logging.debug('get_energy_saving On (GV8): {}'.format(Val))
-        self.node.setDriver('GV8', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV8', self.isy_value(Val))
+            updated = True
 
         Val = self.zone.get_alarmOn()
         logging.debug('get_alarmOn(GV9): {}'.format(Val))
-        self.node.setDriver('GV9', self.isy_value(Val), True, True)
+        if Val is not None:
+            self.node.setDriver('GV9', self.isy_value(Val), True, True)
+            updated = True
 
         Val = self.zone.get_temp()
         logging.debug('System Temp (GV10): {}'.format(Val))
-        #self.node.setDriver('GV10', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'GV10')
-        self.node.setDriver('GV2', 1)
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'GV10'):
+                updated = True
+
+        if updated:
+            Val = self.zone.get_air_quality()
+            logging.debug('get_air_quality (GV6): {}'.format(Val))
+            if Val == -1 or Val is None:
+                self.node.setDriver('GV6', 98, True, True, 25)
+            else:
+                self.node.setDriver('GV6', self.isy_value(Val), True, False, 56)
+
+            Val = self.zone.get_co2()
+            logging.debug('get_co2 (CO2LVL): {}'.format(Val))
+            if Val == -1 or Val is None:
+                self.node.setDriver('CO2LVL', 98, True, True, 25)
+            else:
+                self.node.setDriver('CO2LVL', self.isy_value(Val), True, False, 56)
+
+            Val = self.zone.get_voc()
+            logging.debug('get_voc (GV7): {}'.format(Val))
+            if Val == -1 or Val is None:
+                self.node.setDriver('GV7', 98, True, True, 25)
+            else:
+                self.node.setDriver('GV7', self.isy_value(Val), True, False, 96)
+
+            self.node.setDriver('GV2', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Zone {}: No valid data received from API'.format(self.zone_nbr))
+            self.node.setDriver('GV2', 0)
 
     def set_status(self, command):
         status = int(command.get('value'))

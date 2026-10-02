@@ -54,6 +54,7 @@
          <st id="DEWPT" editor="TEMPC" />
          <st id="GV6" editor="AIRQ" />
          <st id="CO2LVL" editor="CO2" />
+         <st id="GV7" editor="VOC" />
          <st id="GV8" editor="ENABLE" />
          <st id="GV9" editor="ALARM" />
          <st id="GV10" editor="TEMPC" />

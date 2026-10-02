@@ -80,32 +80,47 @@ class udi_messana_macrozone(udi_interface.Node):
         self.node.setDriver('GV2', 0, True, True)
 
     def updateISY_shortpoll(self):
+        updated = False
         Val = self.macrozone.get_status()
         logging.debug('Macrozone Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         Val = self.macrozone.get_temp()
         logging.debug('get_temp(ST): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'ST')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'ST'):
+                updated = True
 
         Val = self.macrozone.get_humidity()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        self.node.setDriver('CLIHUM', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('CLIHUM', self.isy_value(Val))
+            updated = True
 
         Val = self.macrozone.get_dewpoint()
         logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'DEWPT')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'DEWPT'):
+                updated = True
 
-        self.node.setDriver('GV2', 1)
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
-
+        if updated:
+            self.node.setDriver('GV2', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Macrozone {}: No valid data received from API'.format(self.macrozone_nbr))
+            self.node.setDriver('GV2', 0)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - macrozone {} Status:'.format(self.macrozone_nbr))
+        updated = False
 
         Val = self.macrozone.get_status()
         logging.debug('Macrozone Status (GV0): {}'.format(Val))
-        self.node.setDriver('GV0', self.isy_value(Val))
+        if Val is not None:
+            self.node.setDriver('GV0', self.isy_value(Val))
+            updated = True
 
         #Val = self.macrozone.get_scheduleOn()
         #logging.debug('Schedule Mode(GV2): {}'.format(Val))
@@ -113,23 +128,34 @@ class udi_messana_macrozone(udi_interface.Node):
 
         Val = self.macrozone.get_setpoint()
         logging.debug('Set point (GV3): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'GV3')
-        #self.node.setDriver('GV3', self.isy_value(Val))
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'GV3'):
+                updated = True
 
         Val = self.macrozone.get_temp()
         logging.debug('get_temp(ST): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'ST')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'ST'):
+                updated = True
 
         Val = self.macrozone.get_humidity()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
+        if Val is not None:
+            self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
+            updated = True
 
         Val = self.macrozone.get_dewpoint()
         logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        self.send_temp_to_isy(Val, 'DEWPT')
+        if Val is not None:
+            if self.send_temp_to_isy(Val, 'DEWPT'):
+                updated = True
 
-        self.node.setDriver('GV2', 1)
-        self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        if updated:
+            self.node.setDriver('GV2', 1)
+            self.node.setDriver('TIME', int(time.time()), True, True, 151)
+        else:
+            logging.warning('Macrozone {}: No valid data received from API'.format(self.macrozone_nbr))
+            self.node.setDriver('GV2', 0)
 
 
 

@@ -60,6 +60,10 @@
     <range uom="56" min="0" max="1000" step="1" prec="0" />
     <range uom="25" subset="98-99" nls="UNKNOWN" />
   </editor>
+  <editor id="VOC">
+    <range uom="96" min="0" max="10000" step="1" prec="0" />
+    <range uom="25" subset="98-99" nls="UNKNOWN" />
+  </editor>
   <editor id="ALARM">
     <range uom="25" subset="0-1,99" nls="ALARM" />
   </editor>

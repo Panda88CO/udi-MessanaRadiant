@@ -154,6 +154,14 @@ class messana_node(messana_control):
         #self.__get_node_data('co2')
         #return(self.__get_node_data('co2'))
 
+    def get_voc(self):
+        logging.debug('{} {} - get_voc'.format(self.type, self.nbr))
+        val = self.__get_node_data('voc')
+        if val == self.RESPONSE_NO_SUPPORT or val == None:
+            return(-1)
+        else:
+            return(val)
+
 
     def get_alarmOn(self):
         logging.debug('{} {} -get_alarmOn'.format(self.type, self.nbr))

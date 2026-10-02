@@ -52,6 +52,8 @@ def handleParams (self, userParam ):
 def send_rel_temp_to_isy(self, temperature, stateVar):
     logging.debug('send_rel_temp_to_isy - {} {}'.format(temperature, stateVar))
     logging.debug('ISYunit={}, Mess_unit={}'.format(self.ISY_temp_unit , self.messana_temp_unit ))
+    if temperature is None:
+        return False
     if self.ISY_temp_unit == TEMP_C: # Celsius in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp = round(temperature, 1)
@@ -59,6 +61,7 @@ def send_rel_temp_to_isy(self, temperature, stateVar):
             temp = round(temperature*5/9,1)
         logging.debug('Celsius : {}  = {}'.format( temperature, temp ))  
         self.node.setDriver(stateVar, temp, True, True, 4)
+        return True
     elif  self.ISY_temp_unit == TEMP_F: # Farenheit in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp =  round((temperature*9/5),1)
@@ -66,13 +69,17 @@ def send_rel_temp_to_isy(self, temperature, stateVar):
             temp =  round(temperature,1)
         logging.debug('Farenheit : {}  = {}'.format( temperature, temp ))
         self.node.setDriver(stateVar, temp, True, True, 17)
+        return True
     else:
         logging.error('Wring temp unit: {}'.format(self.ISY_temp_unit))
+        return False
 
 
 def send_temp_to_isy(self, temperature, stateVar):
     logging.debug('send_temp_to_isy -{} {}'.format(temperature, stateVar ))
     logging.debug('ISYunit={}, Mess_unit={}'.format(self.ISY_temp_unit , self.messana_temp_unit ))
+    if temperature is None:
+        return False
     if self.ISY_temp_unit == TEMP_C: # Celsius in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp = round(temperature,1)
@@ -80,6 +87,7 @@ def send_temp_to_isy(self, temperature, stateVar):
             temp = round((temperature-32)*5/9,1)
         logging.debug('Celsius : {}  = {}'.format( temperature, temp ))  
         self.node.setDriver(stateVar, temp, True, True, 4)
+        return True
     elif  self.ISY_temp_unit == TEMP_F: # Farenheit in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
             temp = round((temperature*9/5+32),1)
@@ -87,8 +95,10 @@ def send_temp_to_isy(self, temperature, stateVar):
             temp = round(temperature,1)
         logging.debug('Farenheit : {}  = {}'.format( temperature, temp ))            
         self.node.setDriver(stateVar,temp , True, True, 17)
+        return True
     else:
         logging.error('Wring temp unit: {}'.format(self.ISY_temp_unit))
+        return False
 
 def convert_temp_unit(self, tempStr):
     if tempStr.capitalize()[:1] == 'F':
