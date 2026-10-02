@@ -342,8 +342,6 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
             "cmds": {
                 "accepts": [
                     {"id": "UPDATE", "name": "Force Update"},
-                    {"id": "DON", "name": "System On"},
-                    {"id": "DOF", "name": "System Off"},
                     {
                         "id": "STATUS",
                         "name": "Set Status",
@@ -403,8 +401,6 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
             "cmds": {
                 "accepts": [
                     {"id": "UPDATE", "name": "Force Update"},
-                    {"id": "DON", "name": "Zone On"},
-                    {"id": "DOF", "name": "Zone Off"},
                     {
                         "id": "SETPOINT",
                         "name": "Set Point",
@@ -446,8 +442,6 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
             "cmds": {
                 "accepts": [
                     {"id": "UPDATE", "name": "Force Update"},
-                    {"id": "DON", "name": "Macrozone On"},
-                    {"id": "DOF", "name": "Macrozone Off"},
                     {
                         "id": "SETPOINT",
                         "name": "Set Point",

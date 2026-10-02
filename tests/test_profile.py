@@ -166,30 +166,30 @@ class TestProfileDef(unittest.TestCase):
         self.assertNotIn("delete", profile)
 
     def test_don_dof_in_dynamic_profile(self):
-        """Verify DON and DOF are defined in accepts and sends for SYSTEM, and accepts for ZONE/MACROZONE."""
+        """Verify DON and DOF are in sends (and NOT in accepts) for SYSTEM, and NOT in accepts for ZONE/MACROZONE."""
         profile = build_profile_definition(TEMP_C)
         nodes_by_id = {n["id"]: n for n in profile["nodedefs"]}
 
-        # SYSTEM: accepts and sends
+        # SYSTEM: sends DON/DOF, does NOT accept DON/DOF
         system_node = nodes_by_id["SYSTEM"]
         system_accepts = {cmd["id"] for cmd in system_node.get("cmds", {}).get("accepts", [])}
         system_sends = {cmd["id"] for cmd in system_node.get("cmds", {}).get("sends", [])}
-        self.assertIn("DON", system_accepts)
-        self.assertIn("DOF", system_accepts)
         self.assertIn("DON", system_sends)
         self.assertIn("DOF", system_sends)
+        self.assertNotIn("DON", system_accepts)
+        self.assertNotIn("DOF", system_accepts)
 
-        # ZONE: accepts
+        # ZONE: does NOT accept DON/DOF
         zone_node = nodes_by_id["ZONE"]
         zone_accepts = {cmd["id"] for cmd in zone_node.get("cmds", {}).get("accepts", [])}
-        self.assertIn("DON", zone_accepts)
-        self.assertIn("DOF", zone_accepts)
+        self.assertNotIn("DON", zone_accepts)
+        self.assertNotIn("DOF", zone_accepts)
 
-        # MACROZONE: accepts
+        # MACROZONE: does NOT accept DON/DOF
         macrozone_node = nodes_by_id["MACROZONE"]
         macrozone_accepts = {cmd["id"] for cmd in macrozone_node.get("cmds", {}).get("accepts", [])}
-        self.assertIn("DON", macrozone_accepts)
-        self.assertIn("DOF", macrozone_accepts)
+        self.assertNotIn("DON", macrozone_accepts)
+        self.assertNotIn("DOF", macrozone_accepts)
 
     def test_temperature_ranges_strict_uom_and_system_sends(self):
         """Verify dynamic profile temperature editors strictly contain only uom4+25 or uom17+25 and SYSTEM has sends DON/DOF."""
@@ -368,36 +368,36 @@ class TestStaticXmlProfile(unittest.TestCase):
         self.assertIn("VOC", entries["ST-NLSZONE-GV7-NAME"])
 
     def test_don_dof_in_static_xml_and_nls(self):
-        """Verify DON and DOF are in nodedefs.xml and en_us.txt for SYSTEM, ZONE, and MACROZONE."""
+        """Verify DON and DOF are in sends (and NOT in accepts) in nodedefs.xml, and SYSTEM sends are localized in en_us.txt."""
         nodedefs_path = os.path.join(self.PROFILE_DIR, "nodedef", "nodedefs.xml")
         tree = ET.parse(nodedefs_path)
         root = tree.getroot()
 
-        # SYSTEM: sends and accepts
+        # SYSTEM: sends has DON/DOF, accepts does NOT have DON/DOF
         sys_node = root.find("./nodeDef[@id='SYSTEM']")
         self.assertIsNotNone(sys_node)
         sys_sends = {c.get("id") for c in sys_node.findall("./cmds/sends/cmd")}
         sys_accepts = {c.get("id") for c in sys_node.findall("./cmds/accepts/cmd")}
         self.assertIn("DON", sys_sends)
         self.assertIn("DOF", sys_sends)
-        self.assertIn("DON", sys_accepts)
-        self.assertIn("DOF", sys_accepts)
+        self.assertNotIn("DON", sys_accepts)
+        self.assertNotIn("DOF", sys_accepts)
 
-        # ZONE: accepts
+        # ZONE: accepts does NOT have DON/DOF
         zone_node = root.find("./nodeDef[@id='ZONE']")
         self.assertIsNotNone(zone_node)
         zone_accepts = {c.get("id") for c in zone_node.findall("./cmds/accepts/cmd")}
-        self.assertIn("DON", zone_accepts)
-        self.assertIn("DOF", zone_accepts)
+        self.assertNotIn("DON", zone_accepts)
+        self.assertNotIn("DOF", zone_accepts)
 
-        # MACROZONE: accepts
+        # MACROZONE: accepts does NOT have DON/DOF
         mz_node = root.find("./nodeDef[@id='MACROZONE']")
         self.assertIsNotNone(mz_node)
         mz_accepts = {c.get("id") for c in mz_node.findall("./cmds/accepts/cmd")}
-        self.assertIn("DON", mz_accepts)
-        self.assertIn("DOF", mz_accepts)
+        self.assertNotIn("DON", mz_accepts)
+        self.assertNotIn("DOF", mz_accepts)
 
-        # NLS labels
+        # NLS labels for SYSTEM sends
         nls_path = os.path.join(self.PROFILE_DIR, "nls", "en_us.txt")
         entries = {}
         with open(nls_path, "r", encoding="utf-8") as f:
@@ -409,10 +409,6 @@ class TestStaticXmlProfile(unittest.TestCase):
 
         self.assertIn("CMD-NLSSYSTEM-DON-NAME", entries)
         self.assertIn("CMD-NLSSYSTEM-DOF-NAME", entries)
-        self.assertIn("CMD-NLSZONE-DON-NAME", entries)
-        self.assertIn("CMD-NLSZONE-DOF-NAME", entries)
-        self.assertIn("CMD-NLSMACROZONE-DON-NAME", entries)
-        self.assertIn("CMD-NLSMACROZONE-DOF-NAME", entries)
 
     def test_common_version_consistency(self):
         """Verify version.py, version.txt, profile/version.txt, and server.json are all in sync."""

@@ -1,6 +1,6 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.5-blue.svg)](server.json)
+[![Version](https://img.shields.io/badge/version-0.3.6-blue.svg)](server.json)
 [![Tests](https://img.shields.io/badge/tests-58%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
@@ -21,6 +21,13 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 * **Domestic Hot Water (DHW)**: Current and target hot water temperatures.
 
 ---
+
+## What's New in v0.3.6
+
+* **Removed DON and DOF from Accepts in Profile Definitions**:
+  * **Profile Commands Cleaned**: Removed `DON` (On) and `DOF` (Off) commands from `<accepts>` in `SYSTEM`, `ZONE`, and `MACROZONE` node definitions across both static XML (`nodedefs.xml`) and dynamic profiles (`profile_def.py`).
+  * **Retained Sends for System Heartbeat**: Kept `<sends><cmd id="DON" /><cmd id="DOF" /></sends>` intact on the `SYSTEM` controller node to support standard heartbeat event broadcasting.
+  * **NLS Cleaned**: Removed obsolete accept command labels for zones and macrozones while retaining `CMD-NLSSYSTEM-DON-NAME` and `CMD-NLSSYSTEM-DOF-NAME` for system send events.
 
 ## What's New in v0.3.5
 
