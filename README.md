@@ -1,6 +1,6 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](server.json)
+[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](server.json)
 [![Tests](https://img.shields.io/badge/tests-51%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
@@ -22,14 +22,17 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 
 ---
 
-## What's New in v0.3.0
+## What's New in v0.3.1
 
+* **Startup Serialization & High Volume Prevention**: Configurable delay (`NODE_DELAY`, default `1.0s`) between node additions during discovery to prevent Polyglot/IoX high volume errors. Added pacing delays (`0.2s` for long poll, `0.1s` for short poll) in polling cycles.
+* **Streamlined Profile Publishing**: Eliminated redundant profile transmissions during startup; dynamic profile publishes once after nodes are fully configured.
+* **Cached System Temperature Unit**: Subsystem nodes reuse the cached system temperature unit, eliminating 30+ redundant HTTP roundtrips on startup.
 * **VOC Sensor Integration**: Full support for zone VOC levels (`GV7`) reporting gas concentration in parts-per-billion (ppb) using UOM `96` from `/api/zone/voc/{id}`.
 * **Dynamic Temperature Profile Selection**: Swappable temperature editors (`TEMPC` vs `TEMPF`, `SETTEMPC`/`SETTEMPF`, `TEMPOFFSETC`/`TEMPOFFSETF`) generated and published dynamically to IoX based on the `TEMP_UNIT` configuration setting (`C` or `F`).
 * **Strict Uppercase Alphanumeric Naming**: All editor IDs, nodeDef IDs, property IDs, and command IDs strictly follow `^[A-Z0-9]+$` without underscores to comply with UDI profile specifications.
 * **Guarded `TIME` Updates**: The `TIME` driver (UOM `151`) only updates when valid data is received from the Messana API. If an API request fails or returns no data, `TIME` remains untouched and the node's running state (`ST` or `GV2`) is set to `0` (Down).
 * **Comprehensive Test Suite**: 51 standalone unit tests covering profile schemas, XML definitions, API communication, conversion routines, and node poll state transitions with zero external dependencies.
-* **Unified Common Versioning**: Centralized `0.3.0` version definition synchronized across `version.py`, `version.txt`, `profile/version.txt`, and `server.json`.
+* **Unified Common Versioning**: Centralized `0.3.1` version definition synchronized across `version.py`, `version.txt`, `profile/version.txt`, and `server.json`.
 
 ---
 
