@@ -124,3 +124,4 @@ def sample_messana_info(temp_unit=0):
         "api_key": "test_api_key_12345",
         "isy_temp_unit": temp_unit,
     }
+
