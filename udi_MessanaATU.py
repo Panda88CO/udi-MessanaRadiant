@@ -41,7 +41,8 @@ class udi_messana_atu(udi_interface.Node):
     '''
  
     drivers = [
-        {'driver': 'GV0', 'value': 99, 'uom': 25},
+        {'driver': 'ST', 'value': 99, 'uom': 25},
+        {'driver': 'GV0', 'value': 1, 'uom': 25},
         {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
@@ -52,9 +53,7 @@ class udi_messana_atu(udi_interface.Node):
         {'driver': 'GV7', 'value': 99, 'uom': 25},
         {'driver': 'GV8', 'value': 99, 'uom': 25},
         {'driver': 'GV9', 'value': 99, 'uom': 25},
-
         {'driver': 'GV11', 'value': 99, 'uom': 25},
-        {'driver': 'ST', 'value': 0, 'uom': 25},
         {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
@@ -82,13 +81,13 @@ class udi_messana_atu(udi_interface.Node):
         
         logging.debug('setup node: {} {} {} {}'.format(address, name, self.id, primary))
         self.poly.ready()
-        self.poly.addNode(self, conn_status='ST')
+        self.poly.addNode(self, conn_status='GV0')
         self.wait_for_node_done()
 
         logging.debug('Drivers: {}'.format(self.drivers))
         logging.debug('address: {}'.format(self.address))
         self.node = self.poly.getNode(self.address)
-        self.node.setDriver('ST', 1, True, True)
+        self.node.setDriver('GV0', 1, True, True)
         self.ISY_temp_unit = messana_info['isy_temp_unit']
         self.messana_temp_unit = self.atu.messana_temp_unit
 
@@ -98,14 +97,14 @@ class udi_messana_atu(udi_interface.Node):
 
     def stop(self):
         logging.info('udiMessanaATU Stop ')
-        self.node.setDriver('ST', 0, True, True)
+        self.node.setDriver('GV0', 0, True, True)
 
     def updateISY_shortpoll(self):
         updated = False
         Val = self.atu.get_status()
-        logging.debug('atu Status (GV0): {}'.format(Val))
+        logging.debug('atu Status (ST): {}'.format(Val))
         if Val is not None:
-            self.node.setDriver('GV0', self.isy_value(Val))
+            self.node.setDriver('ST', self.isy_value(Val))
             updated = True
 
         Val = self.atu.get_air_temp()
@@ -151,20 +150,20 @@ class udi_messana_atu(udi_interface.Node):
             updated = True
 
         if updated:
-            self.node.setDriver('ST', 1)
+            self.node.setDriver('GV0', 1)
             self.node.setDriver('TIME', int(time.time()), True, True, 151)
         else:
             logging.warning('ATU {}: No valid data received from API'.format(self.atu_nbr))
-            self.node.setDriver('ST', 0)
+            self.node.setDriver('GV0', 0)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - ATU {} Status:'.format(self.atu_nbr))
         updated = False
 
         Val = self.atu.get_status()
-        logging.debug('atu Status (GV0): {}'.format(Val))
+        logging.debug('atu Status (ST): {}'.format(Val))
         if Val is not None:
-            self.node.setDriver('GV0', self.isy_value(Val))
+            self.node.setDriver('ST', self.isy_value(Val))
             updated = True
 
         Val = self.atu.get_air_temp()
@@ -234,11 +233,11 @@ class udi_messana_atu(udi_interface.Node):
             updated = True
 
         if updated:
-            self.node.setDriver('ST', 1)
+            self.node.setDriver('GV0', 1)
             self.node.setDriver('TIME', int(time.time()), True, True, 151)
         else:
             logging.warning('ATU {}: No valid data received from API'.format(self.atu_nbr))
-            self.node.setDriver('ST', 0)
+            self.node.setDriver('GV0', 0)
 
 
 
@@ -249,7 +248,7 @@ class udi_messana_atu(udi_interface.Node):
         
         temp = self.atu.set_status(status)
         if temp is not None:
-            self.node.setDriver('GV0', temp)
+            self.node.setDriver('ST', temp)
         else:
             logging.error('Error calling setStatus')
 

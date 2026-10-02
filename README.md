@@ -1,7 +1,7 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.7-blue.svg)](server.json)
-[![Tests](https://img.shields.io/badge/tests-61%20passed-brightgreen.svg)](tests/)
+[![Version](https://img.shields.io/badge/version-0.3.8-blue.svg)](server.json)
+[![Tests](https://img.shields.io/badge/tests-62%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
 
@@ -21,6 +21,18 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 * **Domestic Hot Water (DHW)**: Current and target hot water temperatures.
 
 ---
+
+## What's New in v0.3.8
+
+* **Subsystem Presence Probing Prior to Node Instantiation**:
+  * **Omit Absent Subsystems**: The controller verifies subsystem presence before creating nodes. Firmware endpoints in Messana systems often report count `1` by default even when physical equipment (such as Hot/Cold Changeover HCCO) is absent. If a subsystem probe returns no name and no status/reading, the node is not instantiated and is omitted from the IoX/ISY tree.
+  * **Accurate Subsystem Counts**: The `SYSTEM` controller driver counts (`GV3`-`GV10`) reflect the count of actually instantiated nodes, correctly setting `98` ("Not Present", UOM `25`) when 0 instances of a subsystem exist.
+* **Swapped Primary Value into `ST` on Subsystem Nodes**:
+  * **ATU**: Uses ATU Status as `ST` (was `GV0`); Node Running is now assigned to `GV0`.
+  * **Buffer Tank**: Uses Temperature as `ST` (was `CLITEMP`); Node Running is now assigned to `GV4`. Redundant `CLITEMP` has been removed.
+  * **Energy Source**: Uses Energy Source Status as `ST` (was `GV0`); Node Running is now assigned to `GV0`.
+  * **Hot/Cold Changeover (HCCO)**: Maintained as-is.
+  * **Updated Profile & NLS**: Dynamic profile definitions (`profile_def.py`), static XML (`nodedefs.xml`), and NLS translations (`en_us.txt`) fully aligned.
 
 ## What's New in v0.3.7
 

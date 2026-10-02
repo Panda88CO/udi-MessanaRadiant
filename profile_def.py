@@ -470,8 +470,8 @@ def build_profile_definition(temp_unit=TEMP_C, zone_capabilities=None) -> dict:
             "id": "ATU",
             "name": "Messana Air Treatment Unit",
             "properties": [
-                {"id": "ST", "name": "System Running", "editor": "RUNNING"},
-                {"id": "GV0", "name": "ATU Status", "editor": "ENABLE"},
+                {"id": "ST", "name": "ATU Status", "editor": "ENABLE"},
+                {"id": "GV0", "name": "System Running", "editor": "RUNNING"},
                 {"id": "CLITEMP", "name": "Air Temperature", "editor": temp_editor},
                 {"id": "GV1", "name": "Flow Level", "editor": "FLOWLVL"},
                 {"id": "GV2", "name": "Heat Recovery Status", "editor": "ENABLE"},
@@ -492,7 +492,7 @@ def build_profile_definition(temp_unit=TEMP_C, zone_capabilities=None) -> dict:
                         "id": "STATUS",
                         "name": "Set Status",
                         "parameters": [
-                            {"id": "", "name": "Status", "editor": "SETENABLE", "init": "GV0"},
+                            {"id": "", "name": "Status", "editor": "SETENABLE", "init": "ST"},
                         ],
                     },
                     {
@@ -539,12 +539,12 @@ def build_profile_definition(temp_unit=TEMP_C, zone_capabilities=None) -> dict:
             "id": "BUFFERTANK",
             "name": "Messana Buffer Tank",
             "properties": [
-                {"id": "ST", "name": "System Running", "editor": "RUNNING"},
+                {"id": "ST", "name": "Buffer Tank Temperature", "editor": temp_editor},
                 {"id": "GV0", "name": "Buffer Tank Status", "editor": "BTENABLE"},
-                {"id": "CLITEMP", "name": "Temperature", "editor": temp_editor},
                 {"id": "GV1", "name": "Buffer Tank Mode", "editor": "BTMODE"},
                 {"id": "GV2", "name": "Buffer Tank Temperature Mode", "editor": "BTTEMPMODE"},
                 {"id": "GV3", "name": "Alarm", "editor": "ALARM"},
+                {"id": "GV4", "name": "System Running", "editor": "RUNNING"},
                 {"id": "TIME", "name": "Last Update", "editor": "TIMESTAMP"},
             ],
             "cmds": {
@@ -653,8 +653,8 @@ def build_profile_definition(temp_unit=TEMP_C, zone_capabilities=None) -> dict:
             "id": "ENERGY",
             "name": "Messana Energy Source",
             "properties": [
-                {"id": "ST", "name": "System Running", "editor": "RUNNING"},
-                {"id": "GV0", "name": "Energy Source Status", "editor": "ENABLE"},
+                {"id": "ST", "name": "Energy Source Status", "editor": "ENABLE"},
+                {"id": "GV0", "name": "System Running", "editor": "RUNNING"},
                 {"id": "GV1", "name": "Energy Source DHW Status", "editor": "ONOFF"},
                 {"id": "GV2", "name": "Energy Source Type", "editor": "ESTYPE"},
                 {"id": "GV3", "name": "Alarm", "editor": "ALARM"},

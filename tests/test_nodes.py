@@ -325,7 +325,7 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         self.info = sample_messana_info()
 
     def test_atu_time_and_running_status(self):
-        """ATU updates ST=1 and TIME on success, ST=0 and untouched TIME on failure."""
+        """ATU updates ST=status, GV0=1 and TIME on success, GV0=0 and untouched TIME on failure."""
         mock_atu = MagicMock()
         mock_atu.messana_temp_unit = "Celsius"
         mock_atu.get_name.return_value = "ATU 1"
@@ -344,6 +344,7 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         mock_atu.get_alarmOn.return_value = 0
         node.updateISY_shortpoll()
         self.assertEqual(node.node.getDriver("ST"), 1)
+        self.assertEqual(node.node.getDriver("GV0"), 1)
         self.assertGreater(node.node.getDriver("TIME"), 0)
 
         # Failure
@@ -357,11 +358,11 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         mock_atu.get_convection_status.return_value = None
         mock_atu.get_alarmOn.return_value = None
         node.updateISY_shortpoll()
-        self.assertEqual(node.node.getDriver("ST"), 0)
+        self.assertEqual(node.node.getDriver("GV0"), 0)
         self.assertEqual(node.node.getDriver("TIME"), 11111)
 
     def test_buffertank_time_and_running_status(self):
-        """Buffer Tank updates ST=1 and TIME on success, ST=0 on failure."""
+        """Buffer Tank updates ST=temperature, GV4=1 and TIME on success, GV4=0 on failure."""
         mock_bt = MagicMock()
         mock_bt.messana_temp_unit = "Celsius"
         mock_bt.get_name.return_value = "BT 1"
@@ -376,7 +377,9 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         mock_bt.get_buffertank_temp_mode.return_value = 0
         mock_bt.get_alarmOn.return_value = 0
         node.updateISY_shortpoll()
-        self.assertEqual(node.node.getDriver("ST"), 1)
+        self.assertEqual(node.node.getDriver("ST"), 45.0)
+        self.assertEqual(node.node.getDriver("GV0"), 1)
+        self.assertEqual(node.node.getDriver("GV4"), 1)
         self.assertGreater(node.node.getDriver("TIME"), 0)
 
         # Failure
@@ -387,7 +390,7 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         mock_bt.get_buffertank_temp_mode.return_value = None
         mock_bt.get_alarmOn.return_value = None
         node.updateISY_shortpoll()
-        self.assertEqual(node.node.getDriver("ST"), 0)
+        self.assertEqual(node.node.getDriver("GV4"), 0)
         self.assertEqual(node.node.getDriver("TIME"), 22222)
 
     def test_hcco_time_and_running_status(self):
@@ -449,7 +452,7 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         self.assertEqual(node.node.getDriver("TIME"), 44444)
 
     def test_energy_source_time_and_running_status(self):
-        """Energy Source updates ST=1 and TIME on success, ST=0 on failure."""
+        """Energy Source updates ST=status, GV0=1 and TIME on success, GV0=0 on failure."""
         mock_es = MagicMock()
         mock_es.get_name.return_value = "ES 1"
 
@@ -463,6 +466,7 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         mock_es.get_alarmOn.return_value = 0
         node.updateISY_shortpoll()
         self.assertEqual(node.node.getDriver("ST"), 1)
+        self.assertEqual(node.node.getDriver("GV0"), 1)
         self.assertGreater(node.node.getDriver("TIME"), 0)
 
         # Failure
@@ -472,7 +476,7 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         mock_es.get_energy_source_type.return_value = None
         mock_es.get_alarmOn.return_value = None
         node.updateISY_shortpoll()
-        self.assertEqual(node.node.getDriver("ST"), 0)
+        self.assertEqual(node.node.getDriver("GV0"), 0)
         self.assertEqual(node.node.getDriver("TIME"), 55555)
 
     def test_hotwater_time_and_running_status(self):
@@ -631,6 +635,115 @@ class TestControllerNode(unittest.TestCase):
         self.assertNotIn("CO2LVL", z1_supp)
         self.assertNotIn("GV7", z1_supp)
         self.assertEqual(len(z1_supp), 9)
+
+    def test_controller_skips_absent_subsystems(self):
+        """Controller skips instantiating subsystems not present on the Messana installation."""
+        self.controller.messana_info = sample_messana_info()
+        self.controller.nodeConfigDone = False
+
+        # Set system counts where HCCO and Energy Source report count 1 in API but are physically absent
+        self.mock_sys_api.nbr_zones = 0
+        self.mock_sys_api.nbr_macrozones = 0
+        self.mock_sys_api.nbr_atus = 0
+        self.mock_sys_api.nbr_HCgroup = 1
+        self.mock_sys_api.nbr_fancoil = 0
+        self.mock_sys_api.nbr_dhwater = 0
+        self.mock_sys_api.nbr_buffer_tank = 1
+        self.mock_sys_api.nbr_energy_source = 1
+
+        # HCCO returns None for name and status (absent)
+        self.mock_sys_api.get_hc_co_name.return_value = None
+        mock_hc_probe = MagicMock()
+        mock_hc_probe.get_status.return_value = None
+        mock_hc_probe.get_hc_co_mode.return_value = None
+
+        # Energy source returns None for name and status (absent)
+        self.mock_sys_api.get_energy_source_name.return_value = None
+        mock_es_probe = MagicMock()
+        mock_es_probe.get_status.return_value = None
+        mock_es_probe.get_energy_source_type.return_value = None
+
+        # Buffer tank is present
+        self.mock_sys_api.get_buffertank_name.return_value = "Main Tank"
+        mock_bt_probe = MagicMock()
+        mock_bt_probe.get_status.return_value = 1
+        mock_bt_probe.get_temp.return_value = 48.0
+        mock_bt_probe.messana_temp_unit = "Celsius"
+
+        with patch("udi_MessanaController.messana_hc_co", return_value=mock_hc_probe), \
+             patch("udi_MessanaController.messana_energy_source", return_value=mock_es_probe), \
+             patch("udi_MessanaController.messana_buffertank", return_value=mock_bt_probe), \
+             patch("udi_MessanaBuffertank.messana_buffertank", return_value=mock_bt_probe), \
+             patch("time.sleep"):
+
+            # Run through node creation loops as in start()
+            for hc_co_nbr in range(0, self.mock_sys_api.nbr_HCgroup):
+                tmp_name = self.mock_sys_api.get_hc_co_name(hc_co_nbr)
+                present = False
+                try:
+                    probe = mock_hc_probe
+                    if tmp_name is not None or probe.get_status() is not None or probe.get_hc_co_mode() is not None:
+                        present = True
+                except Exception:
+                    pass
+                if not present:
+                    continue
+                self.controller.hot_cold_change_over[hc_co_nbr] = MagicMock()
+
+            for energy_source_nbr in range(0, self.mock_sys_api.nbr_energy_source):
+                tmp_name = self.mock_sys_api.get_energy_source_name(energy_source_nbr)
+                present = False
+                try:
+                    probe = mock_es_probe
+                    if tmp_name is not None or probe.get_status() is not None or probe.get_energy_source_type() is not None:
+                        present = True
+                except Exception:
+                    pass
+                if not present:
+                    continue
+                self.controller.energy_source[energy_source_nbr] = MagicMock()
+
+            for buffertank_nbr in range(0, self.mock_sys_api.nbr_buffer_tank):
+                tmp_name = self.mock_sys_api.get_buffertank_name(buffertank_nbr)
+                present = False
+                try:
+                    probe = mock_bt_probe
+                    if tmp_name is not None or probe.get_status() is not None or probe.get_temp() is not None:
+                        present = True
+                except Exception:
+                    pass
+                if not present:
+                    continue
+                self.controller.buffertank[buffertank_nbr] = udi_messana_buffertank(
+                    self.poly, "controller", "buffertank0", "Buffertank Main Tank", buffertank_nbr, self.controller.messana_info
+                )
+
+        # Absent nodes were skipped
+        self.assertEqual(len(self.controller.hot_cold_change_over), 0)
+        self.assertEqual(len(self.controller.energy_source), 0)
+        # Present node was created
+        self.assertEqual(len(self.controller.buffertank), 1)
+
+        # Longpoll after nodeConfigDone reports 98 (Not Present) for absent subsystems
+        self.controller.nodeConfigDone = True
+        self.mock_sys_api.get_status.return_value = 1
+        self.mock_sys_api.get_setback_diff.return_value = 0
+        self.mock_sys_api.get_setback.return_value = 0
+        self.mock_sys_api.get_energy_saving.return_value = 0
+        self.mock_sys_api.get_external_alarm.return_value = 0
+        self.controller.updateISY_longpoll()
+
+        # HCCO (GV6): 98 (Not Present, uom 25)
+        self.assertEqual(self.controller.drivers_values["GV6"]["value"], 98)
+        self.assertEqual(self.controller.drivers_values["GV6"]["uom"], 25)
+
+        # Energy Source (GV10): 98 (Not Present, uom 25)
+        self.assertEqual(self.controller.drivers_values["GV10"]["value"], 98)
+        self.assertEqual(self.controller.drivers_values["GV10"]["uom"], 25)
+
+        # Buffer Tank (GV9): 1 (uom 107)
+        self.assertEqual(self.controller.drivers_values["GV9"]["value"], 1)
+        self.assertEqual(self.controller.drivers_values["GV9"]["uom"], 107)
 
 
 if __name__ == "__main__":

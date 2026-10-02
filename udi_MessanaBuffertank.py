@@ -23,22 +23,24 @@ class udi_messana_buffertank(udi_interface.Node):
 
     '''
        drivers = [
-            'GV0' = buffertank status
-            'GV1' = mode
-            'GV2' = Temp mpde
-            'GV3' = alarm
-            'ST' = System Status
+            'ST' = Buffertank Temperature
+            'GV0' = Buffertank Status
+            'GV1' = Buffertank Mode
+            'GV2' = Buffertank Temp mode
+            'GV3' = Alarm
+            'GV4' = System Running
+            'TIME' = Last Update
             ]
     '''
     
     
     drivers = [
+        {'driver': 'ST', 'value': 99, 'uom': 25},
         {'driver': 'GV0', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'ST', 'value': 0, 'uom': 25},
+        {'driver': 'GV4', 'value': 1, 'uom': 25},
         {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
@@ -61,23 +63,23 @@ class udi_messana_buffertank(udi_interface.Node):
         
         logging.debug('setup node: {} {} {} {}'.format(address, name, self.id, self.primary))
         self.poly.ready()
-        self.poly.addNode(self, conn_status='ST')
+        self.poly.addNode(self, conn_status='GV4')
         self.wait_for_node_done()
 
         logging.debug('Drivers: {}'.format(self.drivers))
         logging.debug('address: {}'.format(self.address))
         self.node = self.poly.getNode(self.address)
-        self.node.setDriver('ST', 1, True, True)
+        self.node.setDriver('GV4', 1, True, True)
         self.ISY_temp_unit = messana_info['isy_temp_unit']
         self.messana_temp_unit = self.buffertank.messana_temp_unit
 
     def start(self):
-        logging.info('udiMessanaZone Start ')
+        logging.info('udiMessanaBuffertank Start ')
         self.updateISY_longpoll()
 
     def stop(self):
-        logging.info('udiMessanaZone Stop ')
-        self.node.setDriver('ST', 0, True, True)
+        logging.info('udiMessanaBuffertank Stop ')
+        self.node.setDriver('GV4', 0, True, True)
 
     def updateISY_shortpoll(self):
         updated = False
@@ -88,9 +90,9 @@ class udi_messana_buffertank(udi_interface.Node):
             updated = True
 
         Val = self.buffertank.get_temp()
-        logging.debug('buffertank get_temp(CLITEMP): {}'.format(Val))
+        logging.debug('buffertank get_temp(ST): {}'.format(Val))
         if Val is not None:
-            if self.send_temp_to_isy(Val, 'CLITEMP'):
+            if self.send_temp_to_isy(Val, 'ST'):
                 updated = True
 
         Val = self.buffertank.get_alarmOn()
@@ -100,11 +102,11 @@ class udi_messana_buffertank(udi_interface.Node):
             updated = True
 
         if updated:
-            self.node.setDriver('ST', 1)
+            self.node.setDriver('GV4', 1)
             self.node.setDriver('TIME', int(time.time()), True, True, 151)
         else:
             logging.warning('Buffertank {}: No valid data received from API'.format(self.buffertank_nbr))
-            self.node.setDriver('ST', 0)
+            self.node.setDriver('GV4', 0)
 
 
     def updateISY_longpoll(self):
@@ -130,9 +132,9 @@ class udi_messana_buffertank(udi_interface.Node):
             updated = True
 
         Val = self.buffertank.get_temp()
-        logging.debug('buffertank get_temp(CLITEMP): {}'.format(Val))
+        logging.debug('buffertank get_temp(ST): {}'.format(Val))
         if Val is not None:
-            if self.send_temp_to_isy(Val, 'CLITEMP'):
+            if self.send_temp_to_isy(Val, 'ST'):
                 updated = True
 
         Val = self.buffertank.get_alarmOn()
@@ -142,11 +144,11 @@ class udi_messana_buffertank(udi_interface.Node):
             updated = True
 
         if updated:
-            self.node.setDriver('ST', 1)
+            self.node.setDriver('GV4', 1)
             self.node.setDriver('TIME', int(time.time()), True, True, 151)
         else:
             logging.warning('Buffertank {}: No valid data received from API'.format(self.buffertank_nbr))
-            self.node.setDriver('ST', 0)
+            self.node.setDriver('GV4', 0)
 
 
     def set_status(self, command):
