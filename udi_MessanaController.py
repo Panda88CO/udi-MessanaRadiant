@@ -529,6 +529,22 @@ class MessanaController(udi_interface.Node):
         else:
             logging.error('Error calling setStatus')
 
+    def setOn(self, command=None):
+        logging.debug('setOn Called (DON)')
+        temp = self.messana.set_status(1)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
+        else:
+            logging.error('Error calling setOn')
+
+    def setOff(self, command=None):
+        logging.debug('setOff Called (DOF)')
+        temp = self.messana.set_status(0)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
+        else:
+            logging.error('Error calling setOff')
+
 
     def setEnergySave(self, command): 
         energy_save = int(command.get('value'))
@@ -578,6 +594,8 @@ class MessanaController(udi_interface.Node):
 
     commands = { 'UPDATE': ISYupdate
                 ,'STATUS': setStatus
+                ,'DON': setOn
+                ,'DOF': setOff
                 ,'ENERGYSAVE': setEnergySave
                 ,'SETBACK' : setSetback
                 ,'SETBACK_OFFSET' : setSetbackOffset

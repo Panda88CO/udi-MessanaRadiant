@@ -1,7 +1,7 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)](server.json)
-[![Tests](https://img.shields.io/badge/tests-53%20passed-brightgreen.svg)](tests/)
+[![Version](https://img.shields.io/badge/version-0.3.3-blue.svg)](server.json)
+[![Tests](https://img.shields.io/badge/tests-57%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
 
@@ -21,6 +21,14 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 * **Domestic Hot Water (DHW)**: Current and target hot water temperatures.
 
 ---
+
+## What's New in v0.3.3
+
+* **Defined DON (Device On) and DOF (Device Off) Standard Commands**:
+  * **System Controller Node (`SYSTEM`)**: Added standard `DON` and `DOF` to both `<accepts>` and `<sends>` in static `nodedefs.xml` and dynamic profile definitions (`profile_def.py`). Controller heartbeat `reportCmd('DON', 2)` / `reportCmd('DOF', 2)` and Admin Console / eisy-ui power controls are now fully registered.
+  * **Zone & Macrozone Nodes (`ZONE`, `MACROZONE`)**: Added `DON` and `DOF` to `<accepts>` in node definitions so zones and macrozones can be switched On and Off directly from eisy-ui panels, buttons, scenes, and ISY programs.
+  * **NLS Localization**: Added `CMD-NLSSYSTEM-DON-NAME = On`, `CMD-NLSSYSTEM-DOF-NAME = Off`, `CMD-NLSZONE-DON-NAME = On`, `CMD-NLSZONE-DOF-NAME = Off`, `CMD-NLSMACROZONE-DON-NAME = On`, `CMD-NLSMACROZONE-DOF-NAME = Off` in `profile/nls/en_us.txt`.
+  * **Command Handlers in Node Implementations**: Implemented `setOn()` / `setOff()` on `MessanaController` and `set_on()` / `set_off()` on `udi_messana_zone` and `udi_messana_macrozone`, mapping `'DON'` and `'DOF'` commands in their respective `commands` dictionaries.
 
 ## What's New in v0.3.2
 

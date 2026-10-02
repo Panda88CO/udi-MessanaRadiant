@@ -25,6 +25,8 @@
          </sends>
          <accepts>
             <cmd id="UPDATE" />
+            <cmd id="DON" />
+            <cmd id="DOF" />
             <cmd id="STATUS">
                <p id="" editor="SETSTATUS" init="GV0" />
             </cmd>
@@ -64,6 +66,8 @@
          <sends />
          <accepts>
             <cmd id="UPDATE" />
+            <cmd id="DON" />
+            <cmd id="DOF" />
             <cmd id="SETPOINT">
                <p id="" editor="SETTEMPC" init="GV3" />
             </cmd>
@@ -92,6 +96,8 @@
          <sends />
          <accepts>
             <cmd id="UPDATE" />
+            <cmd id="DON" />
+            <cmd id="DOF" />
             <cmd id="SETPOINT">
                <p id="" editor="SETTEMPC" init="GV3" />
             </cmd>

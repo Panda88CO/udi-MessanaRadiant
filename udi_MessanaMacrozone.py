@@ -188,9 +188,27 @@ class udi_messana_macrozone(udi_interface.Node):
         else:
             logging.error('Error calling setStatus')
 
+    def set_on(self, command=None):
+        logging.debug('set_on Called (DON) for macrozone: {}'.format(self.macrozone_nbr))
+        new_status = self.macrozone.set_status(1)
+        if new_status is not None:
+            self.node.setDriver('GV0', new_status)
+        else:
+            logging.error('Error calling set_on')
+
+    def set_off(self, command=None):
+        logging.debug('set_off Called (DOF) for macrozone: {}'.format(self.macrozone_nbr))
+        new_status = self.macrozone.set_status(0)
+        if new_status is not None:
+            self.node.setDriver('GV0', new_status)
+        else:
+            logging.error('Error calling set_off')
+
 
     commands = { 'UPDATE': update
                 ,'STATUS': set_status
+                ,'DON': set_on
+                ,'DOF': set_off
                 ,'SETPOINT' : set_setpoint
      #           ,'SETPOINTCO2' : set_setpoint_co2
      #           ,'SCHEDULEON' : set_schedule

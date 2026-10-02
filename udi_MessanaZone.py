@@ -237,6 +237,22 @@ class udi_messana_zone(udi_interface.Node):
         else:
             logging.error('Error calling setStatus')
 
+    def set_on(self, command=None):
+        logging.debug('set_on Called (DON) for zone: {}'.format(self.zone_nbr))
+        new_status = self.zone.set_status(1)
+        if new_status is not None:
+            self.node.setDriver('GV0', new_status)
+        else:
+            logging.error('Error calling set_on')
+
+    def set_off(self, command=None):
+        logging.debug('set_off Called (DOF) for zone: {}'.format(self.zone_nbr))
+        new_status = self.zone.set_status(0)
+        if new_status is not None:
+            self.node.setDriver('GV0', new_status)
+        else:
+            logging.error('Error calling set_off')
+
     def set_energy_save(self, command):
         energy_save = int(command.get('value'))
         logging.debug('setEnergySave Called {} for zone {}'.format(energy_save, self.zone_nbr))
@@ -264,6 +280,8 @@ class udi_messana_zone(udi_interface.Node):
     
     commands = { 'UPDATE': update
                 ,'STATUS': set_status
+                ,'DON': set_on
+                ,'DOF': set_off
                 ,'ENERGYSAVE': set_energy_save
                 ,'SETPOINT' : set_setpoint
      #           ,'SETPOINTCO2' : set_setpoint_co2        

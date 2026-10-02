@@ -163,10 +163,26 @@ class TestZoneNode(unittest.TestCase):
         self.assertEqual(self.zone_node.node.getDriver("TIME"), 999999)
 
     def test_command_handlers(self):
-        """Test zone commands: STATUS, ENERGYSAVE, SETPOINT, UPDATE."""
+        """Test zone commands: STATUS, DON, DOF, ENERGYSAVE, SETPOINT, UPDATE."""
         self.mock_zone_api.set_status.return_value = 1
         self.zone_node.set_status({"value": 1})
         self.assertEqual(self.zone_node.node.getDriver("GV0"), 1)
+
+        # DON
+        self.mock_zone_api.set_status.return_value = 1
+        self.zone_node.set_on({"cmd": "DON"})
+        self.assertEqual(self.zone_node.node.getDriver("GV0"), 1)
+        self.mock_zone_api.set_status.assert_called_with(1)
+
+        # DOF
+        self.mock_zone_api.set_status.return_value = 0
+        self.zone_node.set_off({"cmd": "DOF"})
+        self.assertEqual(self.zone_node.node.getDriver("GV0"), 0)
+        self.mock_zone_api.set_status.assert_called_with(0)
+
+        # Commands mapping
+        self.assertEqual(self.zone_node.commands["DON"], udi_messana_zone.set_on)
+        self.assertEqual(self.zone_node.commands["DOF"], udi_messana_zone.set_off)
 
         self.mock_zone_api.set_energy_saving.return_value = 1
         self.zone_node.set_energy_save({"value": 1})
@@ -217,6 +233,21 @@ class TestMacrozoneNode(unittest.TestCase):
         self.macro_node.updateISY_shortpoll()
         self.assertEqual(self.macro_node.node.getDriver("GV2"), 0)
         self.assertEqual(self.macro_node.node.getDriver("TIME"), 88888)
+
+    def test_macrozone_command_handlers(self):
+        """Test macrozone commands: DON, DOF, STATUS."""
+        self.mock_macro_api.set_status.return_value = 1
+        self.macro_node.set_on({"cmd": "DON"})
+        self.assertEqual(self.macro_node.node.getDriver("GV0"), 1)
+        self.mock_macro_api.set_status.assert_called_with(1)
+
+        self.mock_macro_api.set_status.return_value = 0
+        self.macro_node.set_off({"cmd": "DOF"})
+        self.assertEqual(self.macro_node.node.getDriver("GV0"), 0)
+        self.mock_macro_api.set_status.assert_called_with(0)
+
+        self.assertEqual(self.macro_node.commands["DON"], udi_messana_macrozone.set_on)
+        self.assertEqual(self.macro_node.commands["DOF"], udi_messana_macrozone.set_off)
 
 
 class TestOtherSubsystemNodes(unittest.TestCase):
@@ -470,6 +501,21 @@ class TestControllerNode(unittest.TestCase):
         self.controller.updateISY_longpoll()
         self.assertEqual(self.controller.getDriver("ST"), 0)
         self.assertEqual(self.controller.getDriver("TIME"), 88888)
+
+    def test_controller_don_dof_commands(self):
+        """Test controller commands: DON, DOF."""
+        self.mock_sys_api.set_status.return_value = 1
+        self.controller.setOn({"cmd": "DON"})
+        self.assertEqual(self.controller.getDriver("GV0"), 1)
+        self.mock_sys_api.set_status.assert_called_with(1)
+
+        self.mock_sys_api.set_status.return_value = 0
+        self.controller.setOff({"cmd": "DOF"})
+        self.assertEqual(self.controller.getDriver("GV0"), 0)
+        self.mock_sys_api.set_status.assert_called_with(0)
+
+        self.assertEqual(self.controller.commands["DON"], MessanaController.setOn)
+        self.assertEqual(self.controller.commands["DOF"], MessanaController.setOff)
 
 
 if __name__ == "__main__":
