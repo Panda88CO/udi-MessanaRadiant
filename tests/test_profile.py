@@ -44,6 +44,15 @@ class TestProfileDef(unittest.TestCase):
         self.assertEqual(prop_editors["GV7"], "VOC")
         self.assertEqual(prop_editors["TIME"], "TIMESTAMP")
 
+        # Verify Celsius editors have only UOM 4 (no UOM 17)
+        editors_by_id = {e["id"]: e for e in profile["editors"]}
+        settempc_uoms = {r["uom"] for r in editors_by_id["SETTEMPC"]["ranges"]}
+        self.assertIn("4", settempc_uoms)
+        self.assertNotIn("17", settempc_uoms)
+        tempc_uoms = {r["uom"] for r in editors_by_id["TEMPC"]["ranges"]}
+        self.assertIn("4", tempc_uoms)
+        self.assertNotIn("17", tempc_uoms)
+
     def test_build_profile_fahrenheit(self):
         """Test profile generation for Fahrenheit with various parameter formats."""
         for f_param in (TEMP_F, "F", "f", "FAHRENHEIT", 1, "1", 17, "17"):
@@ -66,6 +75,15 @@ class TestProfileDef(unittest.TestCase):
                 if "parameters" in c
             }
             self.assertEqual(cmd_params["SETPOINT"], "SETTEMPF")
+
+            # Verify Fahrenheit editors have only UOM 17 (no UOM 4)
+            editors_by_id = {e["id"]: e for e in profile["editors"]}
+            settempf_uoms = {r["uom"] for r in editors_by_id["SETTEMPF"]["ranges"]}
+            self.assertIn("17", settempf_uoms)
+            self.assertNotIn("4", settempf_uoms)
+            tempf_uoms = {r["uom"] for r in editors_by_id["TEMPF"]["ranges"]}
+            self.assertIn("17", tempf_uoms)
+            self.assertNotIn("4", tempf_uoms)
 
     def test_all_ids_uppercase_alphanumeric(self):
         """Verify all editor IDs, nodeDef IDs, property IDs, and cmd IDs follow ^[A-Z0-9]+$."""
@@ -206,21 +224,25 @@ class TestStaticXmlProfile(unittest.TestCase):
         ts_uoms = [r.get("uom") for r in ts_ranges]
         self.assertIn("151", ts_uoms)
 
-    def test_dual_uom_temperature_support(self):
-        """Verify temperature editors in editors.xml support both Celsius (4) and Fahrenheit (17)."""
+    def test_single_uom_temperature_support(self):
+        """Verify temperature editors in editors.xml define only a single UOM (C has 4, F has 17, none define both)."""
         editors_path = os.path.join(self.PROFILE_DIR, "editor", "editors.xml")
         tree = ET.parse(editors_path)
         root = tree.getroot()
-        temp_editors = (
-            "TEMPC", "TEMPF", "SETTEMPC", "SETTEMPF",
-            "TEMPOFFSETC", "TEMPOFFSETF", "SETTEMPOSC", "SETTEMPOSF"
-        )
-        for ed_id in temp_editors:
+        c_editors = ("TEMPC", "SETTEMPC", "TEMPOFFSETC", "SETTEMPOSC")
+        f_editors = ("TEMPF", "SETTEMPF", "TEMPOFFSETF", "SETTEMPOSF")
+        for ed_id in c_editors:
             ed = root.find(f"./editor[@id='{ed_id}']")
             self.assertIsNotNone(ed, f"Editor {ed_id} missing")
             uoms = {r.get("uom") for r in ed.findall("range")}
             self.assertIn("4", uoms, f"Editor {ed_id} missing UOM 4")
+            self.assertNotIn("17", uoms, f"Editor {ed_id} must not contain UOM 17")
+        for ed_id in f_editors:
+            ed = root.find(f"./editor[@id='{ed_id}']")
+            self.assertIsNotNone(ed, f"Editor {ed_id} missing")
+            uoms = {r.get("uom") for r in ed.findall("range")}
             self.assertIn("17", uoms, f"Editor {ed_id} missing UOM 17")
+            self.assertNotIn("4", uoms, f"Editor {ed_id} must not contain UOM 4")
 
     def test_nodedefs_xml_validity_and_references(self):
         """Test profile/nodedef/nodedefs.xml parses cleanly and all editor refs exist."""

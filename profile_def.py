@@ -27,39 +27,31 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
 
     tempc_ranges = [
         {"uom": "4", "min": -50, "max": 75, "step": 0.5, "prec": 1},
-        {"uom": "17", "min": -50, "max": 150, "step": 0.5, "prec": 1},
         {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
     ]
     tempf_ranges = [
         {"uom": "17", "min": -50, "max": 150, "step": 0.5, "prec": 1},
-        {"uom": "4", "min": -50, "max": 75, "step": 0.5, "prec": 1},
         {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
     ]
     settempc_ranges = [
         {"uom": "4", "min": 10, "max": 35, "step": 0.5, "prec": 1},
-        {"uom": "17", "min": 50, "max": 100, "step": 1, "prec": 1},
     ]
     settempf_ranges = [
         {"uom": "17", "min": 50, "max": 100, "step": 1, "prec": 1},
-        {"uom": "4", "min": 10, "max": 35, "step": 0.5, "prec": 1},
     ]
     tempoffsetc_ranges = [
         {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
-        {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
         {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
     ]
     tempoffsetf_ranges = [
         {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
-        {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
         {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
     ]
     settemposc_ranges = [
         {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
-        {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
     ]
     settemposf_ranges = [
         {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
-        {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
     ]
 
     editors = [

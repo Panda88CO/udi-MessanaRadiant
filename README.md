@@ -1,6 +1,6 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.3-blue.svg)](server.json)
+[![Version](https://img.shields.io/badge/version-0.3.4-blue.svg)](server.json)
 [![Tests](https://img.shields.io/badge/tests-57%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
@@ -21,6 +21,13 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 * **Domestic Hot Water (DHW)**: Current and target hot water temperatures.
 
 ---
+
+## What's New in v0.3.4
+
+* **Single-UOM Temperature Definitions via Dynamic Profile Selection**:
+  * **Eliminated Dual-UOM Range Clutter**: Temperature editors (`TEMPC`, `TEMPF`, `SETTEMPC`, `SETTEMPF`, `TEMPOFFSETC`, `TEMPOFFSETF`, `SETTEMPOSC`, `SETTEMPOSF`) in both `profile_def.py` and `profile/editor/editors.xml` now strictly define only their own single UOM range (`4` for Celsius, `17` for Fahrenheit). This removes the confusing dual input boxes in eisy-ui parameter panels.
+  * **Dynamic Profile Unit Selection**: The dynamic JSON profile cleanly selects and binds either Celsius (`TEMPC`/`SETTEMPC`) or Fahrenheit (`TEMPF`/`SETTEMPF`) node definitions based on the configured `TEMP_UNIT` (`C` or `F`).
+  * **Streamlined Dynamic Publishing**: `_publish_profile()` delivers dynamic profile configurations directly to IoX without redundant static XML overwrites, falling back to static XML installation only if dynamic profiles are unavailable.
 
 ## What's New in v0.3.3
 
