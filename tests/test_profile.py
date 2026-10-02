@@ -128,6 +128,11 @@ class TestProfileDef(unittest.TestCase):
         primary_range = time_editor["ranges"][0]
         self.assertEqual(primary_range["uom"], "151")
 
+    def test_no_destructive_delete(self):
+        """Verify dynamic profile does not include destructive delete block."""
+        profile = build_profile_definition(TEMP_C)
+        self.assertNotIn("delete", profile)
+
 
 class TestStaticXmlProfile(unittest.TestCase):
     """Tests for static XML profile files in profile/ directory."""
@@ -174,6 +179,22 @@ class TestStaticXmlProfile(unittest.TestCase):
         ts_ranges = ts_elem.findall("range")
         ts_uoms = [r.get("uom") for r in ts_ranges]
         self.assertIn("151", ts_uoms)
+
+    def test_dual_uom_temperature_support(self):
+        """Verify temperature editors in editors.xml support both Celsius (4) and Fahrenheit (17)."""
+        editors_path = os.path.join(self.PROFILE_DIR, "editor", "editors.xml")
+        tree = ET.parse(editors_path)
+        root = tree.getroot()
+        temp_editors = (
+            "TEMPC", "TEMPF", "SETTEMPC", "SETTEMPF",
+            "TEMPOFFSETC", "TEMPOFFSETF", "SETTEMPOSC", "SETTEMPOSF"
+        )
+        for ed_id in temp_editors:
+            ed = root.find(f"./editor[@id='{ed_id}']")
+            self.assertIsNotNone(ed, f"Editor {ed_id} missing")
+            uoms = {r.get("uom") for r in ed.findall("range")}
+            self.assertIn("4", uoms, f"Editor {ed_id} missing UOM 4")
+            self.assertIn("17", uoms, f"Editor {ed_id} missing UOM 17")
 
     def test_nodedefs_xml_validity_and_references(self):
         """Test profile/nodedef/nodedefs.xml parses cleanly and all editor refs exist."""

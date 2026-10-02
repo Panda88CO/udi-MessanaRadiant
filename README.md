@@ -1,7 +1,7 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](server.json)
-[![Tests](https://img.shields.io/badge/tests-51%20passed-brightgreen.svg)](tests/)
+[![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)](server.json)
+[![Tests](https://img.shields.io/badge/tests-53%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
 
@@ -21,6 +21,14 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 * **Domestic Hot Water (DHW)**: Current and target hot water temperatures.
 
 ---
+
+## What's New in v0.3.2
+
+* **Profile & Parameter Panel Display Fix for eisy-ui / Admin Console**:
+  * **Static Profile Guaranteed Delivery**: Controller now invokes `self.poly.updateProfile()` upon initialization and configuration to ensure the complete static XML profile (`profile.zip`) is registered with IoX.
+  * **Dual UOM Ranges in Temperature Editors**: Added both Celsius (UOM `4`) and Fahrenheit (UOM `17`) ranges directly to `TEMPC`, `TEMPF`, `SETTEMPC`, `SETTEMPF`, `TEMPOFFSETC`, `TEMPOFFSETF`, `SETTEMPOSC`, and `SETTEMPOSF` in `editors.xml`. All temperature drivers and setpoints render and format accurately in eisy-ui regardless of unit selection.
+  * **Removed Destructive Dynamic Deletions**: Eliminated the wildcard deletion block (`"delete": {"editors": ["*"], "nodedefs": ["*"]}`) from `profile_def.py` that caused IoX to wipe node definitions.
+  * **Safe Dual-Path Publishing**: Profile publishing now secures static XML registration first, then pushes non-destructive dynamic definitions without blocking or raising unhandled exceptions.
 
 ## What's New in v0.3.1
 

@@ -106,6 +106,11 @@ class MessanaController(udi_interface.Node):
 
 
         self.poly.ready()
+        if hasattr(self.poly, "updateProfile"):
+            try:
+                self.poly.updateProfile()
+            except Exception as err:
+                logging.warning(f"Initial updateProfile failed: {err}")
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()
 
@@ -308,11 +313,17 @@ class MessanaController(udi_interface.Node):
         )
 
     def _publish_profile(self, wait_response: bool = False) -> None:
+        # 1. Always ensure static XML profile is installed in IoX
+        if hasattr(self.poly, "updateProfile"):
+            try:
+                logging.info("[_publish_profile] Installing static XML profile via poly.updateProfile()")
+                self.poly.updateProfile()
+            except Exception as err:
+                logging.warning(f"[_publish_profile] updateProfile failed: {err}")
+
+        # 2. Optionally publish dynamic JSON profile if supported
         update_json_profile = getattr(self.poly, "updateJsonProfile", None)
         if not callable(update_json_profile):
-            logging.info("[_publish_profile] updateJsonProfile is unavailable, falling back to updateProfile")
-            if hasattr(self.poly, "updateProfile"):
-                self.poly.updateProfile()
             return
 
         temp_unit = getattr(self, "ISY_temp_unit", self.TEMP_C)
@@ -323,38 +334,37 @@ class MessanaController(udi_interface.Node):
             try:
                 current_profile = current_profile_getter({"waitResponse": False})
                 if self._profiles_match(current_profile, profile):
-                    logging.info("[_publish_profile] Profile already up to date, skipping publish")
+                    logging.info("[_publish_profile] Dynamic profile already up to date, skipping publish")
                     return
-            except TypeError:
+            except Exception:
                 try:
                     current_profile = current_profile_getter()
                     if self._profiles_match(current_profile, profile):
-                        logging.info("[_publish_profile] Profile already up to date, skipping publish")
+                        logging.info("[_publish_profile] Dynamic profile already up to date, skipping publish")
                         return
                 except Exception as err:
-                    logging.warning(f"[_publish_profile] Unable to read existing profile: {err}")
-            except Exception as err:
-                logging.warning(f"[_publish_profile] Unable to read existing profile: {err}")
+                    logging.debug(f"[_publish_profile] Unable to read existing profile: {err}")
 
         try:
-            logging.debug(f"[_publish_profile] Publishing profile: {json.dumps(profile, sort_keys=True, indent=2)}")
-            update_json_profile(profile, {"waitResponse": wait_response})
+            logging.debug(f"[_publish_profile] Publishing dynamic JSON profile")
+            update_json_profile(profile, {"waitResponse": False})
             logging.info("[_publish_profile] Dynamic JSON profile published successfully")
             if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
                 self.poly.Notices.delete("profile")
         except TypeError:
-            update_json_profile(profile)
-            logging.info("[_publish_profile] Dynamic JSON profile published successfully")
-            if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
-                self.poly.Notices.delete("profile")
+            try:
+                update_json_profile(profile)
+                logging.info("[_publish_profile] Dynamic JSON profile published successfully")
+                if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
+                    self.poly.Notices.delete("profile")
+            except Exception as err:
+                logging.warning(f"[_publish_profile] Dynamic profile publish failed (static profile is active): {err}")
         except Exception as err:
-            logging.error(f"[_publish_profile] Profile publish failed: {err}")
-            if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "__setitem__"):
-                self.poly.Notices["profile"] = f"Dynamic profile publish failed: {err}"
+            logging.warning(f"[_publish_profile] Dynamic profile publish failed (static profile is active): {err}")
 
     def update_profile(self, command=None) -> None:
-        """Update ISY profile dynamically or via static files."""
-        self._publish_profile(wait_response=True)
+        """Update ISY profile via static files and dynamic profile."""
+        self._publish_profile(wait_response=False)
 
     def systemPoll (self, polltype):
         if self.poll_start:
