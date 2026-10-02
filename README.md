@@ -1,7 +1,7 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.6-blue.svg)](server.json)
-[![Tests](https://img.shields.io/badge/tests-58%20passed-brightgreen.svg)](tests/)
+[![Version](https://img.shields.io/badge/version-0.3.7-blue.svg)](server.json)
+[![Tests](https://img.shields.io/badge/tests-61%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
 
@@ -21,6 +21,14 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 * **Domestic Hot Water (DHW)**: Current and target hot water temperatures.
 
 ---
+
+## What's New in v0.3.7
+
+* **Dynamic Per-Zone Node Definitions & Sensor Capability Probing**:
+  * **Hardware Probing Before Node Creation**: The controller probes zone hardware capabilities before instantiating zone nodes to determine which optional sensor variables (`GV6` Air Quality, `CO2LVL` CO2, `GV7` VOC, `CLIHUM` Humidity, and `DEWPT` Dew Point) are actually supported by hardware.
+  * **Dynamic Per-Zone Node Definitions (`ZONE0`, `ZONE1`, etc.)**: Generates customized dynamic node definitions for each individual zone with only the supported sensor properties included, and publishes the dynamic profile to IoX before nodes are instantiated.
+  * **Eliminated "No Support" Display in eisy-ui**: Rooms lacking air quality, CO2, VOC, or humidity sensors never render these properties on the eisy-ui or Admin Console parameter panel, eliminating cluttered "No Support" (value `98` / UOM `25`) entries.
+  * **Optimized Polling**: Zone shortpoll and longpoll loops skip queries and updates for unsupported sensors.
 
 ## What's New in v0.3.6
 

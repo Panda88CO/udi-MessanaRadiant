@@ -3,6 +3,7 @@
 
 import sys
 from Messana_System import messana_system
+from Messana_Zone import messana_zone
 from udi_MessanaZone import udi_messana_zone
 from udi_MessanaMacrozone import udi_messana_macrozone
 from udi_MessanaATU import udi_messana_atu
@@ -81,6 +82,7 @@ class MessanaController(udi_interface.Node):
         self.nodeDefineDone = False
         self.nodeConfigDone = False
         self.zone = {}
+        self.zone_capabilities = {}
         self.macrozone = {}
         self.atu = {}
         self.buffertank = {}
@@ -126,8 +128,77 @@ class MessanaController(udi_interface.Node):
         logging.debug('config done')
         self.nodeConfigDone = True
 
+    def discover_zone_capabilities(self) -> dict:
+        """
+        Probe each zone prior to node creation to determine which optional
+        sensor variables are actually supported by hardware.
+        """
+        capabilities = {}
+        core_drivers = {'ST', 'GV0', 'GV1', 'GV2', 'GV3', 'GV8', 'GV9', 'GV10', 'TIME'}
 
+        def _is_supported(val):
+            if val is None or val == -1 or str(val) == '<Response [400]>':
+                return False
+            if isinstance(val, (int, float)):
+                return True
+            try:
+                float(val)
+                return True
+            except (ValueError, TypeError):
+                return False
 
+        nbr_zones = getattr(self.messana, 'nbr_zones', 0) or 0
+        for zone_nbr in range(0, nbr_zones):
+            tmp_name = self.messana.get_zone_name(zone_nbr)
+            supported = set(core_drivers)
+            try:
+                zone_probe = messana_zone(zone_nbr, getattr(self, 'messana_info', {}))
+
+                try:
+                    hum = zone_probe.get_humidity()
+                    if _is_supported(hum):
+                        supported.add('CLIHUM')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} humidity probe error: {err}")
+
+                try:
+                    dew = zone_probe.get_dewpoint()
+                    if _is_supported(dew):
+                        supported.add('DEWPT')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} dewpoint probe error: {err}")
+
+                try:
+                    aq = zone_probe.get_air_quality()
+                    if _is_supported(aq):
+                        supported.add('GV6')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} air quality probe error: {err}")
+
+                try:
+                    co2 = zone_probe.get_co2()
+                    if _is_supported(co2):
+                        supported.add('CO2LVL')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} co2 probe error: {err}")
+
+                try:
+                    voc = zone_probe.get_voc()
+                    if _is_supported(voc):
+                        supported.add('GV7')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} voc probe error: {err}")
+
+            except Exception as err:
+                logging.warning(f"Error probing zone {zone_nbr} capabilities: {err}")
+
+            capabilities[zone_nbr] = {
+                'name': tmp_name or str(zone_nbr),
+                'supported': supported,
+            }
+            logging.info(f"Zone {zone_nbr} ({tmp_name}) supported properties: {sorted(supported)}")
+
+        return capabilities
 
     def start(self):
         logging.info(f'Start Messana Main v{__version__}')
@@ -187,6 +258,12 @@ class MessanaController(udi_interface.Node):
             self.updateISY_longpoll()
             time.sleep(1)
 
+            # Probe zone capabilities prior to creating nodes
+            self.zone_capabilities = self.discover_zone_capabilities()
+            logging.info('Discovered zone capabilities: {}'.format(self.zone_capabilities))
+            # Publish dynamic profile before creating nodes so IoX has node definitions ready
+            self.update_profile()
+
         try:
             node_delay = float(self.Parameters['NODE_DELAY']) if 'NODE_DELAY' in self.Parameters else 1.0
         except (ValueError, TypeError):
@@ -198,7 +275,12 @@ class MessanaController(udi_interface.Node):
             address = self.poly.getValidAddress('zone'+str(zone_nbr))
             tmp_name= self.messana.get_zone_name(zone_nbr)
             name = self.poly.getValidName('Zone '+ (tmp_name or str(zone_nbr)))
-            self.zone[zone_nbr] = udi_messana_zone(self.poly, self.primary, address, name, zone_nbr, self.messana_info)
+            caps = self.zone_capabilities.get(zone_nbr, {})
+            supported_props = caps.get('supported')
+            self.zone[zone_nbr] = udi_messana_zone(
+                self.poly, self.primary, address, name, zone_nbr, self.messana_info,
+                supported_props=supported_props
+            )
             time.sleep(node_delay)
         
         for macrozone_nbr in range(0, self.messana.nbr_macrozones ):
@@ -317,7 +399,8 @@ class MessanaController(udi_interface.Node):
         update_json_profile = getattr(self.poly, "updateJsonProfile", None)
         if callable(update_json_profile):
             temp_unit = getattr(self, "ISY_temp_unit", self.TEMP_C)
-            profile = build_profile_definition(temp_unit)
+            zone_caps = getattr(self, "zone_capabilities", None)
+            profile = build_profile_definition(temp_unit, zone_capabilities=zone_caps)
 
             current_profile_getter = getattr(self.poly, "getJsonProfile", None)
             if callable(current_profile_getter):

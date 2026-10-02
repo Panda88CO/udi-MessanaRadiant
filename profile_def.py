@@ -6,11 +6,13 @@ All editor IDs, nodeDef IDs, property IDs, and command IDs are strictly UPPERCAS
 alphanumeric ([A-Z0-9]+) without underscores or special characters.
 """
 
+import re
+
 TEMP_C = 0
 TEMP_F = 1
 
 
-def build_profile_definition(temp_unit=TEMP_C) -> dict:
+def build_profile_definition(temp_unit=TEMP_C, zone_capabilities=None) -> dict:
     """
     Build the dynamic JSON profile definition for PG3/PG3x.
 
@@ -318,6 +320,50 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
         },
     ]
 
+    zone_properties = [
+        {"id": "ST", "name": "Room Temperature", "editor": temp_editor},
+        {"id": "GV0", "name": "Zone Status", "editor": "ENABLE"},
+        {"id": "GV1", "name": "Zone Thermal Operation", "editor": "THERMALMODE"},
+        {"id": "GV2", "name": "System Running", "editor": "RUNNING"},
+        {"id": "GV3", "name": "Zone Setpoint", "editor": temp_editor},
+        {"id": "CLIHUM", "name": "Zone Humidity", "editor": "HUMIDITY"},
+        {"id": "DEWPT", "name": "Zone Dew Point", "editor": temp_editor},
+        {"id": "GV6", "name": "Zone Air Quality", "editor": "AIRQ"},
+        {"id": "CO2LVL", "name": "Zone CO2 Level", "editor": "CO2"},
+        {"id": "GV7", "name": "Zone VOC Level", "editor": "VOC"},
+        {"id": "GV8", "name": "Zone Energy Saving", "editor": "ENABLE"},
+        {"id": "GV9", "name": "Zone Alarm", "editor": "ALARM"},
+        {"id": "GV10", "name": "Zone System Temperature", "editor": temp_editor},
+        {"id": "TIME", "name": "Last Update", "editor": "TIMESTAMP"},
+    ]
+    zone_cmds = {
+        "accepts": [
+            {"id": "UPDATE", "name": "Force Update"},
+            {
+                "id": "SETPOINT",
+                "name": "Set Point",
+                "parameters": [
+                    {"id": "", "name": "Setpoint", "editor": settemp_editor, "init": "GV3"},
+                ],
+            },
+            {
+                "id": "STATUS",
+                "name": "Set Status",
+                "parameters": [
+                    {"id": "", "name": "Status", "editor": "SETENABLE", "init": "GV0"},
+                ],
+            },
+            {
+                "id": "ENERGYSAVE",
+                "name": "Set Energy Saving",
+                "parameters": [
+                    {"id": "", "name": "Energy Saving", "editor": "SETENABLE", "init": "GV8"},
+                ],
+            },
+        ],
+        "sends": [],
+    }
+
     nodedefs = [
         {
             "id": "SYSTEM",
@@ -382,49 +428,8 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
         {
             "id": "ZONE",
             "name": "Messana Zone",
-            "properties": [
-                {"id": "ST", "name": "Room Temperature", "editor": temp_editor},
-                {"id": "GV0", "name": "Zone Status", "editor": "ENABLE"},
-                {"id": "GV1", "name": "Zone Thermal Operation", "editor": "THERMALMODE"},
-                {"id": "GV2", "name": "System Running", "editor": "RUNNING"},
-                {"id": "GV3", "name": "Zone Setpoint", "editor": temp_editor},
-                {"id": "CLIHUM", "name": "Zone Humidity", "editor": "HUMIDITY"},
-                {"id": "DEWPT", "name": "Zone Dew Point", "editor": temp_editor},
-                {"id": "GV6", "name": "Zone Air Quality", "editor": "AIRQ"},
-                {"id": "CO2LVL", "name": "Zone CO2 Level", "editor": "CO2"},
-                {"id": "GV7", "name": "Zone VOC Level", "editor": "VOC"},
-                {"id": "GV8", "name": "Zone Energy Saving", "editor": "ENABLE"},
-                {"id": "GV9", "name": "Zone Alarm", "editor": "ALARM"},
-                {"id": "GV10", "name": "Zone System Temperature", "editor": temp_editor},
-                {"id": "TIME", "name": "Last Update", "editor": "TIMESTAMP"},
-            ],
-            "cmds": {
-                "accepts": [
-                    {"id": "UPDATE", "name": "Force Update"},
-                    {
-                        "id": "SETPOINT",
-                        "name": "Set Point",
-                        "parameters": [
-                            {"id": "", "name": "Setpoint", "editor": settemp_editor, "init": "GV3"},
-                        ],
-                    },
-                    {
-                        "id": "STATUS",
-                        "name": "Set Status",
-                        "parameters": [
-                            {"id": "", "name": "Status", "editor": "SETENABLE", "init": "GV0"},
-                        ],
-                    },
-                    {
-                        "id": "ENERGYSAVE",
-                        "name": "Set Energy Saving",
-                        "parameters": [
-                            {"id": "", "name": "Energy Saving", "editor": "SETENABLE", "init": "GV8"},
-                        ],
-                    },
-                ],
-                "sends": [],
-            },
+            "properties": zone_properties,
+            "cmds": zone_cmds,
             "links": {"ctl": [], "rsp": []},
         },
         {
@@ -696,6 +701,60 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
             "links": {"ctl": [], "rsp": []},
         },
     ]
+
+    if zone_capabilities:
+        items = []
+        if isinstance(zone_capabilities, dict):
+            for k, v in zone_capabilities.items():
+                try:
+                    zn = int(k) if isinstance(k, int) or (isinstance(k, str) and k.isdigit()) else int(re.sub(r"\D", "", str(k)) or 0)
+                except ValueError:
+                    zn = 0
+                if isinstance(v, dict):
+                    zname = v.get("name") or f"Zone {zn}"
+                    supp = v.get("supported", set())
+                elif isinstance(v, (set, list, tuple)):
+                    zname = f"Zone {zn}"
+                    supp = v
+                else:
+                    zname = f"Zone {zn}"
+                    supp = set()
+                items.append((zn, zname, set(supp)))
+        elif isinstance(zone_capabilities, (list, tuple)):
+            for i, item in enumerate(zone_capabilities):
+                if isinstance(item, dict):
+                    zn = item.get("zone_nbr", i)
+                    zname = item.get("name") or f"Zone {zn}"
+                    supp = item.get("supported", set())
+                elif isinstance(item, (set, list, tuple)):
+                    zn = i
+                    zname = f"Zone {zn}"
+                    supp = item
+                else:
+                    zn = i
+                    zname = f"Zone {zn}"
+                    supp = set()
+                items.append((zn, zname, set(supp)))
+
+        items.sort(key=lambda x: x[0])
+
+        for zn, zname, supported_set in items:
+            clean_name = str(zname).strip()
+            if clean_name.lower().startswith("messana"):
+                node_name = clean_name
+            elif clean_name.lower().startswith("zone"):
+                node_name = f"Messana {clean_name}"
+            else:
+                node_name = f"Messana Zone {clean_name}"
+
+            filtered_props = [p for p in zone_properties if p["id"] in supported_set]
+            nodedefs.append({
+                "id": f"ZONE{zn}",
+                "name": node_name,
+                "properties": filtered_props,
+                "cmds": zone_cmds,
+                "links": {"ctl": [], "rsp": []},
+            })
 
     return {
         "editors": editors,

@@ -192,6 +192,73 @@ class TestZoneNode(unittest.TestCase):
         self.zone_node.set_setpoint({"value": 21.5})
         self.assertEqual(self.zone_node.node.getDriver("GV3"), 21.5)
 
+    def test_zone_node_with_filtered_supported_props(self):
+        """Zone node created with supported_props omits unsupported drivers and does not poll them."""
+        # Zone without air quality, CO2, VOC, humidity, dewpoint
+        supported = {'ST', 'GV0', 'GV1', 'GV2', 'GV3', 'GV8', 'GV9', 'GV10', 'TIME'}
+        mock_api = MagicMock()
+        mock_api.messana_temp_unit = "Celsius"
+        mock_api.get_name.return_value = "Basic Room"
+
+        with patch("udi_MessanaZone.messana_zone", return_value=mock_api):
+            filtered_zone = udi_messana_zone(
+                self.poly,
+                primary="controller",
+                address="zone2",
+                name="Basic Room",
+                zone_nbr=2,
+                messana_info=self.info,
+                supported_props=supported,
+            )
+
+        # Dynamic Node ID conforms to ZONE<nbr>
+        self.assertEqual(filtered_zone.id, "ZONE2")
+
+        # Unsupported drivers are omitted from drivers list
+        driver_names = [d["driver"] for d in filtered_zone.drivers]
+        self.assertNotIn("GV6", driver_names)
+        self.assertNotIn("CO2LVL", driver_names)
+        self.assertNotIn("GV7", driver_names)
+        self.assertNotIn("CLIHUM", driver_names)
+        self.assertNotIn("DEWPT", driver_names)
+        self.assertIn("ST", driver_names)
+        self.assertIn("GV0", driver_names)
+        self.assertIn("GV3", driver_names)
+        self.assertIn("GV10", driver_names)
+        self.assertEqual(len(filtered_zone.drivers), 9)
+
+        # Shortpoll: unsupported sensors are NOT polled
+        mock_api.get_status.return_value = 1
+        mock_api.get_air_temp.return_value = 22.0
+        mock_api.get_alarmOn.return_value = 0
+        filtered_zone.updateISY_shortpoll()
+
+        mock_api.get_humidity.assert_not_called()
+        mock_api.get_dewpoint.assert_not_called()
+        mock_api.get_air_quality.assert_not_called()
+        self.assertNotIn("GV6", filtered_zone.node.drivers_values)
+        self.assertNotIn("CLIHUM", filtered_zone.node.drivers_values)
+
+        # Longpoll: unsupported sensors are NOT polled and NO 98 is set
+        mock_api.get_status.return_value = 1
+        mock_api.get_thermal_status.return_value = 1
+        mock_api.get_setpoint.return_value = 21.0
+        mock_api.get_air_temp.return_value = 22.0
+        mock_api.get_energy_saving.return_value = 0
+        mock_api.get_alarmOn.return_value = 0
+        mock_api.get_temp.return_value = 22.5
+        filtered_zone.updateISY_longpoll()
+
+        mock_api.get_humidity.assert_not_called()
+        mock_api.get_dewpoint.assert_not_called()
+        mock_api.get_air_quality.assert_not_called()
+        mock_api.get_co2.assert_not_called()
+        mock_api.get_voc.assert_not_called()
+        self.assertNotIn("GV6", filtered_zone.node.drivers_values)
+        self.assertNotIn("CO2LVL", filtered_zone.node.drivers_values)
+        self.assertNotIn("GV7", filtered_zone.node.drivers_values)
+        self.assertEqual(filtered_zone.node.getDriver("GV2"), 1)
+
 
 class TestMacrozoneNode(unittest.TestCase):
     """Test suite for udi_messana_macrozone."""
@@ -516,6 +583,54 @@ class TestControllerNode(unittest.TestCase):
 
         self.assertEqual(self.controller.commands["DON"], MessanaController.setOn)
         self.assertEqual(self.controller.commands["DOF"], MessanaController.setOff)
+
+    def test_controller_discover_zone_capabilities(self):
+        """Controller probes zone hardware capabilities and excludes unsupported sensors."""
+        self.controller.messana_info = sample_messana_info()
+        self.mock_sys_api.nbr_zones = 2
+        self.mock_sys_api.get_zone_name.side_effect = lambda nbr: f"Room {nbr}"
+
+        # Mock probe API instances for Zone 0 and Zone 1
+        mock_z0 = MagicMock()
+        mock_z0.get_humidity.return_value = 45.0
+        mock_z0.get_dewpoint.return_value = 11.0
+        mock_z0.get_air_quality.return_value = 85
+        mock_z0.get_co2.return_value = 500
+        mock_z0.get_voc.return_value = 200
+
+        mock_z1 = MagicMock()
+        mock_z1.get_humidity.return_value = None  # Unsupported
+        mock_z1.get_dewpoint.return_value = None  # Unsupported
+        mock_z1.get_air_quality.return_value = None  # Unsupported
+        mock_z1.get_co2.return_value = -1  # Unsupported
+        mock_z1.get_voc.return_value = -1  # Unsupported
+
+        def mock_zone_factory(nbr, info=None):
+            return mock_z0 if nbr == 0 else mock_z1
+
+        with patch("udi_MessanaController.messana_zone", side_effect=mock_zone_factory):
+            caps = self.controller.discover_zone_capabilities()
+
+        self.assertIn(0, caps)
+        self.assertIn(1, caps)
+
+        # Zone 0 supports all optional sensors
+        z0_supp = caps[0]["supported"]
+        self.assertIn("CLIHUM", z0_supp)
+        self.assertIn("DEWPT", z0_supp)
+        self.assertIn("GV6", z0_supp)
+        self.assertIn("CO2LVL", z0_supp)
+        self.assertIn("GV7", z0_supp)
+        self.assertEqual(len(z0_supp), 14)
+
+        # Zone 1 excludes unsupported sensors
+        z1_supp = caps[1]["supported"]
+        self.assertNotIn("CLIHUM", z1_supp)
+        self.assertNotIn("DEWPT", z1_supp)
+        self.assertNotIn("GV6", z1_supp)
+        self.assertNotIn("CO2LVL", z1_supp)
+        self.assertNotIn("GV7", z1_supp)
+        self.assertEqual(len(z1_supp), 9)
 
 
 if __name__ == "__main__":

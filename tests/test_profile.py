@@ -220,6 +220,75 @@ class TestProfileDef(unittest.TestCase):
             self.assertIn("DON", sends_ids)
             self.assertIn("DOF", sends_ids)
 
+    def test_build_profile_with_zone_capabilities(self):
+        """Verify dynamic profile generates per-zone nodeDefs with filtered properties based on hardware support."""
+        zone_caps = {
+            0: {
+                "name": "Living Room",
+                "supported": {"ST", "GV0", "GV1", "GV2", "GV3", "CLIHUM", "DEWPT", "GV6", "CO2LVL", "GV7", "GV8", "GV9", "GV10", "TIME"},
+            },
+            1: {
+                "name": "Master Bed",
+                "supported": {"ST", "GV0", "GV1", "GV2", "GV3", "CLIHUM", "DEWPT", "GV8", "GV9", "GV10", "TIME"},
+            },
+            2: {
+                "name": "Hallway",
+                "supported": {"ST", "GV0", "GV1", "GV2", "GV3", "GV8", "GV9", "GV10", "TIME"},
+            },
+        }
+
+        for temp_unit, temp_editor in ((TEMP_C, "TEMPC"), (TEMP_F, "TEMPF")):
+            profile = build_profile_definition(temp_unit, zone_capabilities=zone_caps)
+            nodes_by_id = {n["id"]: n for n in profile["nodedefs"]}
+
+            # Generic ZONE definition is preserved
+            self.assertIn("ZONE", nodes_by_id)
+
+            # Per-zone custom nodeDefs exist
+            self.assertIn("ZONE0", nodes_by_id)
+            self.assertIn("ZONE1", nodes_by_id)
+            self.assertIn("ZONE2", nodes_by_id)
+
+            # Zone 0: all sensors supported
+            z0_props = {p["id"]: p["editor"] for p in nodes_by_id["ZONE0"]["properties"]}
+            self.assertIn("GV6", z0_props)
+            self.assertIn("CO2LVL", z0_props)
+            self.assertIn("GV7", z0_props)
+            self.assertIn("CLIHUM", z0_props)
+            self.assertIn("DEWPT", z0_props)
+            self.assertEqual(z0_props["ST"], temp_editor)
+            self.assertEqual(z0_props["GV7"], "VOC")
+            self.assertEqual(len(nodes_by_id["ZONE0"]["properties"]), 14)
+
+            # Zone 1: humidity/dewpoint supported, air quality/CO2/VOC unsupported and eliminated
+            z1_props = {p["id"]: p["editor"] for p in nodes_by_id["ZONE1"]["properties"]}
+            self.assertIn("CLIHUM", z1_props)
+            self.assertIn("DEWPT", z1_props)
+            self.assertNotIn("GV6", z1_props)
+            self.assertNotIn("CO2LVL", z1_props)
+            self.assertNotIn("GV7", z1_props)
+            self.assertEqual(len(nodes_by_id["ZONE1"]["properties"]), 11)
+
+            # Zone 2: basic zone, no humidity/dewpoint/airq/co2/voc
+            z2_props = {p["id"]: p["editor"] for p in nodes_by_id["ZONE2"]["properties"]}
+            self.assertNotIn("CLIHUM", z2_props)
+            self.assertNotIn("DEWPT", z2_props)
+            self.assertNotIn("GV6", z2_props)
+            self.assertNotIn("CO2LVL", z2_props)
+            self.assertNotIn("GV7", z2_props)
+            self.assertEqual(len(nodes_by_id["ZONE2"]["properties"]), 9)
+
+            # Node naming conventions
+            self.assertEqual(nodes_by_id["ZONE0"]["name"], "Messana Zone Living Room")
+            self.assertEqual(nodes_by_id["ZONE1"]["name"], "Messana Zone Master Bed")
+            self.assertEqual(nodes_by_id["ZONE2"]["name"], "Messana Zone Hallway")
+
+            # All dynamic nodeDef IDs and property IDs conform to ^[A-Z0-9]+$
+            for zid in ("ZONE0", "ZONE1", "ZONE2"):
+                self.assertTrue(self.ID_REGEX.match(zid))
+                for prop in nodes_by_id[zid]["properties"]:
+                    self.assertTrue(self.ID_REGEX.match(prop["id"]))
+
 
 
 class TestStaticXmlProfile(unittest.TestCase):

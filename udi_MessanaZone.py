@@ -39,7 +39,7 @@ class udi_messana_zone(udi_interface.Node):
             'TIME' = Last Update
             ]
     '''
-    drivers = [
+    BASE_DRIVERS = [
         {'driver': 'ST', 'value': 99, 'uom': 25},
         {'driver': 'GV0', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
@@ -55,9 +55,22 @@ class udi_messana_zone(udi_interface.Node):
         {'driver': 'GV10', 'value': 99, 'uom': 25},
         {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
+    drivers = list(BASE_DRIVERS)
 
-    def __init__(self, polyglot, primary, address, name, zone_nbr, messana_info):
+    def __init__(self, polyglot, primary, address, name, zone_nbr, messana_info, supported_props=None):
+        if supported_props is not None:
+            self.id = f'ZONE{zone_nbr}'
+            self.supported_props = set(supported_props)
+            self.drivers = [d.copy() for d in self.BASE_DRIVERS if d['driver'] in self.supported_props]
+        else:
+            self.id = 'ZONE'
+            self.supported_props = {d['driver'] for d in self.BASE_DRIVERS}
+            self.drivers = [d.copy() for d in self.BASE_DRIVERS]
+
         super().__init__(polyglot, primary, address, name)
+        if supported_props is not None:
+            self.id = f'ZONE{zone_nbr}'
+
         logging.info('init Messana Zone {}:'.format(zone_nbr) )
 
         self.primary = primary
@@ -106,23 +119,26 @@ class udi_messana_zone(udi_interface.Node):
             if self.send_temp_to_isy(Val, 'ST'):
                 updated = True
 
-        Val = self.zone.get_humidity()
-        logging.debug('Humidity(CLIHUM): {}'.format(Val))
-        if Val is not None:
-            self.node.setDriver('CLIHUM', self.isy_value(Val))
-            updated = True
-
-        Val = self.zone.get_dewpoint()
-        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        if Val is not None:
-            if self.send_temp_to_isy(Val, 'DEWPT'):
+        if 'CLIHUM' in self.supported_props:
+            Val = self.zone.get_humidity()
+            logging.debug('Humidity(CLIHUM): {}'.format(Val))
+            if Val is not None:
+                self.node.setDriver('CLIHUM', self.isy_value(Val))
                 updated = True
 
-        Val = self.zone.get_air_quality()
-        logging.debug('get_air_quality (GV6): {}'.format(Val))
-        if Val is not None:
-            self.node.setDriver('GV6', self.isy_value(Val))
-            updated = True
+        if 'DEWPT' in self.supported_props:
+            Val = self.zone.get_dewpoint()
+            logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
+            if Val is not None:
+                if self.send_temp_to_isy(Val, 'DEWPT'):
+                    updated = True
+
+        if 'GV6' in self.supported_props:
+            Val = self.zone.get_air_quality()
+            logging.debug('get_air_quality (GV6): {}'.format(Val))
+            if Val is not None:
+                self.node.setDriver('GV6', self.isy_value(Val))
+                updated = True
 
         Val = self.zone.get_alarmOn()
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
@@ -169,17 +185,19 @@ class udi_messana_zone(udi_interface.Node):
             if self.send_temp_to_isy(Val, 'ST'):
                 updated = True
 
-        Val = self.zone.get_humidity()
-        logging.debug('get_humidity(CLIHUM)): {}'.format(Val))
-        if Val is not None:
-            self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
-            updated = True
-
-        Val = self.zone.get_dewpoint()
-        logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
-        if Val is not None:
-            if self.send_temp_to_isy(Val, 'DEWPT'):
+        if 'CLIHUM' in self.supported_props:
+            Val = self.zone.get_humidity()
+            logging.debug('get_humidity(CLIHUM)): {}'.format(Val))
+            if Val is not None:
+                self.node.setDriver('CLIHUM', self.isy_value(Val), True, True)
                 updated = True
+
+        if 'DEWPT' in self.supported_props:
+            Val = self.zone.get_dewpoint()
+            logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
+            if Val is not None:
+                if self.send_temp_to_isy(Val, 'DEWPT'):
+                    updated = True
 
         Val = self.zone.get_energy_saving()
         logging.debug('get_energy_saving On (GV8): {}'.format(Val))
@@ -200,26 +218,29 @@ class udi_messana_zone(udi_interface.Node):
                 updated = True
 
         if updated:
-            Val = self.zone.get_air_quality()
-            logging.debug('get_air_quality (GV6): {}'.format(Val))
-            if Val == -1 or Val is None:
-                self.node.setDriver('GV6', 98, True, True, 25)
-            else:
-                self.node.setDriver('GV6', self.isy_value(Val), True, False, 56)
+            if 'GV6' in self.supported_props:
+                Val = self.zone.get_air_quality()
+                logging.debug('get_air_quality (GV6): {}'.format(Val))
+                if Val == -1 or Val is None:
+                    self.node.setDriver('GV6', 98, True, True, 25)
+                else:
+                    self.node.setDriver('GV6', self.isy_value(Val), True, False, 56)
 
-            Val = self.zone.get_co2()
-            logging.debug('get_co2 (CO2LVL): {}'.format(Val))
-            if Val == -1 or Val is None:
-                self.node.setDriver('CO2LVL', 98, True, True, 25)
-            else:
-                self.node.setDriver('CO2LVL', self.isy_value(Val), True, False, 56)
+            if 'CO2LVL' in self.supported_props:
+                Val = self.zone.get_co2()
+                logging.debug('get_co2 (CO2LVL): {}'.format(Val))
+                if Val == -1 or Val is None:
+                    self.node.setDriver('CO2LVL', 98, True, True, 25)
+                else:
+                    self.node.setDriver('CO2LVL', self.isy_value(Val), True, False, 56)
 
-            Val = self.zone.get_voc()
-            logging.debug('get_voc (GV7): {}'.format(Val))
-            if Val == -1 or Val is None:
-                self.node.setDriver('GV7', 98, True, True, 25)
-            else:
-                self.node.setDriver('GV7', self.isy_value(Val), True, False, 96)
+            if 'GV7' in self.supported_props:
+                Val = self.zone.get_voc()
+                logging.debug('get_voc (GV7): {}'.format(Val))
+                if Val == -1 or Val is None:
+                    self.node.setDriver('GV7', 98, True, True, 25)
+                else:
+                    self.node.setDriver('GV7', self.isy_value(Val), True, False, 96)
 
             self.node.setDriver('GV2', 1)
             self.node.setDriver('TIME', int(time.time()), True, True, 151)
