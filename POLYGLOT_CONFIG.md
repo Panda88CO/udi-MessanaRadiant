@@ -20,6 +20,7 @@ In the Polyglot Web Dashboard, go to your **Messana Radiant** node server detail
 | `IP_ADDRESS` | **Yes** | — | The local IPv4 address of your Messana system (e.g., `192.168.1.100`). |
 | `MESSANA_KEY` | **Yes** | — | The API key required to authenticate with your Messana controller. |
 | `TEMP_UNIT` | No | `C` | Preferred temperature unit for ISY/IoX display: enter `C` for Celsius or `F` for Fahrenheit. Changing this automatically publishes the corresponding dynamic profile (`TEMPC` or `TEMPF`). |
+| `NODE_DELAY` | No | `1.0` | Delay in seconds between creating and initializing each node during startup. Serializes node additions to prevent "High Volume" errors in Polyglot/IoX. |
 
 Click **Save Changes** and restart the node server if prompted.
 

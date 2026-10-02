@@ -19,9 +19,12 @@ def node_queue(self, data):
     self.n_queue.append(data['address'])
 
 def wait_for_node_done(self):
-    while len(self.n_queue) == 0:
+    count = 0
+    while len(self.n_queue) == 0 and count < 50:
         time.sleep(0.1)
-    self.n_queue.pop()
+        count += 1
+    if len(self.n_queue) > 0:
+        self.n_queue.pop()
 
 def getValidName(self, name):
     name = bytes(name, 'utf-8').decode('utf-8','ignore')

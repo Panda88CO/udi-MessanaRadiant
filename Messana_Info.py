@@ -38,8 +38,18 @@ class messana_control(object):
         self.IPaddress = ip_address
         self.apiKey = api_key
         self.apiStr = 'apikey=' + self.apiKey
-        self.IPstr ='http://'+ self.IPaddress        
-        self.mTemp_unit = self.GET_system_data('tempUnit')
+        self.IPstr = 'http://' + self.IPaddress
+        self._mTemp_unit = None
+
+    @property
+    def mTemp_unit(self):
+        if self._mTemp_unit is None:
+            self._mTemp_unit = self.GET_system_data('tempUnit')
+        return self._mTemp_unit
+
+    @mTemp_unit.setter
+    def mTemp_unit(self, val):
+        self._mTemp_unit = val
 
         #self.temp_unit = self.GET_system_data('status')
         #self.temp_unit = self.GET_system_data('tempUnit')

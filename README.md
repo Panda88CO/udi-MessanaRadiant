@@ -42,6 +42,7 @@ In the PG3 Dashboard under **Configuration**, provide the following custom param
 | `IP_ADDRESS` | String | **Yes** | — | Local IP address of your Messana system (e.g. `192.168.1.100`) |
 | `MESSANA_KEY` | String | **Yes** | — | API key provided by Messana / radiantcooling.com |
 | `TEMP_UNIT` | String | No | `C` | Temperature display unit for ISY/IoX: `C` for Celsius or `F` for Fahrenheit |
+| `NODE_DELAY` | Float | No | `1.0` | Startup serialization delay (seconds) between node creations to prevent high-volume errors |
 
 ### Polling Intervals
 
