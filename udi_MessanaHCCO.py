@@ -19,7 +19,7 @@ except ImportError:
 class udi_messana_hc_co(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'hcco'
+    id = 'HCCO'
 
     '''
        drivers = [
@@ -36,6 +36,7 @@ class udi_messana_hc_co(udi_interface.Node):
         {'driver': 'GV1', 'value': 99, 'uom': 25},
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
+        {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
     def __init__(self, polyglot, primary, address, name, hc_co_nbr, messana_info):
@@ -78,6 +79,7 @@ class udi_messana_hc_co(udi_interface.Node):
         Val = self.hc_co.get_status()
         logging.debug('hc_co adaptiveComfort Status (GV0): {}'.format(Val))
         self.node.setDriver('GV0', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
 
@@ -96,6 +98,7 @@ class udi_messana_hc_co(udi_interface.Node):
         Val = self.hc_co.get_hc_co_season_mode()
         logging.debug('hc_co executiveSeason (GV2): {}'.format(Val))
         self.node.setDriver('GV2', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
 

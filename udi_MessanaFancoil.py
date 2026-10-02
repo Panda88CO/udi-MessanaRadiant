@@ -19,7 +19,7 @@ except ImportError:
 class udi_messana_fancoil(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'fancoil'
+    id = 'FANCOIL'
 
     '''
        drivers = [
@@ -40,6 +40,7 @@ class udi_messana_fancoil(udi_interface.Node):
         {'driver': 'GV3', 'value': 99, 'uom': 25},
         {'driver': 'GV4', 'value': 99, 'uom': 25},        
         {'driver': 'ST', 'value': 0, 'uom': 25},
+        {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
     def __init__(self, polyglot, primary, address, name, fancoil_nbr, messana_info):
@@ -94,6 +95,7 @@ class udi_messana_fancoil(udi_interface.Node):
         Val = self.fancoil.get_alarmOn()
         logging.debug('fancoil get_alarmOn(GV4): {}'.format(Val))
         self.node.setDriver('GV4', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
 
@@ -120,6 +122,7 @@ class udi_messana_fancoil(udi_interface.Node):
         Val = self.fancoil.get_alarmOn()
         logging.debug('fancoil get_alarmOn(GV4): {}'.format(Val))
         self.node.setDriver('GV4', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
 

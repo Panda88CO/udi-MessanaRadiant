@@ -54,7 +54,7 @@ def send_rel_temp_to_isy(self, temperature, stateVar):
     logging.debug('ISYunit={}, Mess_unit={}'.format(self.ISY_temp_unit , self.messana_temp_unit ))
     if self.ISY_temp_unit == TEMP_C: # Celsius in ISY
         if self.messana_temp_unit == 'Celsius' or self.messana_temp_unit == TEMP_C:
-            temp = round(temperature,1),
+            temp = round(temperature, 1)
         else: # messana = Farenheit
             temp = round(temperature*5/9,1)
         logging.debug('Celsius : {}  = {}'.format( temperature, temp ))  

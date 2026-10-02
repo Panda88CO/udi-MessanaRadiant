@@ -19,7 +19,7 @@ except ImportError:
 class udi_messana_buffertank(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'buffertank'
+    id = 'BUFFERTANK'
 
     '''
        drivers = [
@@ -39,6 +39,7 @@ class udi_messana_buffertank(udi_interface.Node):
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
+        {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
     def __init__(self, polyglot, primary, address, name, buffertank_nbr, messana_info):
@@ -90,6 +91,7 @@ class udi_messana_buffertank(udi_interface.Node):
         Val = self.buffertank.get_alarmOn()
         logging.debug('buffertank Alarm (GV3): {}'.format(Val))
         self.node.setDriver('GV3', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
     def updateISY_longpoll(self):
@@ -115,6 +117,7 @@ class udi_messana_buffertank(udi_interface.Node):
         Val = self.buffertank.get_alarmOn()
         logging.debug('buffertank Alarm (GV3): {}'.format(Val))
         self.node.setDriver('GV3', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
     def set_status(self, command):

@@ -18,7 +18,7 @@ import time
 class udi_messana_atu(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'atu'
+    id = 'ATU'
 
     '''
        drivers = [
@@ -55,6 +55,7 @@ class udi_messana_atu(udi_interface.Node):
 
         {'driver': 'GV11', 'value': 99, 'uom': 25},
         {'driver': 'ST', 'value': 0, 'uom': 25},
+        {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
     def __init__(self, polyglot, primary, address, name, atu_nbr, messana_info):
@@ -131,6 +132,7 @@ class udi_messana_atu(udi_interface.Node):
         Val = self.atu.get_alarmOn()
         logging.debug('get_alarmOn(GV11): {}'.format(Val))
         self.node.setDriver('GV11', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
     def updateISY_longpoll(self):
@@ -186,6 +188,7 @@ class udi_messana_atu(udi_interface.Node):
         Val = self.atu.get_alarmOn()
         logging.debug('get_alarmOn(GV11): {}'.format(Val))
         self.node.setDriver('GV11', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
 

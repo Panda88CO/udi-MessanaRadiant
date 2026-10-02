@@ -19,7 +19,7 @@ except ImportError:
 class udi_messana_macrozone(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'macrozone'
+    id = 'MACROZONE'
 
     '''
        drivers = [
@@ -34,13 +34,13 @@ class udi_messana_macrozone(udi_interface.Node):
     
     
     drivers = [
+        {'driver': 'ST', 'value': 99, 'uom': 25},
         {'driver': 'GV0', 'value': 99, 'uom': 25},
-        #{'driver': 'GV2', 'value': 99, 'uom': 25},
+        {'driver': 'GV2', 'value': 1, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
         {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
         {'driver': 'DEWPT', 'value': 99, 'uom': 25},
-        {'driver': 'ST', 'value': 0, 'uom': 25},
+        {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
     def __init__(self, polyglot, primary, address, name, macrozone_nbr, messana_info):
@@ -61,13 +61,13 @@ class udi_messana_macrozone(udi_interface.Node):
         
         logging.debug('setup node: {} {} {} {}'.format(self.address, name, self.id, self.primary))
         self.poly.ready()
-        self.poly.addNode(self, conn_status='ST')
+        self.poly.addNode(self, conn_status='GV2')
         self.wait_for_node_done()
 
         logging.debug('Drivers: {}'.format(self.drivers))
         logging.debug('address: {}'.format(self.address))
         self.node = self.poly.getNode(self.address)
-        self.node.setDriver('ST', 1, True, True)
+        self.node.setDriver('GV2', 1, True, True)
         self.ISY_temp_unit = messana_info['isy_temp_unit']
         self.messana_temp_unit = self.macrozone.messana_temp_unit
 
@@ -77,6 +77,7 @@ class udi_messana_macrozone(udi_interface.Node):
 
     def stop(self):
         logging.info('udiMessanaMacrozone Stop ')
+        self.node.setDriver('GV2', 0, True, True)
 
     def updateISY_shortpoll(self):
         Val = self.macrozone.get_status()
@@ -84,9 +85,8 @@ class udi_messana_macrozone(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.macrozone.get_temp()
-        logging.debug('get_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+        logging.debug('get_temp(ST): {}'.format(Val))
+        self.send_temp_to_isy(Val, 'ST')
 
         Val = self.macrozone.get_humidity()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
@@ -96,6 +96,8 @@ class udi_messana_macrozone(udi_interface.Node):
         logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
         self.send_temp_to_isy(Val, 'DEWPT')
 
+        self.node.setDriver('GV2', 1)
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
     def updateISY_longpoll(self):
@@ -115,9 +117,8 @@ class udi_messana_macrozone(udi_interface.Node):
         #self.node.setDriver('GV3', self.isy_value(Val))
 
         Val = self.macrozone.get_temp()
-        logging.debug('get_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+        logging.debug('get_temp(ST): {}'.format(Val))
+        self.send_temp_to_isy(Val, 'ST')
 
         Val = self.macrozone.get_humidity()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
@@ -126,6 +127,9 @@ class udi_messana_macrozone(udi_interface.Node):
         Val = self.macrozone.get_dewpoint()
         logging.debug('get_dewpoint (DEWPT): {}'.format(Val))
         self.send_temp_to_isy(Val, 'DEWPT')
+
+        self.node.setDriver('GV2', 1)
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
 

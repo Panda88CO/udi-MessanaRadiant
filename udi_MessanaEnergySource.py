@@ -19,7 +19,7 @@ except ImportError:
 class udi_messana_energy_source(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'energy'
+    id = 'ENERGY'
 
     '''
        drivers = [
@@ -38,6 +38,7 @@ class udi_messana_energy_source(udi_interface.Node):
         {'driver': 'GV2', 'value': 99, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},        
         {'driver': 'ST', 'value': 0, 'uom': 25},
+        {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
     def __init__(self, polyglot, primary, address, name, energy_source_nbr, messana_info):
@@ -88,6 +89,7 @@ class udi_messana_energy_source(udi_interface.Node):
         Val = self.energy_source.get_alarmOn()
         logging.debug('energy_source get_alarmOn(GV3): {}'.format(Val))
         self.node.setDriver('GV3', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
 
@@ -110,6 +112,7 @@ class udi_messana_energy_source(udi_interface.Node):
         Val = self.energy_source.get_alarmOn()
         logging.debug('energy_source get_alarmOn(GV3): {}'.format(Val))
         self.node.setDriver('GV3', self.isy_value(Val))
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
 

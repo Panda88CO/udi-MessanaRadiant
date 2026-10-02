@@ -19,6 +19,8 @@ from udi_MessanaHotWater import  udi_messana_hot_water
 
 import time
 import re
+import json
+from profile_def import build_profile_definition
 
 try:
     import udi_interface
@@ -34,7 +36,7 @@ except ImportError:
 class MessanaController(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, convert_temp_unit, send_rel_temp_to_isy
   
-    id = 'system'
+    id = 'SYSTEM'
 
     drivers = [
             {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
@@ -51,6 +53,7 @@ class MessanaController(udi_interface.Node):
             {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count
             {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
             {'driver': 'ST', 'value':0, 'uom':25 }, #state
+            {'driver': 'TIME', 'value':0, 'uom':151 }, #last update
             ]
     
 
@@ -100,11 +103,10 @@ class MessanaController(udi_interface.Node):
 
 
         self.poly.ready()
-        self.poly.updateProfile()
+        self._publish_profile()
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()
 
-        self.poly.updateProfile()
         self.node = self.poly.getNode(self.address)
         logging.debug('Node is {}'.format(self.node))
         logging.debug('drivers: {}'.format(self.drivers))
@@ -156,7 +158,7 @@ class MessanaController(udi_interface.Node):
             self.ISY_temp_unit = self.TEMP_C
             self.Parameters['TEMP_UNIT'] = 'C'
             logging.debug('TEMP_UNIT: {}'.format(self.ISY_temp_unit ))
-       
+        self._publish_profile()
 
         if (self.IPAddress is None) or (self.MessanaKey is None):
             #self.defineInputParams()
@@ -234,9 +236,9 @@ class MessanaController(udi_interface.Node):
             name = self.poly.getValidName('Hotwater '+tmp_name)
             self.hotwater[hotwater_nbr] = udi_messana_hot_water(self.poly, self.primary, address, name, hotwater_nbr, self.messana_info)
                                              
-        #self.updateISY_longpoll()
-        #self.updateISYdrivers('all')
-        #self.messanaImportOK = 1
+        self.nodeConfigDone = True
+        logging.info('Messana system configured - updating profile')
+        self.update_profile()
         self.poll_start = True
         #self.discover()
 
@@ -263,6 +265,80 @@ class MessanaController(udi_interface.Node):
         logging.debug('handleParams')
         self.Parameters.load(userParam)
         self.poly.Notices.clear()
+        if 'TEMP_UNIT' in self.Parameters:
+            new_unit = self.convert_temp_unit(self.Parameters['TEMP_UNIT'])
+            if new_unit != getattr(self, 'ISY_temp_unit', None):
+                self.ISY_temp_unit = new_unit
+                if hasattr(self, 'messana_info') and isinstance(self.messana_info, dict):
+                    self.messana_info['isy_temp_unit'] = new_unit
+                for zone in self.zone.values():
+                    zone.ISY_temp_unit = new_unit
+                for mzone in self.macrozone.values():
+                    mzone.ISY_temp_unit = new_unit
+                for atu in self.atu.values():
+                    atu.ISY_temp_unit = new_unit
+                for bt in self.buffertank.values():
+                    bt.ISY_temp_unit = new_unit
+                for dhw in self.hotwater.values():
+                    dhw.ISY_temp_unit = new_unit
+                self.update_profile()
+
+    def _profiles_match(self, current_profile, expected_profile) -> bool:
+        if not isinstance(current_profile, dict) or not isinstance(expected_profile, dict):
+            return False
+        return all(
+            current_profile.get(k, []) == expected_profile.get(k, [])
+            for k in ("editors", "nodedefs", "linkdefs")
+        )
+
+    def _publish_profile(self, wait_response: bool = False) -> None:
+        update_json_profile = getattr(self.poly, "updateJsonProfile", None)
+        if not callable(update_json_profile):
+            logging.info("[_publish_profile] updateJsonProfile is unavailable, falling back to updateProfile")
+            if hasattr(self.poly, "updateProfile"):
+                self.poly.updateProfile()
+            return
+
+        temp_unit = getattr(self, "ISY_temp_unit", self.TEMP_C)
+        profile = build_profile_definition(temp_unit)
+
+        current_profile_getter = getattr(self.poly, "getJsonProfile", None)
+        if callable(current_profile_getter):
+            try:
+                current_profile = current_profile_getter({"waitResponse": False})
+                if self._profiles_match(current_profile, profile):
+                    logging.info("[_publish_profile] Profile already up to date, skipping publish")
+                    return
+            except TypeError:
+                try:
+                    current_profile = current_profile_getter()
+                    if self._profiles_match(current_profile, profile):
+                        logging.info("[_publish_profile] Profile already up to date, skipping publish")
+                        return
+                except Exception as err:
+                    logging.warning(f"[_publish_profile] Unable to read existing profile: {err}")
+            except Exception as err:
+                logging.warning(f"[_publish_profile] Unable to read existing profile: {err}")
+
+        try:
+            logging.debug(f"[_publish_profile] Publishing profile: {json.dumps(profile, sort_keys=True, indent=2)}")
+            update_json_profile(profile, {"waitResponse": wait_response})
+            logging.info("[_publish_profile] Dynamic JSON profile published successfully")
+            if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
+                self.poly.Notices.delete("profile")
+        except TypeError:
+            update_json_profile(profile)
+            logging.info("[_publish_profile] Dynamic JSON profile published successfully")
+            if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
+                self.poly.Notices.delete("profile")
+        except Exception as err:
+            logging.error(f"[_publish_profile] Profile publish failed: {err}")
+            if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "__setitem__"):
+                self.poly.Notices["profile"] = f"Dynamic profile publish failed: {err}"
+
+    def update_profile(self, command=None) -> None:
+        """Update ISY profile dynamically or via static files."""
+        self._publish_profile(wait_response=True)
 
     def systemPoll (self, polltype):
         if self.poll_start:
@@ -373,7 +449,8 @@ class MessanaController(udi_interface.Node):
 
         tmp = self.messana.get_external_alarm()
         logging.debug('Alarm Status{}'.format(tmp))
-        self.node.setDriver('GV11', tmp, True, True)                
+        self.node.setDriver('GV11', tmp, True, True)
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
     def updateISY_shortpoll(self):
         logging.debug('updateISY_shortpoll')
@@ -386,6 +463,7 @@ class MessanaController(udi_interface.Node):
         tmp = self.messana.get_external_alarm()
         logging.debug('Alarm Status{}'.format(tmp))
         self.node.setDriver('GV11', tmp)
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
 
     def setStatus(self, command):
@@ -450,6 +528,8 @@ class MessanaController(udi_interface.Node):
                 ,'SETBACK' : setSetback
                 ,'SETBACK_OFFSET' : setSetbackOffset
                 ,'SETBACKOFFSET' : setSetbackOffset
+                ,'PROFILE' : update_profile
+                ,'UPDATEPROFILE' : update_profile
                 }
 
 
@@ -458,7 +538,7 @@ if __name__ == "__main__":
     try:
         logging.info('Starting Messana Controller')
         polyglot = udi_interface.Interface([])
-        polyglot.start('0.2.1')
+        polyglot.start('0.2.3')
         MessanaController(polyglot, 'system', 'system', 'Messana Radiant System')
 
         # Just sit and wait for events

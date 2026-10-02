@@ -19,7 +19,7 @@ except ImportError:
 class udi_messana_zone(udi_interface.Node):
     from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
 
-    id = 'zone'
+    id = 'ZONE'
 
     '''
        drivers = [
@@ -39,11 +39,11 @@ class udi_messana_zone(udi_interface.Node):
             ]
     '''
     drivers = [
+        {'driver': 'ST', 'value': 99, 'uom': 25},
         {'driver': 'GV0', 'value': 99, 'uom': 25},
         {'driver': 'GV1', 'value': 99, 'uom': 25},
-        #{'driver': 'GV2', 'value': 99, 'uom': 25},
+        {'driver': 'GV2', 'value': 1, 'uom': 25},
         {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
         {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
         {'driver': 'DEWPT', 'value': 99, 'uom': 25},
         {'driver': 'GV6', 'value': 99, 'uom': 25},
@@ -51,7 +51,7 @@ class udi_messana_zone(udi_interface.Node):
         {'driver': 'GV8', 'value': 99, 'uom': 25},
         {'driver': 'GV9', 'value': 99, 'uom': 25},
         {'driver': 'GV10', 'value': 99, 'uom': 25},
-        {'driver': 'ST', 'value': 0, 'uom': 25},
+        {'driver': 'TIME', 'value': 0, 'uom': 151},
         ]
 
     def __init__(self, polyglot, primary, address, name, zone_nbr, messana_info):
@@ -72,13 +72,13 @@ class udi_messana_zone(udi_interface.Node):
         
         logging.debug('setup node: {} {} {} {}'.format(self.address, name, self.id, self.primary))
         self.poly.ready()
-        self.poly.addNode(self, conn_status='ST')
+        self.poly.addNode(self, conn_status='GV2')
         self.wait_for_node_done()
 
         logging.debug('Drivers: {}'.format(self.drivers))
         logging.debug('address: {}'.format(self.address))
         self.node = self.poly.getNode(self.address)
-        self.node.setDriver('ST', 1, True, True)
+        self.node.setDriver('GV2', 1, True, True)
         self.ISY_temp_unit = messana_info['isy_temp_unit']
         self.messana_temp_unit = self.zone.messana_temp_unit
 
@@ -88,6 +88,7 @@ class udi_messana_zone(udi_interface.Node):
 
     def stop(self):
         logging.info('udiMessanaZone Stop ')
+        self.node.setDriver('GV2', 0, True, True)
 
     def updateISY_shortpoll(self):
         Val = self.zone.get_status()
@@ -95,9 +96,8 @@ class udi_messana_zone(udi_interface.Node):
         self.node.setDriver('GV0', self.isy_value(Val))
 
         Val = self.zone.get_air_temp()
-        logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+        logging.debug('get_air_temp(ST): {}'.format(Val))
+        self.send_temp_to_isy(Val, 'ST')
 
         Val = self.zone.get_humidity()
         logging.debug('Humidity(CLIHUM): {}'.format(Val))
@@ -119,7 +119,8 @@ class udi_messana_zone(udi_interface.Node):
         logging.debug('get_get_alarmOn(GV9): {}'.format(Val))
         self.node.setDriver('GV9', self.isy_value(Val), True, True)
 
-
+        self.node.setDriver('GV2', 1)
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
     def updateISY_longpoll(self):
         logging.debug('update_system - zone {} Status:'.format(self.zone_nbr))
@@ -142,9 +143,8 @@ class udi_messana_zone(udi_interface.Node):
         #self.node.setDriver('GV3', self.isy_value(Val))
 
         Val = self.zone.get_air_temp()
-        logging.debug('get_air_temp(CLITEMP): {}'.format(Val))
-        #self.node.setDriver('GV4', self.isy_value(Val), True, True)
-        self.send_temp_to_isy(Val, 'CLITEMP')
+        logging.debug('get_air_temp(ST): {}'.format(Val))
+        self.send_temp_to_isy(Val, 'ST')
 
         Val = self.zone.get_humidity()
         logging.debug('get_humidity(CLIHUM)): {}'.format(Val))
@@ -181,6 +181,8 @@ class udi_messana_zone(udi_interface.Node):
         logging.debug('System Temp (GV10): {}'.format(Val))
         #self.node.setDriver('GV10', self.isy_value(Val), True, True)
         self.send_temp_to_isy(Val, 'GV10')
+        self.node.setDriver('GV2', 1)
+        self.node.setDriver('TIME', int(time.time()), True, True, 151)
 
     def set_status(self, command):
         status = int(command.get('value'))
