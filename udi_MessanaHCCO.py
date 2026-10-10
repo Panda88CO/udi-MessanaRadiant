@@ -78,7 +78,7 @@ class udi_messana_hc_co(udi_interface.Node):
 
     def updateISY_shortpoll(self):
         updated = False
-        Val = self.hc_co.get_status()
+        Val = self.hc_co.get_adaptive_comf_status()
         logging.debug('hc_co adaptiveComfort Status (GV0): {}'.format(Val))
         if Val is not None:
             self.node.setDriver('GV0', self.isy_value(Val))
@@ -131,13 +131,13 @@ class udi_messana_hc_co(udi_interface.Node):
             logging.error('HCCO {}: No value provided to set_adaptive_comf in command: {}'.format(self.hc_co_nbr, command))
             return
         status = int(float(val))
-        logging.debug('HCCO {}: calling set_status({})'.format(self.hc_co_nbr, status))
-        temp = self.hc_co.set_status(status)
-        logging.info('HCCO {}: set_status result: {}'.format(self.hc_co_nbr, temp))
+        logging.debug('HCCO {}: calling set_adaptive_comf_status({})'.format(self.hc_co_nbr, status))
+        temp = self.hc_co.set_adaptive_comf_status(status)
+        logging.info('HCCO {}: set_adaptive_comf_status result: {}'.format(self.hc_co_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV0', temp)
         else:
-            logging.error('HCCO {}: Error calling setStatus'.format(self.hc_co_nbr))
+            logging.error('HCCO {}: Error calling set_adaptive_comf_status'.format(self.hc_co_nbr))
 
     def set_hc_co_mode(self, command):
         logging.info('HCCO {}: set_hc_co_mode called with command: {}'.format(self.hc_co_nbr, command))

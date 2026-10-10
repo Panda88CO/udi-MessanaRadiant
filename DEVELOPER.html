@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>udi-MessanaRadiant — Developer & Architecture Guide</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #243247;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0ea5e9;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --code-bg: #090d16;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 0 1rem 3rem 1rem;
+    }
+    header {
+      max-width: 1100px;
+      margin: 2rem auto 2.5rem auto;
+      padding: 2rem;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    header h1 { font-size: 2.2rem; color: #fff; margin-bottom: 0.5rem; }
+    header p { color: var(--text-muted); font-size: 1.1rem; }
+    .badge-container { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .badge {
+      display: inline-block;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+    .badge.green { color: var(--success); border-color: rgba(34, 197, 94, 0.4); }
+    main { max-width: 1100px; margin: 0 auto; display: grid; gap: 2rem; }
+    section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    h2 {
+      font-size: 1.5rem;
+      color: var(--accent);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    h3 { font-size: 1.15rem; color: #fff; margin: 1.25rem 0 0.5rem 0; }
+    p, ul, ol { color: #cbd5e1; margin-bottom: 1rem; }
+    ul, ol { padding-left: 1.5rem; }
+    li { margin-bottom: 0.4rem; }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: var(--code-bg);
+      color: #38bdf8;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.9em;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0 1.5rem 0;
+    }
+    pre code { background: none; padding: 0; border: none; color: #e2e8f0; font-size: 0.9rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      text-align: left;
+    }
+    th { background: var(--bg-card); color: #fff; font-weight: 600; }
+    tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+    .note {
+      background: rgba(56, 189, 248, 0.1);
+      border-left: 4px solid var(--accent);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0 1.5rem 0;
+      color: #cbd5e1;
+    }
+    .warning {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--warning);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0 1.5rem 0;
+      color: #fde68a;
+    }
+    footer {
+      max-width: 1100px;
+      margin: 3rem auto 0 auto;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>udi-MessanaRadiant Developer Guide</h1>
+    <p>Architecture, API Integration, Testing Suite & Maintenance Reference</p>
+    <div class="badge-container">
+      <span class="badge">Version 0.3.1</span>
+      <span class="badge green">59 Automated Tests Passing</span>
+      <span class="badge">Python 3.9+</span>
+      <span class="badge">Polyglot v3 / PG3x</span>
+      <span class="badge">Messana REST API v0.9.1</span>
+    </div>
+    <div style="margin-top: 1.25rem; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <a href="README.md" style="display: inline-block; padding: 0.4rem 0.9rem; background: var(--accent); color: #0f172a; font-weight: 600; text-decoration: none; border-radius: 6px; font-size: 0.9rem;">&larr; User Guide (README.md)</a>
+      <a href="POLYGLOT_CONFIG.md" style="display: inline-block; padding: 0.4rem 0.9rem; background: var(--bg-card); color: var(--accent); border: 1px solid var(--border); font-weight: 600; text-decoration: none; border-radius: 6px; font-size: 0.9rem;">PG3 Configuration Guide</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- SECTION 1: ARCHITECTURE OVERVIEW -->
+    <section id="architecture">
+      <h2>1. Architecture & Codebase Structure</h2>
+      <p>
+        The <code>udi-MessanaRadiant</code> node server is built on the Universal Devices Polyglot v3 (<code>udi_interface</code>) framework. It acts as an asynchronous bridge between the Universal Devices IoX event bus (eisy / Polisy) and the local Messana MCU (mBox) HTTP REST API.
+      </p>
+      
+      <pre><code>udi-MessanaRadiant/
+├── server.json                 # PG3 node server metadata, executables, and profile version
+├── version.py                  # Single source of truth for release version (__version__)
+├── version.txt                 # Synchronized version string
+├── install.sh                  # PG3 installation script for python dependencies
+├── requirements.txt            # Python dependencies (requests, udi_interface)
+├── profile_def.py              # Dynamic JSON profile engine (swaps TEMPC/TEMPF profiles)
+├── profile/                    # Static XML profile fallback
+│   ├── version.txt             # Synchronized profile version string
+│   ├── editor/editors.xml      # Static XML editors (TEMPC, TEMPF, VOC, TIMESTAMP, etc.)
+│   ├── nodedef/nodedefs.xml    # Static XML NodeDefs (SYSTEM, ZONE, ATU, etc.)
+│   └── nls/en_us.txt           # Natural Language Strings (translations & labels)
+├── profile.zip                 # Packaged static profile archive for Polyglot
+├── udi_MessanaController.py    # Main system node (orchestrator, discovery, and poll loops)
+├── udi_MessanaZone.py          # Zone node (temperatures, setpoints, air quality, VOC, CO2)
+├── udi_MessanaMacrozone.py     # Macrozone node (aggregated zone group)
+├── udi_MessanaATU.py           # Air Treatment Unit node (ventilation, HRV, humidity)
+├── udi_MessanaBuffertank.py    # Buffer Tank node (thermal storage tanks)
+├── udi_MessanaHCCO.py          # Heat/Cool Changeover node (adaptive comfort & seasons)
+├── udi_MessanaFancoil.py       # Fan Coil Unit node (auxiliary fan speeds & status)
+├── udi_MessanaEnergySource.py  # Energy Source node (boilers, heat pumps)
+├── udi_MessanaHotWater.py      # Domestic Hot Water node (DHW temperatures)
+├── Messana_Info.py             # Base HTTP client with connection management and retry guards
+├── Messana_Node.py             # Subsystem API bindings (data serialization/deserialization)
+├── Messana_System.py           # System-level API bindings (counts, alarms, setback, energy)
+├── udiLib.py                   # Shared utilities, command parsers, and temperature converters
+├── run_tests.py                # Standalone test runner (runs unittest discover)
+└── tests/                      # Automated test suite (59 unit tests)
+    ├── mock_helper.py          # Polyglot interface & HTTP mocks
+    ├── test_profile.py         # Profile schema, XML consistency & ID validators
+    ├── test_udilib.py          # Unit conversion & command payload parsing tests
+    ├── test_messana_api.py     # HTTP transport, NaN filtering & API client tests
+    └── test_nodes.py           # Node polling state transitions & command handler tests</code></pre>
+    </section>
+
+    <!-- SECTION 2: MESSANA API INTEGRATION -->
+    <section id="api-integration">
+      <h2>2. Messana REST API Integration (v0.9.1)</h2>
+      <p>
+        The node server communicates with the local Messana Control Unit (mBox) via HTTP GET and PUT requests using an API Key. All requests include the <code>apikey</code> query parameter.
+      </p>
+
+      <h3>Transport Layer (Messana_Info.py)</h3>
+      <ul>
+        <li><strong>Socket Timeouts:</strong> All <code>requests.get</code> and <code>requests.put</code> calls enforce a 10-second timeout (<code>self.timeout = 10</code>) to prevent hung poll threads if the controller reboots or drops connections.</li>
+        <li><strong>Response Verification:</strong> Status codes are checked using <code>resp.status_code == 200</code> alongside representation checks.</li>
+        <li><strong>Robust JSON Property Extraction:</strong> The <code>_extract_value()</code> helper handles both single-key and multi-key API responses. For multi-key endpoints such as <code>/api/zone/airQuality</code> (which returns <code>{"category": "Good", "value": 564, "voc": 24}</code>), it prioritizes the numeric <code>value</code> property.</li>
+        <li><strong>NaN Filtering:</strong> Sentinel values returned during sensor faults or communication loss (<code>-32768</code> and <code>-3276.8</code>) are filtered to <code>None</code> to prevent erroneous readings.</li>
+      </ul>
+
+      <h3>Key Endpoints Summary</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Subsystem</th>
+            <th>Endpoint Route</th>
+            <th>Methods</th>
+            <th>Notes & Key Parameters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>System</td>
+            <td><code>/api/system/energySaving</code></td>
+            <td>GET, PUT</td>
+            <td>0 = Off, 1 = On (Applies across all zones when turned on)</td>
+          </tr>
+          <tr>
+            <td>System</td>
+            <td><code>/api/system/setback</code>, <code>/setbackDiff</code></td>
+            <td>GET, PUT</td>
+            <td>Setback state and differential offset value</td>
+          </tr>
+          <tr>
+            <td>System</td>
+            <td><code>/api/system/macrozoneCount</code></td>
+            <td>GET</td>
+            <td>Count of defined macrozones (lowercase 'z')</td>
+          </tr>
+          <tr>
+            <td>Zones</td>
+            <td><code>/api/zone/setpoint/{id}</code></td>
+            <td>GET, PUT</td>
+            <td>Operative temperature setpoint (Messana unit: °C or °F)</td>
+          </tr>
+          <tr>
+            <td>Zones</td>
+            <td><code>/api/zone/voc/{id}</code></td>
+            <td>GET</td>
+            <td>Gas concentration in ppb (UOM 96)</td>
+          </tr>
+          <tr>
+            <td>Zones</td>
+            <td><code>/api/zone/airQuality/{id}</code></td>
+            <td>GET</td>
+            <td>Air quality category and numeric index</td>
+          </tr>
+          <tr>
+            <td>ATU</td>
+            <td><code>/api/atu/hrvOn</code>, <code>humOn</code>, <code>ntdOn</code>, <code>intOn</code></td>
+            <td>GET, PUT</td>
+            <td>camelCase toggle endpoints for ventilation, humidity, integration</td>
+          </tr>
+          <tr>
+            <td>HCCO</td>
+            <td><code>/api/hc/adaptiveComfort</code>, <code>/mode</code></td>
+            <td>GET, PUT</td>
+            <td>Adaptive comfort status and Heating/Cooling/Auto mode</td>
+          </tr>
+          <tr>
+            <td>Buffer Tank</td>
+            <td><code>/api/bufferTank/mode</code>, <code>/tempMode</code></td>
+            <td>GET, PUT</td>
+            <td>camelCase node type in route (<code>/api/bufferTank/...</code>)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 3: POLYGLOT V3 ARCHITECTURE -->
+    <section id="polyglot-architecture">
+      <h2>3. Polyglot v3 & IoX Node Architecture</h2>
+      <p>
+        Every discovered Messana device is instantiated as a subclass of <code>udi_interface.Node</code>.
+      </p>
+
+      <h3>Polled Cycles & Guarded Timestamps</h3>
+      <ul>
+        <li><strong>shortPoll (Default: 120s):</strong> High-priority poll for room temperatures, live status, and alarm flags. Toggles heartbeat.</li>
+        <li><strong>longPoll (Default: 600s):</strong> Deep refresh of environmental sensors (VOC, CO2, air quality), setpoints, and auxiliary states.</li>
+        <li><strong>Guarded TIME Driver (UOM 151):</strong> The <code>TIME</code> driver only updates when fresh, valid data is successfully received from the Messana API. On network dropouts or API failures, <code>TIME</code> remains frozen and the running state (<code>ST</code> or <code>GV2</code>) drops to <code>0</code> (Down).</li>
+      </ul>
+
+      <h3>Dynamic Profile Generator (profile_def.py)</h3>
+      <p>
+        The node server generates dynamic JSON profiles transmitted to IoX at startup. Depending on the <code>TEMP_UNIT</code> configuration parameter:
+      </p>
+      <ul>
+        <li><code>TEMP_UNIT = C</code>: Assigns <code>TEMPC</code> (prec 1, range 5–40°C), <code>SETTEMPC</code>, and <code>TEMPOFFSETC</code>.</li>
+        <li><code>TEMP_UNIT = F</code>: Assigns <code>TEMPF</code> (prec 1, range 40–104°F), <code>SETTEMPF</code>, and <code>TEMPOFFSETF</code>.</li>
+        <li><strong>UDI Profile Standard Compliance:</strong> All editor IDs, nodeDef IDs, property IDs, and command IDs strictly match <code>^[A-Z0-9]+$</code> with no underscores.</li>
+      </ul>
+
+      <h3>Unit Conversion & Parameter Normalization (udiLib.py)</h3>
+      <div class="note">
+        When IoX operates in Fahrenheit while the Messana system operates in Celsius, <code>udiLib.py</code> automatically handles bidirectional conversion:
+        <ul>
+          <li><code>convert_temp_to_messana(val)</code>: Converts setpoints from °F to °C before issuing API calls.</li>
+          <li><code>convert_rel_temp_to_messana(diff)</code>: Converts differential offsets (e.g. setback offset) without adding the 32°F zero-point bias: <code>delta_C = delta_F * (5 / 9)</code>.</li>
+          <li><code>get_command_value(*args)</code>: Safely extracts parameter values across flat values, float strings (e.g. <code>"21.5"</code>, <code>"70.0"</code>), and IoX nested query dictionaries (<code>command['query']</code>).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TESTING SUITE -->
+    <section id="testing">
+      <h2>4. Automated Test Suite</h2>
+      <p>
+        The test suite contains <strong>59 automated unit tests</strong> with zero external hardware or network dependencies.
+      </p>
+
+      <h3>Running the Tests</h3>
+      <pre><code># Run using the standalone runner:
+python3 run_tests.py
+
+# Or run using Python standard unittest:
+python3 -m unittest discover tests</code></pre>
+
+      <h3>Test Coverage Matrix</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Test File</th>
+            <th>Coverage Focus</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>tests/test_profile.py</code></td>
+            <td>Dynamic profile generation (C/F), XML validity, uppercase ID naming conventions, version consistency across files.</td>
+          </tr>
+          <tr>
+            <td><code>tests/test_udilib.py</code></td>
+            <td>Absolute and relative temperature conversions, UOM conversions, robust command payload extraction.</td>
+          </tr>
+          <tr>
+            <td><code>tests/test_messana_api.py</code></td>
+            <td>HTTP transport mock tests, socket timeouts, NaN conversion, multi-key JSON parsing, subsystem alarm guards.</td>
+          </tr>
+          <tr>
+            <td><code>tests/test_nodes.py</code></td>
+            <td>Node state transitions (ST/GV2), guarded TIME timestamps, command handlers for zones, macrozones, ATU, HCCO, and fan coils.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SECTION 5: VERSIONING WORKFLOW -->
+    <section id="versioning">
+      <h2>5. Versioning & Packaging Workflow</h2>
+      <p>
+        The node server uses unified semantic versioning. The version must remain synchronized across four locations:
+      </p>
+      <ol>
+        <li><code>version.py</code>: <code>__version__ = "X.Y.Z"</code> (single source of truth for runtime)</li>
+        <li><code>version.txt</code>: Plain text version string</li>
+        <li><code>profile/version.txt</code>: Profile version string</li>
+        <li><code>server.json</code>: <code>"profile_version"</code> and <code>"version"</code> in credits</li>
+        <li><code>profile.zip</code>: Archive of the <code>profile/</code> folder containing the updated <code>version.txt</code></li>
+      </ol>
+      <p>
+        The consistency test in <code>tests/test_profile.py</code> will fail if any of these files are out of sync.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>udi-MessanaRadiant &copy; Panda88CO &bull; Licensed under the MIT License</p>
+  </footer>
+
+</body>
+</html>

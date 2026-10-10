@@ -36,7 +36,8 @@ class TestMessanaControl(unittest.TestCase):
         result = self.control.GET_system_data("tempUnit")
         self.assertEqual(result, "Celsius")
         mock_get.assert_called_once_with(
-            f"http://{self.ip}/api/system/tempUnit?apikey={self.api_key}"
+            f"http://{self.ip}/api/system/tempUnit?apikey={self.api_key}",
+            timeout=10,
         )
 
     @patch("requests.get")
@@ -74,6 +75,7 @@ class TestMessanaControl(unittest.TestCase):
         mock_put.assert_called_once_with(
             f"http://{self.ip}/api/system/status?apikey={self.api_key}",
             json={"value": 1},
+            timeout=10,
         )
 
     @patch("requests.put")
@@ -93,8 +95,19 @@ class TestMessanaControl(unittest.TestCase):
         result = self.control.GET_node_data("airTemperature", "zone", 1)
         self.assertEqual(result, 22.5)
         mock_get.assert_called_once_with(
-            f"http://{self.ip}/api/zone/airTemperature/1?apikey={self.api_key}"
+            f"http://{self.ip}/api/zone/airTemperature/1?apikey={self.api_key}",
+            timeout=10,
         )
+
+    @patch("requests.get")
+    def test_get_node_data_multi_key_air_quality(self, mock_get):
+        """Test GET_node_data prioritizes numeric value in multi-key dicts like airQuality."""
+        mock_get.return_value = create_mock_response(
+            status_code=200,
+            json_data={"category": "Good", "value": 564, "voc": 24},
+        )
+        result = self.control.GET_node_data("airQuality", "zone", 1)
+        self.assertEqual(result, 564)
 
     @patch("requests.get")
     def test_get_node_data_unsupported_or_nan(self, mock_get):
@@ -192,6 +205,14 @@ class TestMessanaNode(unittest.TestCase):
         self.assertEqual(self.node.get_alarmOn(), 1)
 
     @patch.object(messana_control, "GET_node_data")
+    def test_get_alarm_on_non_zone_no_alarms_call(self, mock_get_node):
+        """Test get_alarmOn for bufferTank does not query non-existent alarms endpoint."""
+        self.node.type = "bufferTank"
+        mock_get_node.return_value = 1
+        self.assertEqual(self.node.get_alarmOn(), 1)
+        mock_get_node.assert_called_once_with("alarmOn", "bufferTank", 1)
+
+    @patch.object(messana_control, "GET_node_data")
     def test_get_convection_status(self, mock_get_node):
         """Test get_convection_status queries integrationStatus endpoint."""
         mock_get_node.return_value = 1
@@ -214,6 +235,7 @@ class TestMessanaSystem(unittest.TestCase):
             "energySourceCount": 1,
             "fancoilCount": 2,
             "HCgroupCount": 1,
+            "macrozoneCount": 1,
             "macroZoneCount": 1,
             "dhwCount": 1,
             "name": "Main System",
@@ -227,6 +249,7 @@ class TestMessanaSystem(unittest.TestCase):
         self.assertEqual(sys_obj.temp_unit, "Celsius")
         self.assertEqual(sys_obj.nbr_zones, 4)
         self.assertEqual(sys_obj.nbr_atus, 1)
+        self.assertEqual(sys_obj.nbr_macrozones, 1)
         self.assertEqual(sys_obj.name, "Main System")
 
 

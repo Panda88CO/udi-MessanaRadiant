@@ -25,7 +25,7 @@ from Messana_Node import messana_node
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messana_energy_source(messana_node):
     def __init__(self, energySource_nbr, messana_info):
-        super().__init__(messana_info, 'fcu', energySource_nbr)
+        super().__init__(messana_info, 'energySource', energySource_nbr)
         logging.info('init energySource:' )
         self.type = 'energySource'
         self.nbr = energySource_nbr

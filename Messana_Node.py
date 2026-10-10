@@ -168,12 +168,13 @@ class messana_node(messana_control):
         alarm = self.__get_node_data('alarmOn')
         logging.debug('get_alarmOn: {}'.format(alarm))
 
-        if alarm != 0:
+        if alarm and alarm != 0 and self.type in ('zone', 'fcu'):
             alarm_code = self.__get_node_data('alarms')
-            logging.debug('alarmc codes: {}'.format(alarm_code))
-            logging.info('Alarm set : {}'.format(alarm_code))
-            if len(alarm_code) == 0:
-                alarm = 0
+            logging.debug('alarm codes: {}'.format(alarm_code))
+            if alarm_code is not None:
+                logging.info('Alarm set : {}'.format(alarm_code))
+                if len(alarm_code) == 0:
+                    alarm = 0
         return(alarm)
 
 
@@ -183,7 +184,7 @@ class messana_node(messana_control):
         return(self.__get_node_data('antifreezeSP'))
 
     def set_antifreeze_setpoint(self, af_sp):
-        logging.debug('{} {} set_scheduleOn {}'.format(self.type, self.nbr, af_sp ))
+        logging.debug('{} {} set_antifreeze_setpoint {}'.format(self.type, self.nbr, af_sp ))
         if self.__put_node_data('antifreezeSP', af_sp):
             time.sleep(0.5)
         return(self.get_antifreeze_setpoint())
@@ -204,12 +205,12 @@ class messana_node(messana_control):
         return(self.__get_node_data('hrvStatus'))
     
     def get_activate_HRV(self):
-        logging.debug('{} {} - get_HRVstatus'.format(self.type, self.nbr))
-        return(self.__get_node_data('hrvON'))
+        logging.debug('{} {} - get_activate_HRV'.format(self.type, self.nbr))
+        return(self.__get_node_data('hrvOn'))
 
     def set_activate_HRV(self, hrv_en):
         logging.debug('{} {} - set_activate_HRV {} '.format(self.type, self.nbr, hrv_en))
-        if self.__put_node_data('hrvON', hrv_en):
+        if self.__put_node_data('hrvOn', hrv_en):
             time.sleep(0.5)
         return(self.get_activate_HRV())
 
@@ -220,11 +221,11 @@ class messana_node(messana_control):
     
     def get_humidification_enable(self):
         logging.debug('{} {} - get_humidification_enable'.format(self.type, self.nbr))
-        return(self.__get_node_data('humON'))
+        return(self.__get_node_data('humOn'))
 
     def set_humidification_enable(self, hum_en):
         logging.debug('{} {} - set_humidification_enable {} '.format(self.type, self.nbr, hum_en))
-        if self.__put_node_data('humON', hum_en):
+        if self.__put_node_data('humOn', hum_en):
             time.sleep(0.5)
         return(self.get_humidification_enable())
 
@@ -234,11 +235,11 @@ class messana_node(messana_control):
     
     def get_dehumidification_enable(self):
         logging.debug('{} {} - get_dehumidification_enable'.format(self.type, self.nbr))
-        return(self.__get_node_data('ntdON'))
+        return(self.__get_node_data('ntdOn'))
 
     def set_dehumidification_enable(self, dehum_en):
         logging.debug('{} {} - set_dehumidification_enable {} '.format(self.type, self.nbr, dehum_en))
-        if self.__put_node_data('ntdON', dehum_en):
+        if self.__put_node_data('ntdOn', dehum_en):
             time.sleep(0.5)
         return(self.get_dehumidification_enable())
     
@@ -250,11 +251,11 @@ class messana_node(messana_control):
 
     def get_convection_enable(self):
         logging.debug('{} {} - get_convection_enable'.format(self.type, self.nbr))
-        return(self.__get_node_data('intON'))
+        return(self.__get_node_data('intOn'))
 
     def set_convection_enable(self, conv_en):
         logging.debug('{} {} - set_convection_enable {} '.format(self.type, self.nbr, conv_en))
-        if self.__put_node_data('intON', conv_en):
+        if self.__put_node_data('intOn', conv_en):
             time.sleep(0.5)
         return(self.get_convection_enable())
 

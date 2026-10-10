@@ -435,10 +435,10 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         with patch("udi_MessanaHCCO.messana_hc_co", return_value=mock_hc):
             node = udi_messana_hc_co(self.poly, "controller", "hc1", "HC 1", 0, self.info)
 
-        mock_hc.set_status.return_value = 1
+        mock_hc.set_adaptive_comf_status.return_value = 1
         node.set_adaptive_comf({"value": "1"})
         self.assertEqual(node.node.getDriver("GV0"), 1)
-        mock_hc.set_status.assert_called_with(1)
+        mock_hc.set_adaptive_comf_status.assert_called_with(1)
 
         mock_hc.set_hc_co_mode.return_value = 2
         node.set_hc_co_mode({"value": 2})

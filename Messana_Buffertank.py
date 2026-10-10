@@ -25,7 +25,7 @@ from Messana_Node import messana_node
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class messana_buffertank(messana_node):
     def __init__(self, buffertank_nbr, messana_info):
-        super().__init__(messana_info, 'buffertank', buffertank_nbr)
+        super().__init__(messana_info, 'bufferTank', buffertank_nbr)
         logging.info('init bufferTank:' )
         self.type = 'bufferTank'
         self.nbr = buffertank_nbr

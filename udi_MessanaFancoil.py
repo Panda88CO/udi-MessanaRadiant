@@ -88,13 +88,13 @@ class udi_messana_fancoil(udi_interface.Node):
             self.node.setDriver('GV0', self.isy_value(Val))
             updated = True
 
-        Val = self.fancoil.get_cool_speed() if hasattr(self.fancoil, 'get_cool_speed') else self.fancoil.get_fancoil_cool_speed()
+        Val = self.fancoil.get_fancoil_cool_speed()
         logging.debug('Fancoil get_fancoil_cool_speed(GV1): {}'.format(Val))
         if Val is not None:
             self.node.setDriver('GV1', self.isy_value(Val))
             updated = True
 
-        Val = self.fancoil.get_heat_speed() if hasattr(self.fancoil, 'get_heat_speed') else self.fancoil.get_fancoil_heat_speed()
+        Val = self.fancoil.get_fancoil_heat_speed()
         logging.debug('Fancoil get_fancoil_heat_speed(GV2): {}'.format(Val))
         if Val is not None:
             self.node.setDriver('GV2', self.isy_value(Val))
