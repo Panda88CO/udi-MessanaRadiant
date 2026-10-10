@@ -176,6 +176,31 @@ class TestZoneNode(unittest.TestCase):
         self.zone_node.set_setpoint({"value": 21.5})
         self.assertEqual(self.zone_node.node.getDriver("GV3"), 21.5)
 
+        # Decimal string format as sent from web UI
+        self.mock_zone_api.set_setpoint.return_value = 22.0
+        self.zone_node.set_setpoint({"value": "22.0"})
+        self.assertEqual(self.zone_node.node.getDriver("GV3"), 22.0)
+        self.mock_zone_api.set_setpoint.assert_called_with(22.0)
+
+        # IoX query dictionary convention
+        self.mock_zone_api.set_setpoint.return_value = 23.0
+        self.zone_node.set_setpoint({"query": {"": "23.0"}})
+        self.assertEqual(self.zone_node.node.getDriver("GV3"), 23.0)
+
+        # Fahrenheit input with Celsius Messana
+        self.zone_node.ISY_temp_unit = 1  # TEMP_F
+        self.mock_zone_api.set_setpoint.return_value = 21.0
+        self.zone_node.set_setpoint({"value": "70"})
+        # 70 F converts to 21.1 -> rounded to 21.0 C for Messana
+        self.mock_zone_api.set_setpoint.assert_called_with(21.0)
+        # 21.0 C reported back to ISY in F is 69.8 F
+        self.assertEqual(self.zone_node.node.getDriver("GV3"), 69.8)
+
+        # Empty / None payloads safely ignored
+        self.zone_node.set_setpoint({})
+        self.zone_node.set_status({})
+        self.zone_node.set_energy_save({})
+
 
 class TestMacrozoneNode(unittest.TestCase):
     """Test suite for udi_messana_macrozone."""
@@ -402,6 +427,51 @@ class TestOtherSubsystemNodes(unittest.TestCase):
         node.updateISY_shortpoll()
         self.assertEqual(node.node.getDriver("ST"), 0)
         self.assertEqual(node.node.getDriver("TIME"), 66666)
+
+    def test_hcco_command_handlers(self):
+        """HCCO commands: STATUS, MODE, UPDATE."""
+        mock_hc = MagicMock()
+        mock_hc.get_name.return_value = "HC 1"
+        with patch("udi_MessanaHCCO.messana_hc_co", return_value=mock_hc):
+            node = udi_messana_hc_co(self.poly, "controller", "hc1", "HC 1", 0, self.info)
+
+        mock_hc.set_status.return_value = 1
+        node.set_adaptive_comf({"value": "1"})
+        self.assertEqual(node.node.getDriver("GV0"), 1)
+        mock_hc.set_status.assert_called_with(1)
+
+        mock_hc.set_hc_co_mode.return_value = 2
+        node.set_hc_co_mode({"value": 2})
+        self.assertEqual(node.node.getDriver("GV1"), 2)
+        mock_hc.set_hc_co_mode.assert_called_with(2)
+
+        # Empty payloads safely handled
+        node.set_adaptive_comf({})
+        node.set_hc_co_mode({})
+
+    def test_fancoil_command_handlers(self):
+        """Fan Coil commands: STATUS, HEATSPEED, COOLSPEED, UPDATE."""
+        mock_fc = MagicMock()
+        mock_fc.get_name.return_value = "FC 1"
+        with patch("udi_MessanaFancoil.messana_fancoil", return_value=mock_fc):
+            node = udi_messana_fancoil(self.poly, "controller", "fc1", "FC 1", 0, self.info)
+
+        mock_fc.set_status.return_value = 1
+        node.set_status({"value": "1"})
+        self.assertEqual(node.node.getDriver("GV0"), 1)
+
+        mock_fc.set_fancoil_heat_speed.return_value = 2
+        node.set_heat_speed({"value": 2})
+        self.assertEqual(node.node.getDriver("GV2"), 2)
+
+        mock_fc.set_fancoil_cool_speed.return_value = 3
+        node.set_cool_speed({"value": "3"})
+        self.assertEqual(node.node.getDriver("GV1"), 3)
+
+        # Empty payloads safely handled
+        node.set_status({})
+        node.set_heat_speed({})
+        node.set_cool_speed({})
 
 
 class TestControllerNode(unittest.TestCase):

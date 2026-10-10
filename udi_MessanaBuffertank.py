@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_buffertank(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value
 
     id = 'BUFFERTANK'
 
@@ -150,34 +150,52 @@ class udi_messana_buffertank(udi_interface.Node):
 
 
     def set_status(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called {} for zone: {}'.format(status, self.buffertank_nbr))
+        logging.info('BT {}: set_status called with command: {}'.format(self.buffertank_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('BT {}: No value provided to setStatus in command: {}'.format(self.buffertank_nbr, command))
+            return
+        status = int(float(val))
+        logging.debug('BT {}: calling set_status({})'.format(self.buffertank_nbr, status))
         temp = self.buffertank.set_status(status)
+        logging.info('BT {}: set_status result: {}'.format(self.buffertank_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV0', temp)
         else:
-            logging.error('Error calling setStatus')
+            logging.error('BT {}: Error calling setStatus'.format(self.buffertank_nbr))
 
     def set_buffertank_mode(self, command):
-        mode = int(command.get('value'))
-        logging.debug('set_buffertank_mode Called {} for BT {}'.format(mode, self.buffertank_nbr))
+        logging.info('BT {}: set_buffertank_mode called with command: {}'.format(self.buffertank_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('BT {}: No value provided to set_buffertank_mode in command: {}'.format(self.buffertank_nbr, command))
+            return
+        mode = int(float(val))
+        logging.debug('BT {}: calling set_buffertank_mode({})'.format(self.buffertank_nbr, mode))
         temp = self.buffertank.set_buffertank_mode(mode)
+        logging.info('BT {}: set_buffertank_mode result: {}'.format(self.buffertank_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV1', temp)
         else:
-            logging.error('Error calling set_energy_save')
+            logging.error('BT {}: Error calling set_buffertank_mode'.format(self.buffertank_nbr))
         
     def set_buffertank_temp_mode(self, command):
-        mode = int(command.get('value'))
-        logging.debug('set_buffertank_temp_mode {} for BT {}'.format(mode, self.buffertank_nbr))   
+        logging.info('BT {}: set_buffertank_temp_mode called with command: {}'.format(self.buffertank_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('BT {}: No value provided to set_buffertank_temp_mode in command: {}'.format(self.buffertank_nbr, command))
+            return
+        mode = int(float(val))
+        logging.debug('BT {}: calling set_buffertank_temp_mode({})'.format(self.buffertank_nbr, mode))   
         temp = self.buffertank.set_buffertank_temp_mode(mode)
+        logging.info('BT {}: set_buffertank_temp_mode result: {}'.format(self.buffertank_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV2', temp)
         else:
-            logging.error('Error calling set_setpoint')
+            logging.error('BT {}: Error calling set_buffertank_temp_mode'.format(self.buffertank_nbr))
 
     def update(self, command):
-        logging.debug('update')
+        logging.info('BT {}: update called with command: {}'.format(self.buffertank_nbr, command))
         self.updateISY_longpoll()
 
     

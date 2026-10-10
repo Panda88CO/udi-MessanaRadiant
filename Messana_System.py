@@ -63,7 +63,7 @@ class messana_system(messana_control):
         return(self.GET_system_data('energySaving'))
 
     def set_energy_saving(self, status):
-        return(self.PUT_system_data('status', status))
+        return(self.PUT_system_data('energySaving', status))
 
     def get_setback(self):
         return(self.GET_system_data('setback'))

@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_macrozone(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana
 
     id = 'MACROZONE'
 
@@ -161,32 +161,55 @@ class udi_messana_macrozone(udi_interface.Node):
 
         
     def set_setpoint(self, command):
-        temp_1 = float(command.get('value'))
-        set_point = round(round(temp_1*2,0)/2,1)
-        logging.debug('set_setpoint {} = {} for macrozone {}'.format(temp_1, set_point, self.macrozone_nbr))   
-        temp = self.macrozone.set_setpoint(set_point)
+        logging.info('Macrozone {}: set_setpoint called with command: {}'.format(self.macrozone_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('Macrozone {}: No value provided to set_setpoint in command: {}'.format(self.macrozone_nbr, command))
+            return
+        try:
+            isy_temp = float(val)
+        except (ValueError, TypeError) as e:
+            logging.error('Macrozone {}: Invalid setpoint value {} in command {}: {}'.format(self.macrozone_nbr, val, command, e))
+            return
+
+        messana_sp = self.convert_temp_to_messana(isy_temp)
+        target_sp = round(round(messana_sp * 2, 0) / 2, 1)
+        logging.info('Macrozone {}: set_setpoint {} (ISY unit: {}, Messana target: {})'.format(
+            self.macrozone_nbr, isy_temp, getattr(self, 'ISY_temp_unit', None), target_sp
+        ))
+        temp = self.macrozone.set_setpoint(target_sp)
+        logging.info('Macrozone {}: set_setpoint Messana returned: {}'.format(self.macrozone_nbr, temp))
         if temp is not None:
-            self.node.setDriver('GV3', temp)
+            self.send_temp_to_isy(temp, 'GV3')
         else:
-            logging.error('Error calling set_setpoint')
+            logging.error('Macrozone {}: Error calling set_setpoint'.format(self.macrozone_nbr))
 
     def set_schedule(self, command):
-        schedule = int(command.get('value'))
-        logging.debug('set_schedule: {}'.format(schedule))
+        logging.info('Macrozone {}: set_schedule called with command: {}'.format(self.macrozone_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            return
+        schedule = int(float(val))
+        logging.debug('Macrozone {}: set_schedule: {}'.format(self.macrozone_nbr, schedule))
 
     def update(self, command):
-        logging.debug('update')
+        logging.info('Macrozone {}: update called with command: {}'.format(self.macrozone_nbr, command))
         self.updateISY_longpoll()
 
     def set_status(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called {} for macrozone: {}'.format(status, self.macrozone_nbr))
+        logging.info('Macrozone {}: set_status called with command: {}'.format(self.macrozone_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('Macrozone {}: No value provided to set_status in command: {}'.format(self.macrozone_nbr, command))
+            return
+        status = int(float(val))
+        logging.debug('Macrozone {}: calling set_status({})'.format(self.macrozone_nbr, status))
         new_status = self.macrozone.set_status(status)
-        logging.debug('new_status {}'.format(new_status))
-        if new_status != None:
+        logging.info('Macrozone {}: set_status result: {}'.format(self.macrozone_nbr, new_status))
+        if new_status is not None:
             self.node.setDriver('GV0', new_status)
         else:
-            logging.error('Error calling setStatus')
+            logging.error('Macrozone {}: Error calling setStatus'.format(self.macrozone_nbr))
 
 
     commands = { 'UPDATE': update

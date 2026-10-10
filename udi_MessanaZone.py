@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_zone(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana
 
     id = 'ZONE'
 
@@ -228,37 +228,61 @@ class udi_messana_zone(udi_interface.Node):
             self.node.setDriver('GV2', 0)
 
     def set_status(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called {} for zone: {}'.format(status, self.zone_nbr))
+        logging.info('Zone {}: set_status called with command: {}'.format(self.zone_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('Zone {}: No value provided to set_status in command: {}'.format(self.zone_nbr, command))
+            return
+        status = int(float(val))
+        logging.debug('Zone {}: calling set_status({})'.format(self.zone_nbr, status))
         new_status = self.zone.set_status(status)
-        logging.debug('new_status {}'.format(new_status))
-        if new_status != None:
+        logging.info('Zone {}: set_status result: {}'.format(self.zone_nbr, new_status))
+        if new_status is not None:
             self.node.setDriver('GV0', new_status)
         else:
-            logging.error('Error calling setStatus')
+            logging.error('Zone {}: Error calling setStatus'.format(self.zone_nbr))
 
     def set_energy_save(self, command):
-        energy_save = int(command.get('value'))
-        logging.debug('setEnergySave Called {} for zone {}'.format(energy_save, self.zone_nbr))
+        logging.info('Zone {}: set_energy_save called with command: {}'.format(self.zone_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('Zone {}: No value provided to set_energy_save in command: {}'.format(self.zone_nbr, command))
+            return
+        energy_save = int(float(val))
+        logging.debug('Zone {}: calling set_energy_saving({})'.format(self.zone_nbr, energy_save))
         new_es = self.zone.set_energy_saving(energy_save)
-        logging.debug('new_es {}'.format(new_es))
-        if new_es != None:
+        logging.info('Zone {}: set_energy_save result: {}'.format(self.zone_nbr, new_es))
+        if new_es is not None:
             self.node.setDriver('GV8', new_es)
         else:
-            logging.error('Error calling set_energy_save')
+            logging.error('Zone {}: Error calling set_energy_save'.format(self.zone_nbr))
         
     def set_setpoint(self, command):
-        set_point = round(round(int(command.get('value'))*2,0)/2,1)
-        logging.debug('set_setpoint {} for zone {}'.format(set_point, self.zone_nbr))
-        new_SP = self.zone.set_setpoint(set_point)
-        logging.debug('new SP: {}'.format(new_SP))
-        if new_SP != None:
-            self.node.setDriver('GV3', new_SP)
+        logging.info('Zone {}: set_setpoint called with command: {}'.format(self.zone_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('Zone {}: No value provided to set_setpoint in command: {}'.format(self.zone_nbr, command))
+            return
+        try:
+            isy_temp = float(val)
+        except (ValueError, TypeError) as e:
+            logging.error('Zone {}: Invalid setpoint value {} in command {}: {}'.format(self.zone_nbr, val, command, e))
+            return
+
+        messana_sp = self.convert_temp_to_messana(isy_temp)
+        target_sp = round(round(messana_sp * 2, 0) / 2, 1)
+        logging.info('Zone {}: set_setpoint {} (ISY unit: {}, Messana target: {})'.format(
+            self.zone_nbr, isy_temp, getattr(self, 'ISY_temp_unit', None), target_sp
+        ))
+        new_SP = self.zone.set_setpoint(target_sp)
+        logging.info('Zone {}: set_setpoint Messana returned: {}'.format(self.zone_nbr, new_SP))
+        if new_SP is not None:
+            self.send_temp_to_isy(new_SP, 'GV3')
         else:
-            logging.error('Error calling set_setpoint')
+            logging.error('Zone {}: Error calling set_setpoint'.format(self.zone_nbr))
 
     def update(self, command):
-        logging.debug('update')
+        logging.info('Zone {}: update called with command: {}'.format(self.zone_nbr, command))
         self.updateISY_longpoll()
 
     

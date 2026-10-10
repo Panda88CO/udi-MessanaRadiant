@@ -16,7 +16,7 @@ except ImportError:
 import time
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_atu(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value
 
     id = 'ATU'
 
@@ -244,65 +244,96 @@ class udi_messana_atu(udi_interface.Node):
 
 
     def set_status(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called {} for atu: {}'.format(status, self.atu_nbr))
-        
+        logging.info('ATU {}: set_status called with command: {}'.format(self.atu_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('ATU {}: No value provided to setStatus in command: {}'.format(self.atu_nbr, command))
+            return
+        status = int(float(val))
+        logging.debug('ATU {}: calling set_status({})'.format(self.atu_nbr, status))
         temp = self.atu.set_status(status)
+        logging.info('ATU {}: set_status result: {}'.format(self.atu_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV0', temp)
         else:
-            logging.error('Error calling setStatus')
+            logging.error('ATU {}: Error calling setStatus'.format(self.atu_nbr))
 
     def heat_recovery_en(self, command):
-        val = int(command.get('value'))
-        logging.debug('heat_recovery_en: {}'.format(val))
-        temp = self.atu.set_activate_HRV(val)
+        logging.info('ATU {}: heat_recovery_en called with command: {}'.format(self.atu_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('ATU {}: No value provided to heat_recovery_en in command: {}'.format(self.atu_nbr, command))
+            return
+        int_val = int(float(val))
+        logging.debug('ATU {}: calling set_activate_HRV({})'.format(self.atu_nbr, int_val))
+        temp = self.atu.set_activate_HRV(int_val)
+        logging.info('ATU {}: set_activate_HRV result: {}'.format(self.atu_nbr, temp))
         if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV2', self.atu.get_HRV_status())
             self.node.setDriver('GV3', temp)
 
     def humidification_en(self, command):
-        val = int(command.get('value'))
-        logging.debug('humidification_en: {}'.format(val))
-        temp = self.atu.set_humidification_enable(val)
+        logging.info('ATU {}: humidification_en called with command: {}'.format(self.atu_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('ATU {}: No value provided to humidification_en in command: {}'.format(self.atu_nbr, command))
+            return
+        int_val = int(float(val))
+        logging.debug('ATU {}: calling set_humidification_enable({})'.format(self.atu_nbr, int_val))
+        temp = self.atu.set_humidification_enable(int_val)
+        logging.info('ATU {}: set_humidification_enable result: {}'.format(self.atu_nbr, temp))
         if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV4', self.atu.get_humidification_status())
             self.node.setDriver('GV5', temp)
 
-
-
     def dehumidification_en(self, command):
-        val = int(command.get('value'))
-        logging.debug('dehumidification_en: {}'.format(val))
-        temp = self.atu.set_dehumidification_enable(val)
+        logging.info('ATU {}: dehumidification_en called with command: {}'.format(self.atu_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('ATU {}: No value provided to dehumidification_en in command: {}'.format(self.atu_nbr, command))
+            return
+        int_val = int(float(val))
+        logging.debug('ATU {}: calling set_dehumidification_enable({})'.format(self.atu_nbr, int_val))
+        temp = self.atu.set_dehumidification_enable(int_val)
+        logging.info('ATU {}: set_dehumidification_enable result: {}'.format(self.atu_nbr, temp))
         if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV6', self.atu.get_dehumidification_status())
             self.node.setDriver('GV7', temp)
 
-
     def convection_en(self, command):
-        val = int(command.get('value'))
-        logging.debug('convection_en: {}'.format(val))
-        temp = self.atu.set_convection_enable(val)
+        logging.info('ATU {}: convection_en called with command: {}'.format(self.atu_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('ATU {}: No value provided to convection_en in command: {}'.format(self.atu_nbr, command))
+            return
+        int_val = int(float(val))
+        logging.debug('ATU {}: calling set_convection_enable({})'.format(self.atu_nbr, int_val))
+        temp = self.atu.set_convection_enable(int_val)
+        logging.info('ATU {}: set_convection_enable result: {}'.format(self.atu_nbr, temp))
         if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV8', self.atu.get_convection_status())
             self.node.setDriver('GV9', temp)
 
-
     def set_flow(self, command):
-        val = int(command.get('value'))
-        logging.debug('set_flow: {}'.format(val))
-        temp = self.atu.set_flow_level(val) 
-        if  temp is not None:
+        logging.info('ATU {}: set_flow called with command: {}'.format(self.atu_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('ATU {}: No value provided to set_flow in command: {}'.format(self.atu_nbr, command))
+            return
+        int_val = int(float(val))
+        logging.debug('ATU {}: calling set_flow_level({})'.format(self.atu_nbr, int_val))
+        temp = self.atu.set_flow_level(int_val) 
+        logging.info('ATU {}: set_flow_level result: {}'.format(self.atu_nbr, temp))
+        if temp is not None:
             time.sleep(0.2)
             self.node.setDriver('GV1', temp)
 
     def update(self, command):
-        logging.debug('update')
+        logging.info('ATU {}: update called with command: {}'.format(self.atu_nbr, command))
         self.updateISY_longpoll()
 
     commands = { 'UPDATE': update

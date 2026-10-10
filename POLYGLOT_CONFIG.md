@@ -19,7 +19,7 @@ In the Polyglot Web Dashboard, go to your **Messana Radiant** node server detail
 |:---|:---:|:---:|:---|
 | `IP_ADDRESS` | **Yes** | — | The local IPv4 address of your Messana system (e.g., `192.168.1.100`). |
 | `MESSANA_KEY` | **Yes** | — | The API key required to authenticate with your Messana controller. |
-| `TEMP_UNIT` | No | `C` | Preferred temperature unit for ISY/IoX display: enter `C` for Celsius or `F` for Fahrenheit. Changing this automatically publishes the corresponding dynamic profile (`TEMPC` or `TEMPF`). |
+| `TEMP_UNIT` | No | `C` | Preferred temperature unit for ISY/IoX display: enter `C` for Celsius or `F` for Fahrenheit. Changing this automatically publishes the corresponding dynamic profile (`TEMPC` or `TEMPF`). When set to `F`, setpoint commands and setback offsets sent from IoX / eisy Admin Console are automatically converted to Celsius for the Messana API, and status values are converted to Fahrenheit for display. |
 
 Click **Save Changes** and restart the node server if prompted.
 
@@ -35,7 +35,15 @@ Click **Save Changes** and restart the node server if prompted.
 
 ---
 
-## 4. Node Status Indicators
+## 4. Commands & Diagnostics
+
+* **Admin Console / eisy-ui Commands**:
+  - Node commands (temperature setpoints, energy saving toggles, operation modes, fan speeds, flow rates) accept decimal numbers, integer values, and IoX query parameters.
+  - All commands log their invocation, received payload, and API result at `INFO` level in the PG3 Log viewer, making it easy to confirm command delivery and diagnose issues without switching to debug mode.
+
+---
+
+## 5. Node Status Indicators
 
 * **System Running** (`ST` on Controller and Subsystems; `GV2` on Zones and Macrozones):
   - `1` = Up (Online and communicating with Messana API).
@@ -48,7 +56,7 @@ Click **Save Changes** and restart the node server if prompted.
 
 ---
 
-## 5. Subsystem Nodes Discovered
+## 6. Subsystem Nodes Discovered
 
 Upon successful connection, the node server automatically discovers and creates:
 * **Zones**: Individual climate and air quality zones.
@@ -62,7 +70,7 @@ Upon successful connection, the node server automatically discovers and creates:
 
 ---
 
-## 6. Documentation & References
+## 7. Documentation & References
 
 * [Messana Official Site](https://www.radiantcooling.com)
 * [Messana SwaggerHub API Docs (v0.9.1)](https://app.swaggerhub.com/apis-docs/radiantcooling/messana/0.9.1)

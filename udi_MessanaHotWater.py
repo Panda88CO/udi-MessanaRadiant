@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_hot_water(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana
 
     id = 'DHW'
 
@@ -135,25 +135,46 @@ class udi_messana_hot_water(udi_interface.Node):
 
 
     def set_status(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called {} for zone: {}'.format(status, self.dhw_nbr))
+        logging.info('DHW {}: set_status called with command: {}'.format(self.dhw_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('DHW {}: No value provided to set_status in command: {}'.format(self.dhw_nbr, command))
+            return
+        status = int(float(val))
+        logging.debug('DHW {}: calling set_status({})'.format(self.dhw_nbr, status))
         temp = self.dhw.set_status(status)
+        logging.info('DHW {}: set_status result: {}'.format(self.dhw_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV0', temp)
         else:
-            logging.error('Error calling setStatus')
+            logging.error('DHW {}: Error calling setStatus'.format(self.dhw_nbr))
 
     def set_target_temp(self, command):
-        mode = int(command.get('value'))
-        logging.debug('set_dhw_target_temp Called {} for DHW {}'.format(mode, self.dhw_nbr))
-        temp = self.dhw.set_target_temp(mode)
+        logging.info('DHW {}: set_target_temp called with command: {}'.format(self.dhw_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('DHW {}: No value provided to set_target_temp in command: {}'.format(self.dhw_nbr, command))
+            return
+        try:
+            isy_temp = float(val)
+        except (ValueError, TypeError) as e:
+            logging.error('DHW {}: Invalid target temp value {} in command {}: {}'.format(self.dhw_nbr, val, command, e))
+            return
+
+        messana_temp = self.convert_temp_to_messana(isy_temp)
+        target = round(round(messana_temp * 2, 0) / 2, 1)
+        logging.info('DHW {}: set_target_temp {} (ISY unit: {}, Messana target: {})'.format(
+            self.dhw_nbr, isy_temp, getattr(self, 'ISY_temp_unit', None), target
+        ))
+        temp = self.dhw.set_target_temp(target)
+        logging.info('DHW {}: set_target_temp Messana returned: {}'.format(self.dhw_nbr, temp))
         if temp is not None:
-            self.node.setDriver('GV1', temp)
+            self.send_temp_to_isy(temp, 'GV1')
         else:
-            logging.error('Error calling set_energy_save')        
+            logging.error('DHW {}: Error calling set_target_temp'.format(self.dhw_nbr))        
 
     def update(self, command):
-        logging.debug('update')
+        logging.info('DHW {}: update called with command: {}'.format(self.dhw_nbr, command))
         self.updateISY_longpoll()
 
 

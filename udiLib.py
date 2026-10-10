@@ -105,3 +105,79 @@ def convert_temp_unit(self, tempStr):
         return(TEMP_F)
     else:
         return(TEMP_C)
+
+def get_command_value(*args):
+    """Safely extract parameter value from a PG3 command dictionary."""
+    if not args:
+        return None
+    command = args[-1]
+    if not isinstance(command, dict):
+        return None
+    val = command.get('value')
+    if val is not None:
+        logging.debug('get_command_value extracted value {} from {}'.format(val, command))
+        return val
+    query = command.get('query')
+    if isinstance(query, dict) and query:
+        val = query.get('')
+        if val is not None:
+            logging.debug('get_command_value extracted query[""] {} from {}'.format(val, command))
+            return val
+        val = query.get('value')
+        if val is not None:
+            logging.debug('get_command_value extracted query["value"] {} from {}'.format(val, command))
+            return val
+        for k, v in query.items():
+            if v is not None:
+                logging.debug('get_command_value extracted query[{}] {} from {}'.format(k, v, command))
+                return v
+    logging.debug('get_command_value found no value in {}'.format(command))
+    return None
+
+def convert_temp_to_messana(self, isy_temp):
+    """Convert a temperature from ISY units to Messana units."""
+    if isy_temp is None:
+        return None
+    try:
+        val = float(isy_temp)
+    except (ValueError, TypeError):
+        return None
+
+    is_isy_c = (getattr(self, 'ISY_temp_unit', TEMP_C) == TEMP_C)
+    mess_unit = getattr(self, 'messana_temp_unit', 'Celsius')
+    is_mess_c = (mess_unit == 'Celsius' or mess_unit == TEMP_C)
+
+    if is_isy_c and not is_mess_c:
+        res = round(val * 9 / 5 + 32, 1)
+    elif not is_isy_c and is_mess_c:
+        res = round((val - 32) * 5 / 9, 1)
+    else:
+        res = round(val, 1)
+    logging.debug('convert_temp_to_messana: {} (ISY unit: {}) -> {} (Messana unit: {})'.format(
+        isy_temp, getattr(self, 'ISY_temp_unit', None), res, mess_unit
+    ))
+    return res
+
+def convert_rel_temp_to_messana(self, isy_diff):
+    """Convert a relative temperature difference from ISY units to Messana units."""
+    if isy_diff is None:
+        return None
+    try:
+        val = float(isy_diff)
+    except (ValueError, TypeError):
+        return None
+
+    is_isy_c = (getattr(self, 'ISY_temp_unit', TEMP_C) == TEMP_C)
+    mess_unit = getattr(self, 'messana_temp_unit', 'Celsius')
+    is_mess_c = (mess_unit == 'Celsius' or mess_unit == TEMP_C)
+
+    if is_isy_c and not is_mess_c:
+        res = round(val * 9 / 5, 1)
+    elif not is_isy_c and is_mess_c:
+        res = round(val * 5 / 9, 1)
+    else:
+        res = round(val, 1)
+    logging.debug('convert_rel_temp_to_messana: delta {} (ISY unit: {}) -> delta {} (Messana unit: {})'.format(
+        isy_diff, getattr(self, 'ISY_temp_unit', None), res, mess_unit
+    ))
+    return res

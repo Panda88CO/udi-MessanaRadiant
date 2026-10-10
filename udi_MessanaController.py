@@ -35,7 +35,7 @@ except ImportError:
 
 
 class MessanaController(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, convert_temp_unit, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, convert_temp_unit, send_rel_temp_to_isy, get_command_value, convert_rel_temp_to_messana
   
     id = 'SYSTEM'
 
@@ -496,58 +496,77 @@ class MessanaController(udi_interface.Node):
 
 
     def setStatus(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called: {}'.format(status))
+        logging.info('System Controller: setStatus called with command: {}'.format(command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('System Controller: No value provided to setStatus in command: {}'.format(command))
+            return
+        status = int(float(val))
+        logging.debug('System Controller: calling set_status({})'.format(status))
         temp = self.messana.set_status(status) 
+        logging.info('System Controller: set_status result: {}'.format(temp))
         if temp is not None:
-            self.node.setDriver('GV0', temp)
+            self.node.setDriver('GV0', status if temp else 0)
         else:
-            logging.error('Error calling setStatus')
+            logging.error('System Controller: Error calling setStatus')
 
 
     def setEnergySave(self, command): 
-        energy_save = int(command.get('value'))
-        logging.debug('setEnergySave Called: {}'.format(energy_save))
+        logging.info('System Controller: setEnergySave called with command: {}'.format(command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('System Controller: No value provided to setEnergySave in command: {}'.format(command))
+            return
+        energy_save = int(float(val))
+        logging.debug('System Controller: calling set_energy_saving({})'.format(energy_save))
         temp = self.messana.set_energy_saving(energy_save)
-        if   temp is not None:
-            self.node.setDriver('GV12', temp)
+        logging.info('System Controller: set_energy_saving result: {}'.format(temp))
+        if temp is not None:
+            self.node.setDriver('GV12', energy_save if temp else 0)
         else:
-            logging.error('Error calling setEnergySave')
+            logging.error('System Controller: Error calling setEnergySave')
 
 
     def setSetback(self, command):
-        setback = int(command.get('value'))
-        logging.debug('setSetback Called: {}'.format(setback))
-        temp = self.messana.set_energy_saving(setback)
+        logging.info('System Controller: setSetback called with command: {}'.format(command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('System Controller: No value provided to setSetback in command: {}'.format(command))
+            return
+        setback = int(float(val))
+        logging.debug('System Controller: calling set_setback({})'.format(setback))
+        temp = self.messana.set_setback(setback)
+        logging.info('System Controller: set_setback result: {}'.format(temp))
         if temp is not None:
-            self.node.setDriver('GV2', temp)
+            self.node.setDriver('GV2', setback if temp else 0)
         else:
-            logging.error('Error calling setSetback')
+            logging.error('System Controller: Error calling setSetback')
 
     def setSetbackOffset(self, command):
-        setback_diff = int(command.get('value'))
-        #setback_unit = int(temp_uom.get('value'))
-        logging.debug('setSetbackOffset Called: {}'.format(setback_diff))
-        messana_diff = setback_diff
-        if self.messana_temp_unit == self.TEMP_C :
-            if self.ISY_temp_unit == self.TEMP_F:
-                messana_diff = (setback_diff - 32)*5/9
-        elif  self.messana_temp_unit == self.TEMP_F:
-            if self.ISY_temp_unit == self.TEMP_C :
-                messana_diff = setback_diff*9/5 + 32
+        logging.info('System Controller: setSetbackOffset called with command: {}'.format(command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('System Controller: No value provided to setSetbackOffset in command: {}'.format(command))
+            return
+        try:
+            setback_diff = float(val)
+        except (ValueError, TypeError) as e:
+            logging.error('System Controller: Invalid setback offset {} in command {}: {}'.format(val, command, e))
+            return
+        messana_diff = self.convert_rel_temp_to_messana(setback_diff)
+        logging.info('System Controller: setSetbackOffset {} (ISY unit: {}, Messana delta: {})'.format(
+            setback_diff, getattr(self, 'ISY_temp_unit', None), messana_diff
+        ))
         temp = self.messana.set_setback_diff(messana_diff)
+        logging.info('System Controller: set_setback_diff Messana returned: {}'.format(temp))
         if temp is not None:
             self.send_rel_temp_to_isy(temp, 'GV1')
-
-            #self.node.setDriver('GV1', setback_diff)
         else:
-            logging.error('Error calling setSetbackOffset')
+            logging.error('System Controller: Error calling setSetbackOffset')
 
     def ISYupdate (self, command):
-        #logging.info('ISY-update called')
-        #self.messana.updateSystemData('all')
+        logging.info('System Controller: ISYupdate called with command: {}'.format(command))
         self.updateISY_longpoll()
-        #self.reportDrivers()
 
 
 

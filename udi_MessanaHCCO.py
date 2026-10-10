@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_hc_co(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value
 
     id = 'HCCO'
 
@@ -125,26 +125,39 @@ class udi_messana_hc_co(udi_interface.Node):
 
 
     def set_adaptive_comf(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called {} for zone: {}'.format(status, self.hc_co_nbr))
+        logging.info('HCCO {}: set_adaptive_comf called with command: {}'.format(self.hc_co_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('HCCO {}: No value provided to set_adaptive_comf in command: {}'.format(self.hc_co_nbr, command))
+            return
+        status = int(float(val))
+        logging.debug('HCCO {}: calling set_status({})'.format(self.hc_co_nbr, status))
         temp = self.hc_co.set_status(status)
+        logging.info('HCCO {}: set_status result: {}'.format(self.hc_co_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV0', temp)
         else:
-            logging.error('Error calling setStatus')
+            logging.error('HCCO {}: Error calling setStatus'.format(self.hc_co_nbr))
 
     def set_hc_co_mode(self, command):
-        mode = int(command.get('value'))
-        logging.debug('set_hc_co_mode Called {} for BT {}'.format(mode, self.hc_co_nbr))
+        logging.info('HCCO {}: set_hc_co_mode called with command: {}'.format(self.hc_co_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('HCCO {}: No value provided to set_hc_co_mode in command: {}'.format(self.hc_co_nbr, command))
+            return
+        mode = int(float(val))
+        logging.debug('HCCO {}: calling set_hc_co_mode({})'.format(self.hc_co_nbr, mode))
         temp = self.hc_co.set_hc_co_mode(mode)
+        logging.info('HCCO {}: set_hc_co_mode result: {}'.format(self.hc_co_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV1', temp)
         else:
-            logging.error('Error calling set_energy_save')
+            logging.error('HCCO {}: Error calling set_hc_co_mode'.format(self.hc_co_nbr))
         
     def update(self, command):
-        logging.debug('update')
+        logging.info('HCCO {}: update called with command: {}'.format(self.hc_co_nbr, command))
         self.updateISY_longpoll()
+
 
 
     

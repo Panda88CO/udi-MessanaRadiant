@@ -1,7 +1,7 @@
 # udi-MessanaRadiant
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](server.json)
-[![Tests](https://img.shields.io/badge/tests-51%20passed-brightgreen.svg)](tests/)
+[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](server.json)
+[![Tests](https://img.shields.io/badge/tests-57%20passed-brightgreen.svg)](tests/)
 
 Universal Devices Polyglot v3 (PG3 / PG3x) Node Server for integrating the [Messana Radiant](https://www.radiantcooling.com) heating and cooling automation system with the Universal Devices eisy, Polisy, and ISY-994/IoX platforms.
 
@@ -22,14 +22,14 @@ The Messana Radiant Node Server discovers and synchronizes all subsystems config
 
 ---
 
-## What's New in v0.3.0
+## What's New in v0.3.1
 
-* **VOC Sensor Integration**: Full support for zone VOC levels (`GV7`) reporting gas concentration in parts-per-billion (ppb) using UOM `96` from `/api/zone/voc/{id}`.
-* **Dynamic Temperature Profile Selection**: Swappable temperature editors (`TEMPC` vs `TEMPF`, `SETTEMPC`/`SETTEMPF`, `TEMPOFFSETC`/`TEMPOFFSETF`) generated and published dynamically to IoX based on the `TEMP_UNIT` configuration setting (`C` or `F`).
-* **Strict Uppercase Alphanumeric Naming**: All editor IDs, nodeDef IDs, property IDs, and command IDs strictly follow `^[A-Z0-9]+$` without underscores to comply with UDI profile specifications.
-* **Guarded `TIME` Updates**: The `TIME` driver (UOM `151`) only updates when valid data is received from the Messana API. If an API request fails or returns no data, `TIME` remains untouched and the node's running state (`ST` or `GV2`) is set to `0` (Down).
-* **Comprehensive Test Suite**: 51 standalone unit tests covering profile schemas, XML definitions, API communication, conversion routines, and node poll state transitions with zero external dependencies.
-* **Unified Common Versioning**: Centralized `0.3.0` version definition synchronized across `version.py`, `version.txt`, `profile/version.txt`, and `server.json`.
+* **Robust IoX Command Execution**: Flexible parameter extraction (`get_command_value`) across all node command handlers, safely handling decimal/numeric strings (e.g., `"21.5"`, `"70.0"`), integer values, and IoX nested query dictionaries (`command['query']`).
+* **Automatic Temperature Setpoint Unit Conversion**: Bidirectional temperature setpoint and relative setback offset conversions between ISY (Fahrenheit) and Messana (Celsius) ensuring accurate control from the eisy Admin Console and UD Mobile.
+* **Enhanced Execution & Debug Logging**: Informative `INFO` and `DEBUG` logging on command receipt, payload extraction, and API call outcomes across all nodes for straightforward diagnostics directly from PG3 logs.
+* **API Endpoint & Typo Fixes**: Corrected system energy saving endpoint to target `energySaving` in `Messana_System.py` and resolved property name typo `integrationStatus` in `Messana_Node.py`.
+* **Expanded Test Suite**: 57 automated unit tests covering command parsing, temperature unit conversion, API communication, profile schema, and state transitions.
+* **Unified Common Versioning**: Synchronized `0.3.1` version across `version.py`, `version.txt`, `profile/version.txt`, `server.json`, and packaged `profile.zip`.
 
 ---
 
@@ -94,7 +94,7 @@ udi-MessanaRadiant/
 ├── Messana_System.py           # System-level API data bindings
 ├── udiLib.py                   # Helper utilities and temperature conversion routines
 ├── run_tests.py                # Standalone test runner
-└── tests/                      # 51 automated unit tests
+└── tests/                      # 57 automated unit tests
     ├── test_profile.py         # Profile & XML schema tests
     ├── test_udilib.py          # Conversion & utility tests
     ├── test_messana_api.py     # API communication tests

@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_fancoil(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value
 
     id = 'FANCOIL'
 
@@ -157,34 +157,52 @@ class udi_messana_fancoil(udi_interface.Node):
 
 
     def set_status(self, command):
-        status = int(command.get('value'))
-        logging.debug('set Status Called {} for FC: {}'.format(status, self.fancoil_nbr))
+        logging.info('FC {}: set_status called with command: {}'.format(self.fancoil_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('FC {}: No value provided to setStatus in command: {}'.format(self.fancoil_nbr, command))
+            return
+        status = int(float(val))
+        logging.debug('FC {}: calling set_status({})'.format(self.fancoil_nbr, status))
         temp = self.fancoil.set_status(status)
+        logging.info('FC {}: set_status result: {}'.format(self.fancoil_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV0', temp)
         else:
-            logging.error('Error calling setStatus')
+            logging.error('FC {}: Error calling setStatus'.format(self.fancoil_nbr))
 
     def set_heat_speed(self, command):
-        speed = int(command.get('value'))
-        logging.debug('set_heat_speed Called {} for FC {}'.format(speed, self.fancoil_nbr))
+        logging.info('FC {}: set_heat_speed called with command: {}'.format(self.fancoil_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('FC {}: No value provided to set_heat_speed in command: {}'.format(self.fancoil_nbr, command))
+            return
+        speed = int(float(val))
+        logging.debug('FC {}: calling set_fancoil_heat_speed({})'.format(self.fancoil_nbr, speed))
         temp = self.fancoil.set_fancoil_heat_speed(speed)
+        logging.info('FC {}: set_heat_speed result: {}'.format(self.fancoil_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV2', temp)
         else:
-            logging.error('Error calling set_heat_speed')
+            logging.error('FC {}: Error calling set_heat_speed'.format(self.fancoil_nbr))
         
     def set_cool_speed(self, command):
-        speed = int(command.get('value'))
-        logging.debug('set_cool_speed {} for FC {}'.format(speed, self.fancoil_nbr))   
+        logging.info('FC {}: set_cool_speed called with command: {}'.format(self.fancoil_nbr, command))
+        val = self.get_command_value(command)
+        if val is None:
+            logging.error('FC {}: No value provided to set_cool_speed in command: {}'.format(self.fancoil_nbr, command))
+            return
+        speed = int(float(val))
+        logging.debug('FC {}: calling set_fancoil_cool_speed({})'.format(self.fancoil_nbr, speed))
         temp = self.fancoil.set_fancoil_cool_speed(speed)
+        logging.info('FC {}: set_cool_speed result: {}'.format(self.fancoil_nbr, temp))
         if temp is not None:
             self.node.setDriver('GV1', temp)
         else:
-            logging.error('Error calling set_cool_speed')
+            logging.error('FC {}: Error calling set_cool_speed'.format(self.fancoil_nbr))
 
     def update(self, command):
-        logging.debug('update')
+        logging.info('FC {}: update called with command: {}'.format(self.fancoil_nbr, command))
         self.updateISY_longpoll()
 
     

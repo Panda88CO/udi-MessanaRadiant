@@ -30,6 +30,9 @@ class DummyNodeOwner:
     send_rel_temp_to_isy = udiLib.send_rel_temp_to_isy
     node_queue = udiLib.node_queue
     wait_for_node_done = udiLib.wait_for_node_done
+    get_command_value = udiLib.get_command_value
+    convert_temp_to_messana = udiLib.convert_temp_to_messana
+    convert_rel_temp_to_messana = udiLib.convert_rel_temp_to_messana
 
 
 class TestUdiLib(unittest.TestCase):
@@ -155,6 +158,63 @@ class TestUdiLib(unittest.TestCase):
         owner_ff = DummyNodeOwner(isy_temp_unit=TEMP_F, messana_temp_unit="Fahrenheit")
         self.assertTrue(owner_ff.send_rel_temp_to_isy(3.5, "GV1"))
         owner_ff.node.setDriver.assert_called_once_with("GV1", 3.5, True, True, 17)
+
+    def test_get_command_value(self):
+        """Test robust value extraction from PG3 command payloads."""
+        # Direct 'value' key (int, float, string)
+        self.assertEqual(udiLib.get_command_value({"cmd": "STATUS", "value": 1}), 1)
+        self.assertEqual(udiLib.get_command_value({"cmd": "SETPOINT", "value": "21.5"}), "21.5")
+        self.assertEqual(self.helper.get_command_value({"cmd": "SETPOINT", "value": 72.0}), 72.0)
+
+        # 'query' dict with empty string key (IoX convention)
+        self.assertEqual(udiLib.get_command_value({"cmd": "SETPOINT", "query": {"": "21.5"}}), "21.5")
+        self.assertEqual(self.helper.get_command_value({"cmd": "SETPOINT", "query": {"": "70"}}), "70")
+
+        # 'query' dict with named key
+        self.assertEqual(udiLib.get_command_value({"cmd": "SETPOINT", "query": {"SETTEMPC.val": "22.0"}}), "22.0")
+
+        # Empty / None payloads
+        self.assertIsNone(udiLib.get_command_value({}))
+        self.assertIsNone(udiLib.get_command_value({"cmd": "UPDATE"}))
+        self.assertIsNone(udiLib.get_command_value(None))
+        self.assertIsNone(self.helper.get_command_value(None))
+
+    def test_convert_temp_to_messana(self):
+        """Test converting temperature from ISY units to Messana units."""
+        # ISY C -> Messana C (identical)
+        owner_cc = DummyNodeOwner(isy_temp_unit=TEMP_C, messana_temp_unit="Celsius")
+        self.assertEqual(owner_cc.convert_temp_to_messana("21.5"), 21.5)
+
+        # ISY F -> Messana C (70 F -> 21.1 C)
+        owner_fc = DummyNodeOwner(isy_temp_unit=TEMP_F, messana_temp_unit="Celsius")
+        self.assertEqual(owner_fc.convert_temp_to_messana(70.0), 21.1)
+        self.assertEqual(owner_fc.convert_temp_to_messana("68.0"), 20.0)
+
+        # ISY C -> Messana F (20 C -> 68 F)
+        owner_cf = DummyNodeOwner(isy_temp_unit=TEMP_C, messana_temp_unit="Fahrenheit")
+        self.assertEqual(owner_cf.convert_temp_to_messana(20.0), 68.0)
+
+        # ISY F -> Messana F (identical)
+        owner_ff = DummyNodeOwner(isy_temp_unit=TEMP_F, messana_temp_unit="Fahrenheit")
+        self.assertEqual(owner_ff.convert_temp_to_messana("72.5"), 72.5)
+
+        # Invalid / None inputs
+        self.assertIsNone(owner_fc.convert_temp_to_messana(None))
+        self.assertIsNone(owner_fc.convert_temp_to_messana("invalid"))
+
+    def test_convert_rel_temp_to_messana(self):
+        """Test relative temperature difference conversions from ISY to Messana."""
+        # ISY F -> Messana C delta (9 F delta = 5 C delta)
+        owner_fc = DummyNodeOwner(isy_temp_unit=TEMP_F, messana_temp_unit="Celsius")
+        self.assertEqual(owner_fc.convert_rel_temp_to_messana(9.0), 5.0)
+
+        # ISY C -> Messana F delta (5 C delta = 9 F delta)
+        owner_cf = DummyNodeOwner(isy_temp_unit=TEMP_C, messana_temp_unit="Fahrenheit")
+        self.assertEqual(owner_cf.convert_rel_temp_to_messana(5.0), 9.0)
+
+        # Matching units
+        owner_cc = DummyNodeOwner(isy_temp_unit=TEMP_C, messana_temp_unit="Celsius")
+        self.assertEqual(owner_cc.convert_rel_temp_to_messana(2.5), 2.5)
 
 
 if __name__ == "__main__":
