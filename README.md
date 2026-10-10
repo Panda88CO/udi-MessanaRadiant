@@ -1,6 +1,6 @@
 # Messana Radiant Integration for Universal Devices
 
-[![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)](server.json)
+[![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)](server.json)
 [![Platform](https://img.shields.io/badge/platform-eisy%20%7C%20Polisy%20%7C%20IoX-orange.svg)](https://www.universal-devices.com)
 [![Polyglot](https://img.shields.io/badge/polyglot-PG3%20%2F%20PG3x-purple.svg)](https://github.com/UniversalDevicesInc/udi_interface)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -62,6 +62,7 @@ In the PG3 dashboard under **Node Servers** &rarr; **Messana Radiant** &rarr; **
 | `IP_ADDRESS` | `192.168.1.100` | Local IP address of your Messana controller |
 | `MESSANA_KEY` | `your-api-key-here` | Your Messana system API key |
 | `TEMP_UNIT` | `F` (or `C`) | Enter `F` for Fahrenheit or `C` for Celsius (defaults to `C`) |
+| `NODE_DELAY` | `1.0` | Startup serialization delay (seconds) between node creations |
 
 Click **Save Changes** and **Restart** the node server.
 

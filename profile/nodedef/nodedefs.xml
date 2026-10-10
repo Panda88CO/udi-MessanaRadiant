@@ -105,7 +105,8 @@
    <nodeDef id="ATU" nls="NLSATU">
       <editors />
       <sts>
-         <st id="GV0" editor="ENABLE" />
+         <st id="ST" editor="ENABLE" />
+         <st id="GV0" editor="RUNNING" />
          <st id="CLITEMP" editor="TEMPC" />
          <st id="GV1" editor="FLOWLVL" />
          <st id="GV2" editor="ENABLE" />
@@ -117,7 +118,6 @@
          <st id="GV8" editor="ENABLE" />
          <st id="GV9" editor="ONOFF" />
          <st id="GV11" editor="ALARM" />
-         <st id="ST" editor="RUNNING" />
          <st id="TIME" editor="TIMESTAMP" />
       </sts>
       <cmds>
@@ -125,7 +125,7 @@
          <accepts>
             <cmd id="UPDATE" />
             <cmd id="STATUS">
-               <p id="" editor="SETENABLE" init="GV0" />
+               <p id="" editor="SETENABLE" init="ST" />
             </cmd>
             <cmd id="HRVEN">
                <p id="" editor="SETENABLE" init="GV2" />
@@ -149,12 +149,12 @@
    <nodeDef id="BUFFERTANK" nls="NLSBUFFERTANK">
       <editors />
       <sts>
+         <st id="ST" editor="TEMPC" />
          <st id="GV0" editor="BTENABLE" />
-         <st id="CLITEMP" editor="TEMPC" />
          <st id="GV1" editor="BTMODE" />
          <st id="GV2" editor="BTTEMPMODE" />
          <st id="GV3" editor="ALARM" />
-         <st id="ST" editor="RUNNING" />
+         <st id="GV4" editor="RUNNING" />
          <st id="TIME" editor="TIMESTAMP" />
       </sts>
       <cmds>
@@ -228,11 +228,11 @@
    <nodeDef id="ENERGY" nls="NLSENERGY">
       <editors />
       <sts>
-         <st id="GV0" editor="ENABLE" />
+         <st id="ST" editor="ENABLE" />
+         <st id="GV0" editor="RUNNING" />
          <st id="GV1" editor="ONOFF" />
          <st id="GV2" editor="ESTYPE" />
          <st id="GV3" editor="ALARM" />
-         <st id="ST" editor="RUNNING" />
          <st id="TIME" editor="TIMESTAMP" />
       </sts>
       <cmds>

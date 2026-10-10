@@ -134,8 +134,8 @@
     <h1>udi-MessanaRadiant Developer Guide</h1>
     <p>Architecture, API Integration, Testing Suite & Maintenance Reference</p>
     <div class="badge-container">
-      <span class="badge">Version 0.3.2</span>
-      <span class="badge green">59 Automated Tests Passing</span>
+      <span class="badge">Version 0.4.0</span>
+      <span class="badge green">70 Automated Tests Passing</span>
       <span class="badge">Python 3.9+</span>
       <span class="badge">Polyglot v3 / PG3x</span>
       <span class="badge">Messana REST API v0.9.1</span>
@@ -182,7 +182,7 @@
 ├── Messana_System.py           # System-level API bindings (counts, alarms, setback, energy)
 ├── udiLib.py                   # Shared utilities, command parsers, and temperature converters
 ├── run_tests.py                # Standalone test runner (runs unittest discover)
-└── tests/                      # Automated test suite (59 unit tests)
+└── tests/                      # Automated test suite (70 unit tests)
     ├── mock_helper.py          # Polyglot interface & HTTP mocks
     ├── test_profile.py         # Profile schema, XML consistency & ID validators
     ├── test_udilib.py          # Unit conversion & command payload parsing tests
@@ -313,7 +313,7 @@
     <section id="testing">
       <h2>4. Automated Test Suite</h2>
       <p>
-        The test suite contains <strong>59 automated unit tests</strong> with zero external hardware or network dependencies.
+        The test suite contains <strong>70 automated unit tests</strong> with zero external hardware or network dependencies.
       </p>
 
       <h3>Running the Tests</h3>
@@ -368,6 +368,23 @@ python3 -m unittest discover tests</code></pre>
       <p>
         The consistency test in <code>tests/test_profile.py</code> will fail if any of these files are out of sync.
       </p>
+    </section>
+
+    <!-- SECTION 6: RELEASE HISTORY & UNIFICATION -->
+    <section id="release-history">
+      <h2>6. Release History & Version 0.4.0 Unification</h2>
+      <p>
+        Version <code>0.4.0</code> unifies the feature branches into a production-ready release, combining:
+      </p>
+      <ul>
+        <li><strong>Dynamic Per-Zone Capability Probing:</strong> Hardware sensors (VOC, CO2, Dew Point, Humidity) are probed prior to node instantiation, generating customized per-zone node definitions (<code>ZONE0</code>, <code>ZONE1</code>) and avoiding cluttered "No Support" drivers in eisy-ui and UD Mobile.</li>
+        <li><strong>Subsystem Presence Verification:</strong> Probes ATU, Buffer Tank, HCCO, Fan Coil, Energy Source, and DHW before creating nodes; skips absent subsystems to prevent dead nodes and 404 API calls.</li>
+        <li><strong>Primary Status (ST) Optimization:</strong> Maps primary physical readings to <code>ST</code> on Buffer Tanks (water temperature), ATU (unit status), and Energy Source (boiler/heat pump status) for glanceable display in IoX device lists.</li>
+        <li><strong>REST API v0.9.1 Alignment:</strong> Corrected camelCase ATU endpoints (<code>hrvOn</code>, <code>humOn</code>, <code>ntdOn</code>, <code>intOn</code>), <code>macrozoneCount</code> lowercase fallback, <code>/api/hc/adaptiveComfort</code> routing, and multi-key JSON parsing for composite endpoints.</li>
+        <li><strong>Robust Parameter Parsing:</strong> Normalized command extraction (<code>get_command_value</code>) supporting numeric strings, floats, integers, and nested IoX query dictionaries.</li>
+        <li><strong>Bidirectional Temperature Conversion:</strong> Full Fahrenheit-to-Celsius and Celsius-to-Fahrenheit conversion for setpoints and relative differential offsets.</li>
+        <li><strong>Startup Pacing:</strong> Serialized node registration with configurable <code>NODE_DELAY</code> (default 1.0s) to eliminate IoX burst packet drops.</li>
+      </ul>
     </section>
 
   </main>

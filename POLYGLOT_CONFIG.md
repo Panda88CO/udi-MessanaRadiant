@@ -28,6 +28,7 @@ Before configuring the node server, ensure you have:
 | `IP_ADDRESS` | **Yes** | — | `192.168.1.100` | The local IPv4 address of your Messana controller. Do not include `http://` or trailing slashes. |
 | `MESSANA_KEY` | **Yes** | — | `a1b2c3d4-e5f6...` | Your secret Messana API key. |
 | `TEMP_UNIT` | No | `C` | `F` | Preferred temperature unit for display and setpoint control in IoX / UD Mobile: enter `F` for Fahrenheit or `C` for Celsius. |
+| `NODE_DELAY` | No | `1.0` | `1.0` | Delay in seconds between creating each node during startup. Paces node additions to prevent "High Volume" packet errors on Polyglot/IoX. |
 
 5. Click **Save Changes**.
 6. Click **Restart Node Server**.

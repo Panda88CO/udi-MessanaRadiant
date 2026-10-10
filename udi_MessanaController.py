@@ -3,6 +3,14 @@
 
 import sys
 from Messana_System import messana_system
+from Messana_Zone import messana_zone
+from Messana_Macrozone import messana_macrozone
+from Messana_ATU import messana_atu
+from Messana_Buffertank import messana_buffertank
+from Messana_HC_CO import messana_hc_co
+from Messana_Fancoil import messana_fancoil
+from Messana_EnergySource import messana_energy_source
+from Messana_HotWater import messana_hot_water
 from udi_MessanaZone import udi_messana_zone
 from udi_MessanaMacrozone import udi_messana_macrozone
 from udi_MessanaATU import udi_messana_atu
@@ -81,6 +89,7 @@ class MessanaController(udi_interface.Node):
         self.nodeDefineDone = False
         self.nodeConfigDone = False
         self.zone = {}
+        self.zone_capabilities = {}
         self.macrozone = {}
         self.atu = {}
         self.buffertank = {}
@@ -106,7 +115,11 @@ class MessanaController(udi_interface.Node):
 
 
         self.poly.ready()
-        self._publish_profile()
+        if hasattr(self.poly, "updateProfile"):
+            try:
+                self.poly.updateProfile()
+            except Exception as err:
+                logging.warning(f"Initial updateProfile failed: {err}")
         self.poly.addNode(self, conn_status='ST')
         self.wait_for_node_done()
 
@@ -122,8 +135,88 @@ class MessanaController(udi_interface.Node):
         logging.debug('config done')
         self.nodeConfigDone = True
 
+    def discover_zone_capabilities(self) -> dict:
+        """
+        Probe each zone prior to node creation to determine which optional
+        sensor variables are actually supported by hardware.
+        """
+        capabilities = {}
+        core_drivers = {'ST', 'GV0', 'GV1', 'GV2', 'GV3', 'GV8', 'GV9', 'GV10', 'TIME'}
 
+        def _is_supported(val):
+            if val is None or val == -1 or str(val) == '<Response [400]>':
+                return False
+            if isinstance(val, (int, float)):
+                return True
+            try:
+                float(val)
+                return True
+            except (ValueError, TypeError):
+                return False
 
+        nbr_zones = getattr(self.messana, 'nbr_zones', 0) or 0
+        for zone_nbr in range(0, nbr_zones):
+            tmp_name = self.messana.get_zone_name(zone_nbr)
+            supported = set(core_drivers)
+            zone_present = False
+            try:
+                zone_probe = messana_zone(zone_nbr, getattr(self, 'messana_info', {}))
+                st = zone_probe.get_status()
+                at = zone_probe.get_air_temp()
+                if tmp_name is not None or st is not None or at is not None:
+                    zone_present = True
+                else:
+                    logging.info(f"Zone {zone_nbr} not present on system, skipping")
+                    continue
+
+                try:
+                    hum = zone_probe.get_humidity()
+                    if _is_supported(hum):
+                        supported.add('CLIHUM')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} humidity probe error: {err}")
+
+                try:
+                    dew = zone_probe.get_dewpoint()
+                    if _is_supported(dew):
+                        supported.add('DEWPT')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} dewpoint probe error: {err}")
+
+                try:
+                    aq = zone_probe.get_air_quality()
+                    if _is_supported(aq):
+                        supported.add('GV6')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} air quality probe error: {err}")
+
+                try:
+                    co2 = zone_probe.get_co2()
+                    if _is_supported(co2):
+                        supported.add('CO2LVL')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} co2 probe error: {err}")
+
+                try:
+                    voc = zone_probe.get_voc()
+                    if _is_supported(voc):
+                        supported.add('GV7')
+                except Exception as err:
+                    logging.debug(f"Zone {zone_nbr} voc probe error: {err}")
+
+            except Exception as err:
+                logging.warning(f"Error probing zone {zone_nbr} capabilities: {err}")
+                if tmp_name is None:
+                    logging.info(f"Zone {zone_nbr} probe failed and no name found, skipping")
+                    continue
+
+            capabilities[zone_nbr] = {
+                'name': tmp_name or str(zone_nbr),
+                'supported': supported,
+            }
+            logging.info(f"Zone {zone_nbr} ({tmp_name}) supported properties: {sorted(supported)}")
+
+        return capabilities
 
     def start(self):
         logging.info(f'Start Messana Main v{__version__}')
@@ -161,7 +254,6 @@ class MessanaController(udi_interface.Node):
             self.ISY_temp_unit = self.TEMP_C
             self.Parameters['TEMP_UNIT'] = 'C'
             logging.debug('TEMP_UNIT: {}'.format(self.ISY_temp_unit ))
-        self._publish_profile()
 
         if (self.IPAddress is None) or (self.MessanaKey is None):
             #self.defineInputParams()
@@ -178,70 +270,192 @@ class MessanaController(udi_interface.Node):
             if not self.messana.connected():
                 self.stop()
             self.messana_temp_unit = self.convert_temp_unit(self.messana.temp_unit)
+            self.messana_info['messana_temp_unit'] = self.messana.temp_unit
             logging.debug('Messana Temp unit; {}, ISY temp unit: {}'.format(self.messana_temp_unit, self.ISY_temp_unit ))
-            
             
             self.updateISY_longpoll()
             time.sleep(1)
-        for zone_nbr in range(0, self.messana.nbr_zones ):
-            logging.debug('Creating zone {}'.format(zone_nbr))
+
+            # Probe zone capabilities prior to creating nodes
+            self.zone_capabilities = self.discover_zone_capabilities()
+            logging.info('Discovered zone capabilities: {}'.format(self.zone_capabilities))
+            # Publish dynamic profile before creating nodes so IoX has node definitions ready
+            self.update_profile()
+
+        try:
+            node_delay = float(self.Parameters['NODE_DELAY']) if 'NODE_DELAY' in self.Parameters else 1.0
+        except (ValueError, TypeError):
+            node_delay = 1.0
+        logging.info('Serializing node creation with {}s delay between nodes'.format(node_delay))
+
+        nbr_zones = getattr(self.messana, 'nbr_zones', 0) or 0
+        for zone_nbr in range(0, nbr_zones):
+            if zone_nbr not in self.zone_capabilities:
+                logging.info(f"Skipping absent zone {zone_nbr}")
+                continue
+            logging.info('Creating zone {} of {}'.format(zone_nbr + 1, nbr_zones))
             address = self.poly.getValidAddress('zone'+str(zone_nbr))
             tmp_name= self.messana.get_zone_name(zone_nbr)
-            name = self.poly.getValidName('Zone '+ tmp_name)
-            self.zone[zone_nbr] = udi_messana_zone(self.poly, self.primary, address, name, zone_nbr, self.messana_info)
+            name = self.poly.getValidName('Zone '+ (tmp_name or str(zone_nbr)))
+            caps = self.zone_capabilities.get(zone_nbr, {})
+            supported_props = caps.get('supported')
+            self.zone[zone_nbr] = udi_messana_zone(
+                self.poly, self.primary, address, name, zone_nbr, self.messana_info,
+                supported_props=supported_props
+            )
+            time.sleep(node_delay)
         
-        for macrozone_nbr in range(0, self.messana.nbr_macrozones ):
-            logging.debug('Creating macrozone {}'.format(macrozone_nbr))
+        nbr_macrozones = getattr(self.messana, 'nbr_macrozones', 0) or 0
+        for macrozone_nbr in range(0, nbr_macrozones):
+            tmp_name = self.messana.get_macrozone_name(macrozone_nbr)
+            present = False
+            try:
+                probe = messana_macrozone(macrozone_nbr, self.messana_info)
+                if tmp_name is not None or probe.get_status() is not None or probe.get_air_temp() is not None:
+                    present = True
+            except Exception as err:
+                logging.debug(f"Macrozone {macrozone_nbr} probe error: {err}")
+                if tmp_name is not None:
+                    present = True
+            if not present:
+                logging.info(f"Macrozone {macrozone_nbr} not present on system, skipping node creation")
+                continue
+            logging.info('Creating macrozone {} of {}'.format(macrozone_nbr + 1, nbr_macrozones))
             address = self.poly.getValidAddress('macrozone'+str(macrozone_nbr))
-            tmp_name= self.messana.get_macrozone_name(macrozone_nbr)
-            name = self.poly.getValidName('Macrozone '+tmp_name)
+            name = self.poly.getValidName('Macrozone '+ (tmp_name or str(macrozone_nbr)))
             self.macrozone[macrozone_nbr] = udi_messana_macrozone(self.poly, self.primary, address, name, macrozone_nbr, self.messana_info)
+            time.sleep(node_delay)
 
-        for atu_nbr in range(0, self.messana.nbr_atus ):
-            logging.debug('Creating atus {}'.format(atu_nbr))
+        nbr_atus = getattr(self.messana, 'nbr_atus', 0) or 0
+        for atu_nbr in range(0, nbr_atus):
+            tmp_name = self.messana.get_atu_name(atu_nbr)
+            present = False
+            try:
+                probe = messana_atu(atu_nbr, self.messana_info)
+                if tmp_name is not None or probe.get_status() is not None:
+                    present = True
+            except Exception as err:
+                logging.debug(f"ATU {atu_nbr} probe error: {err}")
+                if tmp_name is not None:
+                    present = True
+            if not present:
+                logging.info(f"ATU {atu_nbr} not present on system, skipping node creation")
+                continue
+            logging.info('Creating ATU {} of {}'.format(atu_nbr + 1, nbr_atus))
             address = self.poly.getValidAddress('atu'+str(atu_nbr))
-            tmp_name= self.messana.get_atu_name(atu_nbr)
-            name = self.poly.getValidName('Atu '+tmp_name)
+            name = self.poly.getValidName('Atu '+ (tmp_name or str(atu_nbr)))
             self.atu[atu_nbr] = udi_messana_atu(self.poly, self.primary, address, name, atu_nbr, self.messana_info)
+            time.sleep(node_delay)
 
-        for buffertank_nbr in range(0, self.messana.nbr_buffer_tank ):
-            logging.debug('Creating buffer tanks {}'.format(buffertank_nbr))
+        nbr_buffer_tank = getattr(self.messana, 'nbr_buffer_tank', 0) or 0
+        for buffertank_nbr in range(0, nbr_buffer_tank):
+            tmp_name = self.messana.get_buffertank_name(buffertank_nbr)
+            present = False
+            try:
+                probe = messana_buffertank(buffertank_nbr, self.messana_info)
+                if tmp_name is not None or probe.get_status() is not None or probe.get_temp() is not None:
+                    present = True
+            except Exception as err:
+                logging.debug(f"Buffer tank {buffertank_nbr} probe error: {err}")
+                if tmp_name is not None:
+                    present = True
+            if not present:
+                logging.info(f"Buffer tank {buffertank_nbr} not present on system, skipping node creation")
+                continue
+            logging.info('Creating buffer tank {} of {}'.format(buffertank_nbr + 1, nbr_buffer_tank))
             address = self.poly.getValidAddress('buffertank'+str(buffertank_nbr))
-            tmp_name= self.messana.get_buffertank_name(buffertank_nbr)
-            name = self.poly.getValidName('Buffertank '+tmp_name)
+            name = self.poly.getValidName('Buffertank '+ (tmp_name or str(buffertank_nbr)))
             self.buffertank[buffertank_nbr] = udi_messana_buffertank(self.poly, self.primary, address, name, buffertank_nbr, self.messana_info)
+            time.sleep(node_delay)
 
-        for hc_co_nbr in range(0, self.messana.nbr_energy_source ):
-            logging.debug('Creating hot cold change over {}'.format(hc_co_nbr))
+        nbr_HCgroup = getattr(self.messana, 'nbr_HCgroup', 0) or 0
+        for hc_co_nbr in range(0, nbr_HCgroup):
+            tmp_name = self.messana.get_hc_co_name(hc_co_nbr)
+            present = False
+            try:
+                probe = messana_hc_co(hc_co_nbr, self.messana_info)
+                if tmp_name is not None or probe.get_status() is not None or probe.get_hc_co_mode() is not None:
+                    present = True
+            except Exception as err:
+                logging.debug(f"HCCO {hc_co_nbr} probe error: {err}")
+                if tmp_name is not None:
+                    present = True
+            if not present:
+                logging.info(f"HCCO {hc_co_nbr} not present on system, skipping node creation")
+                continue
+            logging.info('Creating HCCO {} of {}'.format(hc_co_nbr + 1, nbr_HCgroup))
             address = self.poly.getValidAddress('hcco'+str(hc_co_nbr))
-            tmp_name= self.messana.get_hc_co_name(hc_co_nbr)
-            name = self.poly.getValidName('Hot Cold CO '+tmp_name)
+            name = self.poly.getValidName('Hot Cold CO '+ (tmp_name or str(hc_co_nbr)))
             self.hot_cold_change_over[hc_co_nbr] = udi_messana_hc_co(self.poly, self.primary, address, name, hc_co_nbr, self.messana_info)
+            time.sleep(node_delay)
 
-        for fancoil_nbr in range(0, self.messana.nbr_fancoil ):
-            logging.debug('Creating fan coils {}'.format(fancoil_nbr))
+        nbr_fancoil = getattr(self.messana, 'nbr_fancoil', 0) or 0
+        for fancoil_nbr in range(0, nbr_fancoil):
+            tmp_name = self.messana.get_fancoil_name(fancoil_nbr)
+            present = False
+            try:
+                probe = messana_fancoil(fancoil_nbr, self.messana_info)
+                if tmp_name is not None or probe.get_status() is not None or probe.get_fctype() is not None:
+                    present = True
+            except Exception as err:
+                logging.debug(f"Fancoil {fancoil_nbr} probe error: {err}")
+                if tmp_name is not None:
+                    present = True
+            if not present:
+                logging.info(f"Fancoil {fancoil_nbr} not present on system, skipping node creation")
+                continue
+            logging.info('Creating fan coil {} of {}'.format(fancoil_nbr + 1, nbr_fancoil))
             address = self.poly.getValidAddress('fancoil'+str(fancoil_nbr))
-            tmp_name= self.messana.get_fancoil_name(fancoil_nbr)
-            name = self.poly.getValidName('Fancoil '+tmp_name)
+            name = self.poly.getValidName('Fancoil '+ (tmp_name or str(fancoil_nbr)))
             self.fancoil[fancoil_nbr] = udi_messana_fancoil(self.poly, self.primary, address, name, fancoil_nbr, self.messana_info)
+            time.sleep(node_delay)
 
-        for energy_source_nbr in range(0, self.messana.nbr_energy_source ):
-            logging.debug('Creating energy_source {}'.format(energy_source_nbr))
+        nbr_energy_source = getattr(self.messana, 'nbr_energy_source', 0) or 0
+        for energy_source_nbr in range(0, nbr_energy_source):
+            tmp_name = self.messana.get_energy_source_name(energy_source_nbr)
+            present = False
+            try:
+                probe = messana_energy_source(energy_source_nbr, self.messana_info)
+                if tmp_name is not None or probe.get_status() is not None or probe.get_energy_source_type() is not None:
+                    present = True
+            except Exception as err:
+                logging.debug(f"Energy source {energy_source_nbr} probe error: {err}")
+                if tmp_name is not None:
+                    present = True
+            if not present:
+                logging.info(f"Energy source {energy_source_nbr} not present on system, skipping node creation")
+                continue
+            logging.info('Creating energy source {} of {}'.format(energy_source_nbr + 1, nbr_energy_source))
             address = self.poly.getValidAddress('energy'+str(energy_source_nbr))
-            tmp_name= self.messana.get_energy_source_name(energy_source_nbr)
-            name = self.poly.getValidName('Energy Source '+tmp_name)
+            name = self.poly.getValidName('Energy Source '+ (tmp_name or str(energy_source_nbr)))
             self.energy_source[energy_source_nbr] = udi_messana_energy_source(self.poly, self.primary, address, name, energy_source_nbr, self.messana_info)
+            time.sleep(node_delay)
 
-        for hotwater_nbr in range(0, self.messana.nbr_dhwater ):
-            logging.debug('Creating domestic hot water {}'.format(hotwater_nbr))
+        nbr_dhwater = getattr(self.messana, 'nbr_dhwater', 0) or 0
+        for hotwater_nbr in range(0, nbr_dhwater):
+            tmp_name = self.messana.get_hotwater_name(hotwater_nbr)
+            present = False
+            try:
+                probe = messana_hot_water(hotwater_nbr, self.messana_info)
+                if tmp_name is not None or probe.get_status() is not None or probe.get_temp() is not None:
+                    present = True
+            except Exception as err:
+                logging.debug(f"Hot water {hotwater_nbr} probe error: {err}")
+                if tmp_name is not None:
+                    present = True
+            if not present:
+                logging.info(f"Hot water {hotwater_nbr} not present on system, skipping node creation")
+                continue
+            logging.info('Creating domestic hot water {} of {}'.format(hotwater_nbr + 1, nbr_dhwater))
             address = self.poly.getValidAddress('hotwater'+str(hotwater_nbr))
-            tmp_name= self.messana.get_hotwater_name(hotwater_nbr)
-            name = self.poly.getValidName('Hotwater '+tmp_name)
+            name = self.poly.getValidName('Hotwater '+ (tmp_name or str(hotwater_nbr)))
             self.hotwater[hotwater_nbr] = udi_messana_hot_water(self.poly, self.primary, address, name, hotwater_nbr, self.messana_info)
+            time.sleep(node_delay)
                                              
         self.nodeConfigDone = True
         logging.info('Messana system configured - updating profile')
         self.update_profile()
+        self.updateISY_longpoll()
         self.poll_start = True
         #self.discover()
 
@@ -295,53 +509,59 @@ class MessanaController(udi_interface.Node):
         )
 
     def _publish_profile(self, wait_response: bool = False) -> None:
+        # 1. Publish dynamic JSON profile based on configured temperature unit
         update_json_profile = getattr(self.poly, "updateJsonProfile", None)
-        if not callable(update_json_profile):
-            logging.info("[_publish_profile] updateJsonProfile is unavailable, falling back to updateProfile")
-            if hasattr(self.poly, "updateProfile"):
-                self.poly.updateProfile()
-            return
+        if callable(update_json_profile):
+            temp_unit = getattr(self, "ISY_temp_unit", self.TEMP_C)
+            zone_caps = getattr(self, "zone_capabilities", None)
+            profile = build_profile_definition(temp_unit, zone_capabilities=zone_caps)
 
-        temp_unit = getattr(self, "ISY_temp_unit", self.TEMP_C)
-        profile = build_profile_definition(temp_unit)
+            current_profile_getter = getattr(self.poly, "getJsonProfile", None)
+            if callable(current_profile_getter):
+                try:
+                    current_profile = current_profile_getter({"waitResponse": False})
+                    if self._profiles_match(current_profile, profile):
+                        logging.info("[_publish_profile] Dynamic profile already up to date, skipping publish")
+                        return
+                except Exception:
+                    try:
+                        current_profile = current_profile_getter()
+                        if self._profiles_match(current_profile, profile):
+                            logging.info("[_publish_profile] Dynamic profile already up to date, skipping publish")
+                            return
+                    except Exception as err:
+                        logging.debug(f"[_publish_profile] Unable to read existing profile: {err}")
 
-        current_profile_getter = getattr(self.poly, "getJsonProfile", None)
-        if callable(current_profile_getter):
             try:
-                current_profile = current_profile_getter({"waitResponse": False})
-                if self._profiles_match(current_profile, profile):
-                    logging.info("[_publish_profile] Profile already up to date, skipping publish")
-                    return
+                logging.debug(f"[_publish_profile] Publishing dynamic JSON profile (temp_unit={temp_unit})")
+                update_json_profile(profile, {"waitResponse": False})
+                logging.info("[_publish_profile] Dynamic JSON profile published successfully")
+                if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
+                    self.poly.Notices.delete("profile")
+                return
             except TypeError:
                 try:
-                    current_profile = current_profile_getter()
-                    if self._profiles_match(current_profile, profile):
-                        logging.info("[_publish_profile] Profile already up to date, skipping publish")
-                        return
+                    update_json_profile(profile)
+                    logging.info("[_publish_profile] Dynamic JSON profile published successfully")
+                    if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
+                        self.poly.Notices.delete("profile")
+                    return
                 except Exception as err:
-                    logging.warning(f"[_publish_profile] Unable to read existing profile: {err}")
+                    logging.warning(f"[_publish_profile] Dynamic profile publish failed: {err}")
             except Exception as err:
-                logging.warning(f"[_publish_profile] Unable to read existing profile: {err}")
+                logging.warning(f"[_publish_profile] Dynamic profile publish failed: {err}")
 
-        try:
-            logging.debug(f"[_publish_profile] Publishing profile: {json.dumps(profile, sort_keys=True, indent=2)}")
-            update_json_profile(profile, {"waitResponse": wait_response})
-            logging.info("[_publish_profile] Dynamic JSON profile published successfully")
-            if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
-                self.poly.Notices.delete("profile")
-        except TypeError:
-            update_json_profile(profile)
-            logging.info("[_publish_profile] Dynamic JSON profile published successfully")
-            if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "delete"):
-                self.poly.Notices.delete("profile")
-        except Exception as err:
-            logging.error(f"[_publish_profile] Profile publish failed: {err}")
-            if hasattr(self.poly, "Notices") and hasattr(self.poly.Notices, "__setitem__"):
-                self.poly.Notices["profile"] = f"Dynamic profile publish failed: {err}"
+        # 2. Fallback to static XML profile if dynamic profile is unavailable or failed
+        if hasattr(self.poly, "updateProfile"):
+            try:
+                logging.info("[_publish_profile] Installing static XML profile via poly.updateProfile()")
+                self.poly.updateProfile()
+            except Exception as err:
+                logging.warning(f"[_publish_profile] updateProfile failed: {err}")
 
     def update_profile(self, command=None) -> None:
-        """Update ISY profile dynamically or via static files."""
-        self._publish_profile(wait_response=True)
+        """Update ISY profile via static files and dynamic profile."""
+        self._publish_profile(wait_response=False)
 
     def systemPoll (self, polltype):
         if self.poll_start:
@@ -355,6 +575,7 @@ class MessanaController(udi_interface.Node):
                     for nde in nodes:
                         logging.debug('Longpoll update nodes {}'.format(nde))
                         nodes[nde].updateISY_longpoll()
+                        time.sleep(0.2)
                 except Exception as e:
                     logging.debug('Exeption occcured during systemPoll : {}'.format(e))
                     #self.yoAccess = YoLinkInitPAC (self.uaid, self.secretKey)
@@ -366,6 +587,7 @@ class MessanaController(udi_interface.Node):
                 for nde in nodes:
                     logging.debug('short poll update nodes {}'.format(nde))
                     nodes[nde].updateISY_shortpoll()
+                    time.sleep(0.1)
 
 
     def heartbeat(self):
@@ -411,53 +633,61 @@ class MessanaController(udi_interface.Node):
             updated = True
 
         if updated:
-            logging.debug('Nbr Zones{}'.format(self.messana.nbr_zones))
-            if 0 == self.messana.nbr_zones:
+            nbr_zones = len(self.zone) if getattr(self, 'nodeConfigDone', False) else (getattr(self.messana, 'nbr_zones', 0) or 0)
+            logging.debug('Nbr Zones: {}'.format(nbr_zones))
+            if 0 == nbr_zones:
                 self.node.setDriver('GV3', 98, True, False, 25)
             else:
-                self.node.setDriver('GV3', self.messana.nbr_zones, True, False, 107)
+                self.node.setDriver('GV3', nbr_zones, True, False, 107)
 
-            logging.debug('Nbr macrozones{}'.format(self.messana.nbr_macrozones))
-            if 0 == self.messana.nbr_macrozones:
+            nbr_macrozones = len(self.macrozone) if getattr(self, 'nodeConfigDone', False) else (getattr(self.messana, 'nbr_macrozones', 0) or 0)
+            logging.debug('Nbr macrozones: {}'.format(nbr_macrozones))
+            if 0 == nbr_macrozones:
                 self.node.setDriver('GV4', 98, True, False, 25)
             else:
-                self.node.setDriver('GV4', self.messana.nbr_macrozones, True, False, 107)
+                self.node.setDriver('GV4', nbr_macrozones, True, False, 107)
 
-            logging.debug('Nbr atu{}'.format(self.messana.nbr_atus))
-            if 0 == self.messana.nbr_atus:
+            nbr_atus = len(self.atu) if getattr(self, 'nodeConfigDone', False) else (getattr(self.messana, 'nbr_atus', 0) or 0)
+            logging.debug('Nbr atu: {}'.format(nbr_atus))
+            if 0 == nbr_atus:
                 self.node.setDriver('GV5', 98, True, False, 25)
             else:
-                self.node.setDriver('GV5', self.messana.nbr_atus, True, False, 107)
+                self.node.setDriver('GV5', nbr_atus, True, False, 107)
 
-            logging.debug('Nbr Hot Cold{}'.format(self.messana.nbr_HCgroup))
-            if 0 == self.messana.nbr_HCgroup:
+            nbr_hcco = len(self.hot_cold_change_over) if getattr(self, 'nodeConfigDone', False) else (getattr(self.messana, 'nbr_HCgroup', 0) or 0)
+            logging.debug('Nbr Hot Cold: {}'.format(nbr_hcco))
+            if 0 == nbr_hcco:
                 self.node.setDriver('GV6', 98, True, False, 25)
             else:
-                self.node.setDriver('GV6', self.messana.nbr_HCgroup, True, False, 107)
+                self.node.setDriver('GV6', nbr_hcco, True, False, 107)
 
-            logging.debug('Nbr fan coil{}'.format(self.messana.nbr_fancoil))
-            if 0 == self.messana.nbr_fancoil:
+            nbr_fancoils = len(self.fancoil) if getattr(self, 'nodeConfigDone', False) else (getattr(self.messana, 'nbr_fancoil', 0) or 0)
+            logging.debug('Nbr fan coil: {}'.format(nbr_fancoils))
+            if 0 == nbr_fancoils:
                 self.node.setDriver('GV7', 98, True, False, 25)
             else:
-                self.node.setDriver('GV7', self.messana.nbr_fancoil, True, False, 107)
+                self.node.setDriver('GV7', nbr_fancoils, True, False, 107)
 
-            logging.debug('Nbr domestic Hot Water{}'.format(self.messana.nbr_dhwater))
-            if 0 == self.messana.nbr_dhwater:
+            nbr_hotwater = len(self.hotwater) if getattr(self, 'nodeConfigDone', False) else (getattr(self.messana, 'nbr_dhwater', 0) or 0)
+            logging.debug('Nbr domestic Hot Water: {}'.format(nbr_hotwater))
+            if 0 == nbr_hotwater:
                 self.node.setDriver('GV8', 98, True, False, 25)
             else:
-                self.node.setDriver('GV8', self.messana.nbr_dhwater, True, False, 107)
+                self.node.setDriver('GV8', nbr_hotwater, True, False, 107)
 
-            logging.debug('Nbr buffer Tank {}'.format(self.messana.nbr_buffer_tank))
-            if 0 == self.messana.nbr_buffer_tank:
+            nbr_buffertank = len(self.buffertank) if getattr(self, 'nodeConfigDone', False) else (getattr(self.messana, 'nbr_buffer_tank', 0) or 0)
+            logging.debug('Nbr buffer Tank: {}'.format(nbr_buffertank))
+            if 0 == nbr_buffertank:
                 self.node.setDriver('GV9', 98, True, False, 25)
             else:
-                self.node.setDriver('GV9', self.messana.nbr_buffer_tank, True, False, 107)
+                self.node.setDriver('GV9', nbr_buffertank, True, False, 107)
 
-            logging.debug('Nbr energy source{}'.format(self.messana.nbr_energy_source))
-            if 0 == self.messana.nbr_energy_source:
+            nbr_energy = len(self.energy_source) if getattr(self, 'nodeConfigDone', False) else (getattr(self.messana, 'nbr_energy_source', 0) or 0)
+            logging.debug('Nbr energy source: {}'.format(nbr_energy))
+            if 0 == nbr_energy:
                 self.node.setDriver('GV10', 98, True, False, 25)
             else:
-                self.node.setDriver('GV10', self.messana.nbr_energy_source, True, False, 107)
+                self.node.setDriver('GV10', nbr_energy, True, False, 107)
 
             tmp = self.messana.get_external_alarm()
             logging.debug('Alarm Status{}'.format(tmp))
@@ -509,6 +739,22 @@ class MessanaController(udi_interface.Node):
             self.node.setDriver('GV0', status if temp else 0)
         else:
             logging.error('System Controller: Error calling setStatus')
+
+    def setOn(self, command=None):
+        logging.debug('setOn Called (DON)')
+        temp = self.messana.set_status(1)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
+        else:
+            logging.error('Error calling setOn')
+
+    def setOff(self, command=None):
+        logging.debug('setOff Called (DOF)')
+        temp = self.messana.set_status(0)
+        if temp is not None:
+            self.node.setDriver('GV0', temp)
+        else:
+            logging.error('Error calling setOff')
 
 
     def setEnergySave(self, command): 
@@ -572,6 +818,8 @@ class MessanaController(udi_interface.Node):
 
     commands = { 'UPDATE': ISYupdate
                 ,'STATUS': setStatus
+                ,'DON': setOn
+                ,'DOF': setOff
                 ,'ENERGYSAVE': setEnergySave
                 ,'SETBACK' : setSetback
                 ,'SETBACK_OFFSET' : setSetbackOffset

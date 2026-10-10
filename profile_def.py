@@ -6,11 +6,13 @@ All editor IDs, nodeDef IDs, property IDs, and command IDs are strictly UPPERCAS
 alphanumeric ([A-Z0-9]+) without underscores or special characters.
 """
 
+import re
+
 TEMP_C = 0
 TEMP_F = 1
 
 
-def build_profile_definition(temp_unit=TEMP_C) -> dict:
+def build_profile_definition(temp_unit=TEMP_C, zone_capabilities=None) -> dict:
     """
     Build the dynamic JSON profile definition for PG3/PG3x.
 
@@ -25,50 +27,54 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
     tempoffset_editor = "TEMPOFFSETF" if is_f else "TEMPOFFSETC"
     settempos_editor = "SETTEMPOSF" if is_f else "SETTEMPOSC"
 
-    tempc_ranges = [
-        {"uom": "4", "min": -50, "max": 75, "step": 0.5, "prec": 1},
-        {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
-    ]
-    tempf_ranges = [
-        {"uom": "17", "min": -50, "max": 150, "step": 0.5, "prec": 1},
-        {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
-    ]
-    settempc_ranges = [
-        {"uom": "4", "min": 10, "max": 35, "step": 0.5, "prec": 1},
-    ]
-    settempf_ranges = [
-        {"uom": "17", "min": 50, "max": 100, "step": 1, "prec": 1},
-    ]
-    tempoffsetc_ranges = [
-        {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
-        {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
-    ]
-    tempoffsetf_ranges = [
-        {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
-        {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
-    ]
-    settemposc_ranges = [
-        {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
-    ]
-    settemposf_ranges = [
-        {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
-    ]
+    if is_f:
+        temp_ranges = [
+            {"uom": "17", "min": -50, "max": 150, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        settemp_ranges = [
+            {"uom": "17", "min": 50, "max": 100, "step": 1, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        tempoffset_ranges = [
+            {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        settempos_ranges = [
+            {"uom": "17", "min": 0, "max": 50, "step": 1, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        temp_editors = [
+            {"id": "TEMPF", "ranges": temp_ranges},
+            {"id": "SETTEMPF", "ranges": settemp_ranges},
+            {"id": "TEMPOFFSETF", "ranges": tempoffset_ranges},
+            {"id": "SETTEMPOSF", "ranges": settempos_ranges},
+        ]
+    else:
+        temp_ranges = [
+            {"uom": "4", "min": -50, "max": 75, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        settemp_ranges = [
+            {"uom": "4", "min": 10, "max": 35, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        tempoffset_ranges = [
+            {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        settempos_ranges = [
+            {"uom": "4", "min": 0, "max": 25, "step": 0.5, "prec": 1},
+            {"uom": "25", "subset": "98-99", "names": {"98": "No Support", "99": "Unknown"}},
+        ]
+        temp_editors = [
+            {"id": "TEMPC", "ranges": temp_ranges},
+            {"id": "SETTEMPC", "ranges": settemp_ranges},
+            {"id": "TEMPOFFSETC", "ranges": tempoffset_ranges},
+            {"id": "SETTEMPOSC", "ranges": settempos_ranges},
+        ]
 
-    editors = [
-        {"id": "TEMPC", "ranges": tempc_ranges},
-        {"id": "TEMPF", "ranges": tempf_ranges},
-        {"id": "SETTEMPC", "ranges": settempc_ranges},
-        {"id": "SETTEMPF", "ranges": settempf_ranges},
-        {"id": "TEMPOFFSETC", "ranges": tempoffsetc_ranges},
-        {"id": "TEMPOFFSETF", "ranges": tempoffsetf_ranges},
-        {"id": "SETTEMPOSC", "ranges": settemposc_ranges},
-        {"id": "SETTEMPOSF", "ranges": settemposf_ranges},
-        {
-            "id": "TEMPUOM",
-            "ranges": [
-                {"uom": "25", "subset": "4,17,26", "names": {"4": "C", "17": "F", "26": "K"}},
-            ],
-        },
+    editors = temp_editors + [
         {
             "id": "ENABLE",
             "ranges": [
@@ -314,6 +320,50 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
         },
     ]
 
+    zone_properties = [
+        {"id": "ST", "name": "Room Temperature", "editor": temp_editor},
+        {"id": "GV0", "name": "Zone Status", "editor": "ENABLE"},
+        {"id": "GV1", "name": "Zone Thermal Operation", "editor": "THERMALMODE"},
+        {"id": "GV2", "name": "System Running", "editor": "RUNNING"},
+        {"id": "GV3", "name": "Zone Setpoint", "editor": temp_editor},
+        {"id": "CLIHUM", "name": "Zone Humidity", "editor": "HUMIDITY"},
+        {"id": "DEWPT", "name": "Zone Dew Point", "editor": temp_editor},
+        {"id": "GV6", "name": "Zone Air Quality", "editor": "AIRQ"},
+        {"id": "CO2LVL", "name": "Zone CO2 Level", "editor": "CO2"},
+        {"id": "GV7", "name": "Zone VOC Level", "editor": "VOC"},
+        {"id": "GV8", "name": "Zone Energy Saving", "editor": "ENABLE"},
+        {"id": "GV9", "name": "Zone Alarm", "editor": "ALARM"},
+        {"id": "GV10", "name": "Zone System Temperature", "editor": temp_editor},
+        {"id": "TIME", "name": "Last Update", "editor": "TIMESTAMP"},
+    ]
+    zone_cmds = {
+        "accepts": [
+            {"id": "UPDATE", "name": "Force Update"},
+            {
+                "id": "SETPOINT",
+                "name": "Set Point",
+                "parameters": [
+                    {"id": "", "name": "Setpoint", "editor": settemp_editor, "init": "GV3"},
+                ],
+            },
+            {
+                "id": "STATUS",
+                "name": "Set Status",
+                "parameters": [
+                    {"id": "", "name": "Status", "editor": "SETENABLE", "init": "GV0"},
+                ],
+            },
+            {
+                "id": "ENERGYSAVE",
+                "name": "Set Energy Saving",
+                "parameters": [
+                    {"id": "", "name": "Energy Saving", "editor": "SETENABLE", "init": "GV8"},
+                ],
+            },
+        ],
+        "sends": [],
+    }
+
     nodedefs = [
         {
             "id": "SYSTEM",
@@ -368,56 +418,18 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
                     },
                     {"id": "UPDATEPROFILE", "name": "Update Profile"},
                 ],
-                "sends": [],
+                "sends": [
+                    {"id": "DON"},
+                    {"id": "DOF"},
+                ],
             },
             "links": {"ctl": [], "rsp": []},
         },
         {
             "id": "ZONE",
             "name": "Messana Zone",
-            "properties": [
-                {"id": "ST", "name": "Room Temperature", "editor": temp_editor},
-                {"id": "GV0", "name": "Zone Status", "editor": "ENABLE"},
-                {"id": "GV1", "name": "Zone Thermal Operation", "editor": "THERMALMODE"},
-                {"id": "GV2", "name": "System Running", "editor": "RUNNING"},
-                {"id": "GV3", "name": "Zone Setpoint", "editor": temp_editor},
-                {"id": "CLIHUM", "name": "Zone Humidity", "editor": "HUMIDITY"},
-                {"id": "DEWPT", "name": "Zone Dew Point", "editor": temp_editor},
-                {"id": "GV6", "name": "Zone Air Quality", "editor": "AIRQ"},
-                {"id": "CO2LVL", "name": "Zone CO2 Level", "editor": "CO2"},
-                {"id": "GV7", "name": "Zone VOC Level", "editor": "VOC"},
-                {"id": "GV8", "name": "Zone Energy Saving", "editor": "ENABLE"},
-                {"id": "GV9", "name": "Zone Alarm", "editor": "ALARM"},
-                {"id": "GV10", "name": "Zone System Temperature", "editor": temp_editor},
-                {"id": "TIME", "name": "Last Update", "editor": "TIMESTAMP"},
-            ],
-            "cmds": {
-                "accepts": [
-                    {"id": "UPDATE", "name": "Force Update"},
-                    {
-                        "id": "SETPOINT",
-                        "name": "Set Point",
-                        "parameters": [
-                            {"id": "", "name": "Setpoint", "editor": settemp_editor, "init": "GV3"},
-                        ],
-                    },
-                    {
-                        "id": "STATUS",
-                        "name": "Set Status",
-                        "parameters": [
-                            {"id": "", "name": "Status", "editor": "SETENABLE", "init": "GV0"},
-                        ],
-                    },
-                    {
-                        "id": "ENERGYSAVE",
-                        "name": "Set Energy Saving",
-                        "parameters": [
-                            {"id": "", "name": "Energy Saving", "editor": "SETENABLE", "init": "GV8"},
-                        ],
-                    },
-                ],
-                "sends": [],
-            },
+            "properties": zone_properties,
+            "cmds": zone_cmds,
             "links": {"ctl": [], "rsp": []},
         },
         {
@@ -458,8 +470,8 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
             "id": "ATU",
             "name": "Messana Air Treatment Unit",
             "properties": [
-                {"id": "ST", "name": "System Running", "editor": "RUNNING"},
-                {"id": "GV0", "name": "ATU Status", "editor": "ENABLE"},
+                {"id": "ST", "name": "ATU Status", "editor": "ENABLE"},
+                {"id": "GV0", "name": "System Running", "editor": "RUNNING"},
                 {"id": "CLITEMP", "name": "Air Temperature", "editor": temp_editor},
                 {"id": "GV1", "name": "Flow Level", "editor": "FLOWLVL"},
                 {"id": "GV2", "name": "Heat Recovery Status", "editor": "ENABLE"},
@@ -480,7 +492,7 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
                         "id": "STATUS",
                         "name": "Set Status",
                         "parameters": [
-                            {"id": "", "name": "Status", "editor": "SETENABLE", "init": "GV0"},
+                            {"id": "", "name": "Status", "editor": "SETENABLE", "init": "ST"},
                         ],
                     },
                     {
@@ -527,12 +539,12 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
             "id": "BUFFERTANK",
             "name": "Messana Buffer Tank",
             "properties": [
-                {"id": "ST", "name": "System Running", "editor": "RUNNING"},
+                {"id": "ST", "name": "Buffer Tank Temperature", "editor": temp_editor},
                 {"id": "GV0", "name": "Buffer Tank Status", "editor": "BTENABLE"},
-                {"id": "CLITEMP", "name": "Temperature", "editor": temp_editor},
                 {"id": "GV1", "name": "Buffer Tank Mode", "editor": "BTMODE"},
                 {"id": "GV2", "name": "Buffer Tank Temperature Mode", "editor": "BTTEMPMODE"},
                 {"id": "GV3", "name": "Alarm", "editor": "ALARM"},
+                {"id": "GV4", "name": "System Running", "editor": "RUNNING"},
                 {"id": "TIME", "name": "Last Update", "editor": "TIMESTAMP"},
             ],
             "cmds": {
@@ -641,8 +653,8 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
             "id": "ENERGY",
             "name": "Messana Energy Source",
             "properties": [
-                {"id": "ST", "name": "System Running", "editor": "RUNNING"},
-                {"id": "GV0", "name": "Energy Source Status", "editor": "ENABLE"},
+                {"id": "ST", "name": "Energy Source Status", "editor": "ENABLE"},
+                {"id": "GV0", "name": "System Running", "editor": "RUNNING"},
                 {"id": "GV1", "name": "Energy Source DHW Status", "editor": "ONOFF"},
                 {"id": "GV2", "name": "Energy Source Type", "editor": "ESTYPE"},
                 {"id": "GV3", "name": "Alarm", "editor": "ALARM"},
@@ -690,12 +702,61 @@ def build_profile_definition(temp_unit=TEMP_C) -> dict:
         },
     ]
 
+    if zone_capabilities:
+        items = []
+        if isinstance(zone_capabilities, dict):
+            for k, v in zone_capabilities.items():
+                try:
+                    zn = int(k) if isinstance(k, int) or (isinstance(k, str) and k.isdigit()) else int(re.sub(r"\D", "", str(k)) or 0)
+                except ValueError:
+                    zn = 0
+                if isinstance(v, dict):
+                    zname = v.get("name") or f"Zone {zn}"
+                    supp = v.get("supported", set())
+                elif isinstance(v, (set, list, tuple)):
+                    zname = f"Zone {zn}"
+                    supp = v
+                else:
+                    zname = f"Zone {zn}"
+                    supp = set()
+                items.append((zn, zname, set(supp)))
+        elif isinstance(zone_capabilities, (list, tuple)):
+            for i, item in enumerate(zone_capabilities):
+                if isinstance(item, dict):
+                    zn = item.get("zone_nbr", i)
+                    zname = item.get("name") or f"Zone {zn}"
+                    supp = item.get("supported", set())
+                elif isinstance(item, (set, list, tuple)):
+                    zn = i
+                    zname = f"Zone {zn}"
+                    supp = item
+                else:
+                    zn = i
+                    zname = f"Zone {zn}"
+                    supp = set()
+                items.append((zn, zname, set(supp)))
+
+        items.sort(key=lambda x: x[0])
+
+        for zn, zname, supported_set in items:
+            clean_name = str(zname).strip()
+            if clean_name.lower().startswith("messana"):
+                node_name = clean_name
+            elif clean_name.lower().startswith("zone"):
+                node_name = f"Messana {clean_name}"
+            else:
+                node_name = f"Messana Zone {clean_name}"
+
+            filtered_props = [p for p in zone_properties if p["id"] in supported_set]
+            nodedefs.append({
+                "id": f"ZONE{zn}",
+                "name": node_name,
+                "properties": filtered_props,
+                "cmds": zone_cmds,
+                "links": {"ctl": [], "rsp": []},
+            })
+
     return {
-        "delete": {
-            "editors": ["*"],
-            "nodedefs": ["*"],
-            "linkdefs": ["*"],
-        },
         "editors": editors,
         "nodedefs": nodedefs,
         "linkdefs": [],

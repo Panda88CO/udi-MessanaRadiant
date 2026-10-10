@@ -32,7 +32,7 @@ class messana_node(messana_control):
         logging.info('init Node {} {}:'.format(node_type, node_nbr ) )
         self.name = self.get_name()
         self.stateList = [0,1]
-        self.messana_temp_unit = self.GET_system_data('tempUnit')
+        self.messana_temp_unit = messana_info.get('messana_temp_unit') if isinstance(messana_info, dict) and messana_info.get('messana_temp_unit') else self.GET_system_data('tempUnit')
         #self.get_all()
 
     def __get_node_data(self, mKey):

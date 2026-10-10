@@ -30,7 +30,7 @@ class TestProfileDef(unittest.TestCase):
         # Check editor IDs
         editor_ids = {e["id"] for e in profile["editors"]}
         self.assertIn("TEMPC", editor_ids)
-        self.assertIn("TEMPF", editor_ids)
+        self.assertNotIn("TEMPF", editor_ids)
         self.assertIn("VOC", editor_ids)
         self.assertIn("TIMESTAMP", editor_ids)
 
@@ -43,6 +43,22 @@ class TestProfileDef(unittest.TestCase):
         self.assertEqual(prop_editors["GV10"], "TEMPC")
         self.assertEqual(prop_editors["GV7"], "VOC")
         self.assertEqual(prop_editors["TIME"], "TIMESTAMP")
+
+        # Verify Celsius editors have only UOM 4 and UOM 25 (no UOM 17)
+        editors_by_id = {e["id"]: e for e in profile["editors"]}
+        c_temp_editors = ("TEMPC", "SETTEMPC", "TEMPOFFSETC", "SETTEMPOSC")
+        f_temp_editors = ("TEMPF", "SETTEMPF", "TEMPOFFSETF", "SETTEMPOSF")
+        for ed_id in c_temp_editors:
+            self.assertIn(ed_id, editors_by_id, f"Editor {ed_id} missing in Celsius profile")
+            uoms = {r["uom"] for r in editors_by_id[ed_id]["ranges"]}
+            self.assertEqual(uoms, {"4", "25"}, f"Editor {ed_id} must have only uom 4 + 25")
+        for ed_id in f_temp_editors:
+            self.assertNotIn(ed_id, editors_by_id, f"Fahrenheit editor {ed_id} must NOT be in Celsius profile")
+        self.assertNotIn("TEMPUOM", editors_by_id, "TEMPUOM must not be in editors")
+
+        # Zero editors in Celsius profile should contain UOM 17
+        all_uoms = {r["uom"] for e in profile["editors"] for r in e.get("ranges", [])}
+        self.assertNotIn("17", all_uoms, "Celsius profile must not contain UOM 17 anywhere")
 
     def test_build_profile_fahrenheit(self):
         """Test profile generation for Fahrenheit with various parameter formats."""
@@ -66,6 +82,22 @@ class TestProfileDef(unittest.TestCase):
                 if "parameters" in c
             }
             self.assertEqual(cmd_params["SETPOINT"], "SETTEMPF")
+
+            # Verify Fahrenheit editors have only UOM 17 and UOM 25 (no UOM 4)
+            editors_by_id = {e["id"]: e for e in profile["editors"]}
+            c_temp_editors = ("TEMPC", "SETTEMPC", "TEMPOFFSETC", "SETTEMPOSC")
+            f_temp_editors = ("TEMPF", "SETTEMPF", "TEMPOFFSETF", "SETTEMPOSF")
+            for ed_id in f_temp_editors:
+                self.assertIn(ed_id, editors_by_id, f"Editor {ed_id} missing in Fahrenheit profile")
+                uoms = {r["uom"] for r in editors_by_id[ed_id]["ranges"]}
+                self.assertEqual(uoms, {"17", "25"}, f"Editor {ed_id} must have only uom 17 + 25")
+            for ed_id in c_temp_editors:
+                self.assertNotIn(ed_id, editors_by_id, f"Celsius editor {ed_id} must NOT be in Fahrenheit profile")
+            self.assertNotIn("TEMPUOM", editors_by_id, "TEMPUOM must not be in editors")
+
+            # Zero editors in Fahrenheit profile should contain UOM 4
+            all_uoms = {r["uom"] for e in profile["editors"] for r in e.get("ranges", [])}
+            self.assertNotIn("4", all_uoms, "Fahrenheit profile must not contain UOM 4 anywhere")
 
     def test_all_ids_uppercase_alphanumeric(self):
         """Verify all editor IDs, nodeDef IDs, property IDs, and cmd IDs follow ^[A-Z0-9]+$."""
@@ -128,6 +160,136 @@ class TestProfileDef(unittest.TestCase):
         primary_range = time_editor["ranges"][0]
         self.assertEqual(primary_range["uom"], "151")
 
+    def test_no_destructive_delete(self):
+        """Verify dynamic profile does not include destructive delete block."""
+        profile = build_profile_definition(TEMP_C)
+        self.assertNotIn("delete", profile)
+
+    def test_don_dof_in_dynamic_profile(self):
+        """Verify DON and DOF are in sends (and NOT in accepts) for SYSTEM, and NOT in accepts for ZONE/MACROZONE."""
+        profile = build_profile_definition(TEMP_C)
+        nodes_by_id = {n["id"]: n for n in profile["nodedefs"]}
+
+        # SYSTEM: sends DON/DOF, does NOT accept DON/DOF
+        system_node = nodes_by_id["SYSTEM"]
+        system_accepts = {cmd["id"] for cmd in system_node.get("cmds", {}).get("accepts", [])}
+        system_sends = {cmd["id"] for cmd in system_node.get("cmds", {}).get("sends", [])}
+        self.assertIn("DON", system_sends)
+        self.assertIn("DOF", system_sends)
+        self.assertNotIn("DON", system_accepts)
+        self.assertNotIn("DOF", system_accepts)
+
+        # ZONE: does NOT accept DON/DOF
+        zone_node = nodes_by_id["ZONE"]
+        zone_accepts = {cmd["id"] for cmd in zone_node.get("cmds", {}).get("accepts", [])}
+        self.assertNotIn("DON", zone_accepts)
+        self.assertNotIn("DOF", zone_accepts)
+
+        # MACROZONE: does NOT accept DON/DOF
+        macrozone_node = nodes_by_id["MACROZONE"]
+        macrozone_accepts = {cmd["id"] for cmd in macrozone_node.get("cmds", {}).get("accepts", [])}
+        self.assertNotIn("DON", macrozone_accepts)
+        self.assertNotIn("DOF", macrozone_accepts)
+
+    def test_temperature_ranges_strict_uom_and_system_sends(self):
+        """Verify dynamic profile temperature editors strictly contain only uom4+25 or uom17+25 and SYSTEM has sends DON/DOF."""
+        # Celsius profile: strictly uom4 + uom25 for all temperature editors
+        prof_c = build_profile_definition(TEMP_C)
+        temp_editors_c = [e for e in prof_c["editors"] if e["id"] in ("TEMPC", "SETTEMPC", "TEMPOFFSETC", "SETTEMPOSC")]
+        self.assertEqual(len(temp_editors_c), 4)
+        for ed in temp_editors_c:
+            uom_set = {r["uom"] for r in ed["ranges"]}
+            self.assertEqual(uom_set, {"4", "25"}, f"Celsius editor {ed['id']} ranges must be strictly uom 4 + 25")
+            uom25_range = next(r for r in ed["ranges"] if r["uom"] == "25")
+            self.assertEqual(uom25_range.get("subset"), "98-99")
+
+        # Fahrenheit profile: strictly uom17 + uom25 for all temperature editors
+        prof_f = build_profile_definition(TEMP_F)
+        temp_editors_f = [e for e in prof_f["editors"] if e["id"] in ("TEMPF", "SETTEMPF", "TEMPOFFSETF", "SETTEMPOSF")]
+        self.assertEqual(len(temp_editors_f), 4)
+        for ed in temp_editors_f:
+            uom_set = {r["uom"] for r in ed["ranges"]}
+            self.assertEqual(uom_set, {"17", "25"}, f"Fahrenheit editor {ed['id']} ranges must be strictly uom 17 + 25")
+            uom25_range = next(r for r in ed["ranges"] if r["uom"] == "25")
+            self.assertEqual(uom25_range.get("subset"), "98-99")
+
+        # SYSTEM controller node sends DON and DOF in both profiles
+        for prof in (prof_c, prof_f):
+            sys_node = next(n for n in prof["nodedefs"] if n["id"] == "SYSTEM")
+            sends_ids = [cmd["id"] for cmd in sys_node.get("cmds", {}).get("sends", [])]
+            self.assertIn("DON", sends_ids)
+            self.assertIn("DOF", sends_ids)
+
+    def test_build_profile_with_zone_capabilities(self):
+        """Verify dynamic profile generates per-zone nodeDefs with filtered properties based on hardware support."""
+        zone_caps = {
+            0: {
+                "name": "Living Room",
+                "supported": {"ST", "GV0", "GV1", "GV2", "GV3", "CLIHUM", "DEWPT", "GV6", "CO2LVL", "GV7", "GV8", "GV9", "GV10", "TIME"},
+            },
+            1: {
+                "name": "Master Bed",
+                "supported": {"ST", "GV0", "GV1", "GV2", "GV3", "CLIHUM", "DEWPT", "GV8", "GV9", "GV10", "TIME"},
+            },
+            2: {
+                "name": "Hallway",
+                "supported": {"ST", "GV0", "GV1", "GV2", "GV3", "GV8", "GV9", "GV10", "TIME"},
+            },
+        }
+
+        for temp_unit, temp_editor in ((TEMP_C, "TEMPC"), (TEMP_F, "TEMPF")):
+            profile = build_profile_definition(temp_unit, zone_capabilities=zone_caps)
+            nodes_by_id = {n["id"]: n for n in profile["nodedefs"]}
+
+            # Generic ZONE definition is preserved
+            self.assertIn("ZONE", nodes_by_id)
+
+            # Per-zone custom nodeDefs exist
+            self.assertIn("ZONE0", nodes_by_id)
+            self.assertIn("ZONE1", nodes_by_id)
+            self.assertIn("ZONE2", nodes_by_id)
+
+            # Zone 0: all sensors supported
+            z0_props = {p["id"]: p["editor"] for p in nodes_by_id["ZONE0"]["properties"]}
+            self.assertIn("GV6", z0_props)
+            self.assertIn("CO2LVL", z0_props)
+            self.assertIn("GV7", z0_props)
+            self.assertIn("CLIHUM", z0_props)
+            self.assertIn("DEWPT", z0_props)
+            self.assertEqual(z0_props["ST"], temp_editor)
+            self.assertEqual(z0_props["GV7"], "VOC")
+            self.assertEqual(len(nodes_by_id["ZONE0"]["properties"]), 14)
+
+            # Zone 1: humidity/dewpoint supported, air quality/CO2/VOC unsupported and eliminated
+            z1_props = {p["id"]: p["editor"] for p in nodes_by_id["ZONE1"]["properties"]}
+            self.assertIn("CLIHUM", z1_props)
+            self.assertIn("DEWPT", z1_props)
+            self.assertNotIn("GV6", z1_props)
+            self.assertNotIn("CO2LVL", z1_props)
+            self.assertNotIn("GV7", z1_props)
+            self.assertEqual(len(nodes_by_id["ZONE1"]["properties"]), 11)
+
+            # Zone 2: basic zone, no humidity/dewpoint/airq/co2/voc
+            z2_props = {p["id"]: p["editor"] for p in nodes_by_id["ZONE2"]["properties"]}
+            self.assertNotIn("CLIHUM", z2_props)
+            self.assertNotIn("DEWPT", z2_props)
+            self.assertNotIn("GV6", z2_props)
+            self.assertNotIn("CO2LVL", z2_props)
+            self.assertNotIn("GV7", z2_props)
+            self.assertEqual(len(nodes_by_id["ZONE2"]["properties"]), 9)
+
+            # Node naming conventions
+            self.assertEqual(nodes_by_id["ZONE0"]["name"], "Messana Zone Living Room")
+            self.assertEqual(nodes_by_id["ZONE1"]["name"], "Messana Zone Master Bed")
+            self.assertEqual(nodes_by_id["ZONE2"]["name"], "Messana Zone Hallway")
+
+            # All dynamic nodeDef IDs and property IDs conform to ^[A-Z0-9]+$
+            for zid in ("ZONE0", "ZONE1", "ZONE2"):
+                self.assertTrue(self.ID_REGEX.match(zid))
+                for prop in nodes_by_id[zid]["properties"]:
+                    self.assertTrue(self.ID_REGEX.match(prop["id"]))
+
+
 
 class TestStaticXmlProfile(unittest.TestCase):
     """Tests for static XML profile files in profile/ directory."""
@@ -174,6 +336,25 @@ class TestStaticXmlProfile(unittest.TestCase):
         ts_ranges = ts_elem.findall("range")
         ts_uoms = [r.get("uom") for r in ts_ranges]
         self.assertIn("151", ts_uoms)
+
+    def test_single_uom_temperature_support(self):
+        """Verify temperature editors in editors.xml define strictly uom4+25 or uom17+25, and TEMPUOM is removed."""
+        editors_path = os.path.join(self.PROFILE_DIR, "editor", "editors.xml")
+        tree = ET.parse(editors_path)
+        root = tree.getroot()
+        c_editors = ("TEMPC", "SETTEMPC", "TEMPOFFSETC", "SETTEMPOSC")
+        f_editors = ("TEMPF", "SETTEMPF", "TEMPOFFSETF", "SETTEMPOSF")
+        for ed_id in c_editors:
+            ed = root.find(f"./editor[@id='{ed_id}']")
+            self.assertIsNotNone(ed, f"Editor {ed_id} missing")
+            uoms = {r.get("uom") for r in ed.findall("range")}
+            self.assertEqual(uoms, {"4", "25"}, f"Editor {ed_id} must have only uom 4 + 25")
+        for ed_id in f_editors:
+            ed = root.find(f"./editor[@id='{ed_id}']")
+            self.assertIsNotNone(ed, f"Editor {ed_id} missing")
+            uoms = {r.get("uom") for r in ed.findall("range")}
+            self.assertEqual(uoms, {"17", "25"}, f"Editor {ed_id} must have only uom 17 + 25")
+        self.assertIsNone(root.find("./editor[@id='TEMPUOM']"), "TEMPUOM must not exist in editors.xml")
 
     def test_nodedefs_xml_validity_and_references(self):
         """Test profile/nodedef/nodedefs.xml parses cleanly and all editor refs exist."""
@@ -254,6 +435,49 @@ class TestStaticXmlProfile(unittest.TestCase):
 
         self.assertIn("ST-NLSZONE-GV7-NAME", entries)
         self.assertIn("VOC", entries["ST-NLSZONE-GV7-NAME"])
+
+    def test_don_dof_in_static_xml_and_nls(self):
+        """Verify DON and DOF are in sends (and NOT in accepts) in nodedefs.xml, and SYSTEM sends are localized in en_us.txt."""
+        nodedefs_path = os.path.join(self.PROFILE_DIR, "nodedef", "nodedefs.xml")
+        tree = ET.parse(nodedefs_path)
+        root = tree.getroot()
+
+        # SYSTEM: sends has DON/DOF, accepts does NOT have DON/DOF
+        sys_node = root.find("./nodeDef[@id='SYSTEM']")
+        self.assertIsNotNone(sys_node)
+        sys_sends = {c.get("id") for c in sys_node.findall("./cmds/sends/cmd")}
+        sys_accepts = {c.get("id") for c in sys_node.findall("./cmds/accepts/cmd")}
+        self.assertIn("DON", sys_sends)
+        self.assertIn("DOF", sys_sends)
+        self.assertNotIn("DON", sys_accepts)
+        self.assertNotIn("DOF", sys_accepts)
+
+        # ZONE: accepts does NOT have DON/DOF
+        zone_node = root.find("./nodeDef[@id='ZONE']")
+        self.assertIsNotNone(zone_node)
+        zone_accepts = {c.get("id") for c in zone_node.findall("./cmds/accepts/cmd")}
+        self.assertNotIn("DON", zone_accepts)
+        self.assertNotIn("DOF", zone_accepts)
+
+        # MACROZONE: accepts does NOT have DON/DOF
+        mz_node = root.find("./nodeDef[@id='MACROZONE']")
+        self.assertIsNotNone(mz_node)
+        mz_accepts = {c.get("id") for c in mz_node.findall("./cmds/accepts/cmd")}
+        self.assertNotIn("DON", mz_accepts)
+        self.assertNotIn("DOF", mz_accepts)
+
+        # NLS labels for SYSTEM sends
+        nls_path = os.path.join(self.PROFILE_DIR, "nls", "en_us.txt")
+        entries = {}
+        with open(nls_path, "r", encoding="utf-8") as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, val = line.split("=", 1)
+                    entries[key.strip()] = val.strip()
+
+        self.assertIn("CMD-NLSSYSTEM-DON-NAME", entries)
+        self.assertIn("CMD-NLSSYSTEM-DOF-NAME", entries)
 
     def test_common_version_consistency(self):
         """Verify version.py, version.txt, profile/version.txt, and server.json are all in sync."""
