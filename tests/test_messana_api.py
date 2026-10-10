@@ -191,6 +191,13 @@ class TestMessanaNode(unittest.TestCase):
         mock_get_node.side_effect = side_effect_active
         self.assertEqual(self.node.get_alarmOn(), 1)
 
+    @patch.object(messana_control, "GET_node_data")
+    def test_get_convection_status(self, mock_get_node):
+        """Test get_convection_status queries integrationStatus endpoint."""
+        mock_get_node.return_value = 1
+        self.assertEqual(self.node.get_convection_status(), 1)
+        mock_get_node.assert_called_with("integrationStatus", "zone", 1)
+
 
 class TestMessanaSystem(unittest.TestCase):
     """Test suite for messana_system in Messana_System.py."""

@@ -245,7 +245,7 @@ class messana_node(messana_control):
 
     def get_convection_status(self):
         logging.debug('{} {} - get_convection_status'.format(self.type, self.nbr))
-        return(self.__get_node_data('integratioStatus'))
+        return(self.__get_node_data('integrationStatus'))
     
 
     def get_convection_enable(self):
