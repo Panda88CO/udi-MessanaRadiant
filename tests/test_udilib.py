@@ -33,6 +33,7 @@ class DummyNodeOwner:
     get_command_value = udiLib.get_command_value
     convert_temp_to_messana = udiLib.convert_temp_to_messana
     convert_rel_temp_to_messana = udiLib.convert_rel_temp_to_messana
+    apply_profile_driver_names = udiLib.apply_profile_driver_names
 
 
 class TestUdiLib(unittest.TestCase):
@@ -216,6 +217,88 @@ class TestUdiLib(unittest.TestCase):
         owner_cc = DummyNodeOwner(isy_temp_unit=TEMP_C, messana_temp_unit="Celsius")
         self.assertEqual(owner_cc.convert_rel_temp_to_messana(2.5), 2.5)
 
+    def test_get_profile_driver_names_dynamic(self):
+        """Test driver names extracted from dynamic profile."""
+        udiLib.clear_profile_driver_names_cache()
+        names = udiLib.get_profile_driver_names()
+        self.assertIn(('SYSTEM', 'ST'), names)
+        self.assertEqual(names[('SYSTEM', 'ST')], 'System Running')
+        self.assertEqual(names[('SYSTEM', 'GV0')], 'System State')
+        self.assertEqual(names[('ZONE', 'ST')], 'Room Temperature')
+        self.assertEqual(names[('ATU', 'ST')], 'ATU Status')
+        self.assertEqual(names[('BUFFERTANK', 'ST')], 'Buffer Tank Temperature')
+        self.assertEqual(names[('ENERGY', 'ST')], 'Energy Source Status')
+
+    def test_get_profile_driver_names_static_fallback(self):
+        """Test fallback to static profile files when dynamic profile fails."""
+        udiLib.clear_profile_driver_names_cache()
+        from unittest.mock import patch
+        with patch('profile_def.build_profile_definition', side_effect=RuntimeError('Dynamic unavailable')):
+            names = udiLib.get_profile_driver_names(force_refresh=True)
+            self.assertIn(('SYSTEM', 'ST'), names)
+            self.assertIn(('ZONE', 'ST'), names)
+            self.assertEqual(names[('ZONE', 'ST')], 'Room Temperature')
+
+    def test_apply_profile_driver_names(self):
+        """Test apply_profile_driver_names correctly populates driver names on a node."""
+        udiLib.clear_profile_driver_names_cache()
+        class MockNode:
+            id = 'ATU'
+            drivers = [
+                {'driver': 'ST', 'value': 0, 'uom': 25},
+                {'driver': 'CLITEMP', 'value': 0, 'uom': 4},
+                {'driver': 'TIME', 'value': 0, 'uom': 151},
+            ]
+        node = MockNode()
+        udiLib.apply_profile_driver_names(node)
+        self.assertEqual(node.drivers[0]['name'], 'ATU Status')
+        self.assertEqual(node.drivers[1]['name'], 'Air Temperature')
+        self.assertEqual(node.drivers[2]['name'], 'Last Update')
+
+    def test_apply_profile_driver_names_zone_fallback(self):
+        """Test dynamic zone node (e.g. ZONE1) falls back to ZONE driver names."""
+        udiLib.clear_profile_driver_names_cache()
+        class MockZoneNode:
+            id = 'ZONE1'
+            drivers = [
+                {'driver': 'ST', 'value': 0, 'uom': 25},
+                {'driver': 'GV0', 'value': 0, 'uom': 25},
+            ]
+        node = MockZoneNode()
+        udiLib.apply_profile_driver_names(node)
+        self.assertEqual(node.drivers[0]['name'], 'Room Temperature')
+        self.assertEqual(node.drivers[1]['name'], 'Zone Status')
+
+    def test_all_node_classes_have_driver_names(self):
+        """Ensure all 9 node classes define 'name' for every driver."""
+        from udi_MessanaController import MessanaController
+        from udi_MessanaZone import udi_messana_zone
+        from udi_MessanaMacrozone import udi_messana_macrozone
+        from udi_MessanaATU import udi_messana_atu
+        from udi_MessanaBuffertank import udi_messana_buffertank
+        from udi_MessanaHCCO import udi_messana_hc_co
+        from udi_MessanaFancoil import udi_messana_fancoil
+        from udi_MessanaEnergySource import udi_messana_energy_source
+        from udi_MessanaHotWater import udi_messana_hot_water
+
+        node_classes = [
+            (MessanaController, MessanaController.drivers),
+            (udi_messana_zone, udi_messana_zone.BASE_DRIVERS),
+            (udi_messana_macrozone, udi_messana_macrozone.drivers),
+            (udi_messana_atu, udi_messana_atu.drivers),
+            (udi_messana_buffertank, udi_messana_buffertank.drivers),
+            (udi_messana_hc_co, udi_messana_hc_co.drivers),
+            (udi_messana_fancoil, udi_messana_fancoil.drivers),
+            (udi_messana_energy_source, udi_messana_energy_source.drivers),
+            (udi_messana_hot_water, udi_messana_hot_water.drivers),
+        ]
+
+        for cls, drivers in node_classes:
+            for d in drivers:
+                self.assertIn('name', d, f"Driver {d['driver']} in {cls.__name__} missing 'name'")
+                self.assertTrue(isinstance(d['name'], str) and len(d['name']) > 0, f"Driver {d['driver']} in {cls.__name__} has empty name")
+
 
 if __name__ == "__main__":
     unittest.main()
+

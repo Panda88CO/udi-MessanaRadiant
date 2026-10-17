@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_hot_water(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana, apply_profile_driver_names
 
     id = 'DHW'
 
@@ -32,15 +32,16 @@ class udi_messana_hot_water(udi_interface.Node):
     
     
     drivers = [
-        {'driver': 'GV0', 'value': 99, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
-        {'driver': 'GV1', 'value': 99, 'uom': 25},
-        {'driver': 'ST', 'value': 0, 'uom': 25},
-        {'driver': 'TIME', 'value': 0, 'uom': 151},
+        {'driver': 'GV0', 'value': 99, 'uom': 25, 'name': 'DHW Status'},
+        {'driver': 'CLITEMP', 'value': 99, 'uom': 25, 'name': 'Current Temperature'},
+        {'driver': 'GV1', 'value': 99, 'uom': 25, 'name': 'Target Temperature'},
+        {'driver': 'ST', 'value': 0, 'uom': 25, 'name': 'System Running'},
+        {'driver': 'TIME', 'value': 0, 'uom': 151, 'name': 'Last Update'},
         ]
 
     def __init__(self, polyglot, primary, address, name, dhw_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
+        self.apply_profile_driver_names(self.id)
         logging.info('init Messana dhw {}:'.format(dhw_nbr) )
 
         self.primary = primary  

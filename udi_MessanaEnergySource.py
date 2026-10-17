@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_energy_source(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, apply_profile_driver_names
 
     id = 'ENERGY'
 
@@ -34,16 +34,17 @@ class udi_messana_energy_source(udi_interface.Node):
     
     
     drivers = [
-        {'driver': 'ST', 'value': 99, 'uom': 25},
-        {'driver': 'GV0', 'value': 1, 'uom': 25},
-        {'driver': 'GV1', 'value': 99, 'uom': 25},
-        {'driver': 'GV2', 'value': 99, 'uom': 25},
-        {'driver': 'GV3', 'value': 99, 'uom': 25},        
-        {'driver': 'TIME', 'value': 0, 'uom': 151},
+        {'driver': 'ST', 'value': 99, 'uom': 25, 'name': 'Energy Source Status'},
+        {'driver': 'GV0', 'value': 1, 'uom': 25, 'name': 'System Running'},
+        {'driver': 'GV1', 'value': 99, 'uom': 25, 'name': 'Energy Source DHW Status'},
+        {'driver': 'GV2', 'value': 99, 'uom': 25, 'name': 'Energy Source Type'},
+        {'driver': 'GV3', 'value': 99, 'uom': 25, 'name': 'Alarm'},        
+        {'driver': 'TIME', 'value': 0, 'uom': 151, 'name': 'Last Update'},
         ]
 
     def __init__(self, polyglot, primary, address, name, energy_source_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
+        self.apply_profile_driver_names(self.id)
         logging.info('init Messana energy_source {}:'.format(energy_source_nbr) )
 
         self.primary = primary  

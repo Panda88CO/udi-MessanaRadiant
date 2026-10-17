@@ -9,8 +9,10 @@ except ImportError:
     logging.basicConfig(level=logging.INFO)
     #logging = logging.getlogging('testLOG')
 import time
+import os
 import re
 import numbers
+import xml.etree.ElementTree as ET
 
 TEMP_C = 0
 TEMP_F = 1
@@ -184,3 +186,101 @@ def convert_rel_temp_to_messana(self, isy_diff):
         isy_diff, getattr(self, 'ISY_temp_unit', None), res, mess_unit
     ))
     return res
+
+
+_profile_driver_names = None
+
+
+def clear_profile_driver_names_cache():
+    """Clear the cached profile driver names mapping."""
+    global _profile_driver_names
+    _profile_driver_names = None
+
+
+def get_profile_driver_names(temp_unit=None, force_refresh=False):
+    """
+    Extract the mapping of (nodeDefId, driver_id) -> display name.
+    1. First tries dynamic profile definitions (profile_def.build_profile_definition).
+    2. If dynamic profile is not available or does not contain the driver,
+       falls back to the static profile directory (profile/nodedef/nodedefs.xml and profile/nls/en_us.txt).
+    Cached after the first load.
+    """
+    global _profile_driver_names
+    if _profile_driver_names is not None and not force_refresh:
+        return _profile_driver_names
+
+    _profile_driver_names = {}
+
+    # 1. First try dynamic JSON profile definitions
+    try:
+        from profile_def import build_profile_definition
+        dp = build_profile_definition(temp_unit if temp_unit is not None else TEMP_C)
+        for nd in dp.get('nodedefs', []):
+            nid = nd.get('id')
+            for prop in nd.get('properties', []):
+                driver_id = prop.get('id')
+                name = prop.get('name')
+                if nid and driver_id and name:
+                    _profile_driver_names[(nid, driver_id)] = name
+    except Exception as e:
+        logging.debug(f'Could not load driver names from dynamic profile: {e}')
+
+    # 2. If not available or missing definitions, fall back to profile directory
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    xml_path = os.path.join(base_dir, 'profile', 'nodedef', 'nodedefs.xml')
+    nls_path = os.path.join(base_dir, 'profile', 'nls', 'en_us.txt')
+
+    if os.path.exists(xml_path) and os.path.exists(nls_path):
+        try:
+            st_labels = {}
+            with open(nls_path, 'r', encoding='utf-8') as f:
+                for line in f:
+                    m = re.match(r'^ST-([\w\-]+)-([\w\-]+)-NAME\s*=\s*(.+)', line.strip())
+                    if m:
+                        nls, driver, label = m.groups()
+                        st_labels[(nls, driver)] = label.strip()
+
+            tree = ET.parse(xml_path)
+            root = tree.getroot()
+            for node_def in root.findall('.//nodeDef'):
+                node_id = node_def.get('id')
+                nls = node_def.get('nls')
+                if not node_id or not nls:
+                    continue
+                for st in node_def.findall('.//st'):
+                    driver_id = st.get('id')
+                    if driver_id and (nls, driver_id) in st_labels:
+                        key = (node_id, driver_id)
+                        if key not in _profile_driver_names:
+                            _profile_driver_names[key] = st_labels[(nls, driver_id)]
+        except Exception as e:
+            logging.warning(f'Could not load driver names from static profile directory: {e}')
+
+    return _profile_driver_names
+
+
+def apply_profile_driver_names(self, node_id=None):
+    """
+    Populate or update 'name' in each driver dictionary of a node instance
+    using definitions extracted from dynamic profiles or profile directory.
+    Can be invoked as node.apply_profile_driver_names() or apply_profile_driver_names(node).
+    """
+    target_id = node_id or getattr(self, 'id', None)
+    if not target_id:
+        return
+    drivers_list = getattr(self, 'drivers', None)
+    if not drivers_list or not isinstance(drivers_list, list):
+        return
+
+    names = get_profile_driver_names()
+    for d in drivers_list:
+        if not isinstance(d, dict):
+            continue
+        driver_id = d.get('driver')
+        if not driver_id:
+            continue
+        if (target_id, driver_id) in names:
+            d['name'] = names[(target_id, driver_id)]
+        elif str(target_id).startswith('ZONE') and ('ZONE', driver_id) in names:
+            d['name'] = names[('ZONE', driver_id)]
+

@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_fancoil(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, apply_profile_driver_names
 
     id = 'FANCOIL'
 
@@ -34,17 +34,18 @@ class udi_messana_fancoil(udi_interface.Node):
     
     
     drivers = [
-        {'driver': 'GV0', 'value': 99, 'uom': 25},
-        {'driver': 'GV1', 'value': 99, 'uom': 25},
-        {'driver': 'GV2', 'value': 99, 'uom': 25},
-        {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'GV4', 'value': 99, 'uom': 25},        
-        {'driver': 'ST', 'value': 0, 'uom': 25},
-        {'driver': 'TIME', 'value': 0, 'uom': 151},
+        {'driver': 'GV0', 'value': 99, 'uom': 25, 'name': 'Fan Coil Status'},
+        {'driver': 'GV1', 'value': 99, 'uom': 25, 'name': 'Fan Coil Cool Speed'},
+        {'driver': 'GV2', 'value': 99, 'uom': 25, 'name': 'Fan Coil Heat Speed'},
+        {'driver': 'GV3', 'value': 99, 'uom': 25, 'name': 'Fan Coil Type'},
+        {'driver': 'GV4', 'value': 99, 'uom': 25, 'name': 'Alarm'},        
+        {'driver': 'ST', 'value': 0, 'uom': 25, 'name': 'System Running'},
+        {'driver': 'TIME', 'value': 0, 'uom': 151, 'name': 'Last Update'},
         ]
 
     def __init__(self, polyglot, primary, address, name, fancoil_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
+        self.apply_profile_driver_names(self.id)
         logging.info('init Messana fancoil {}:'.format(fancoil_nbr) )
 
         self.primary = primary  

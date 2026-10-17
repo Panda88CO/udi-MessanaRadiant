@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_zone(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana, apply_profile_driver_names
 
     id = 'ZONE'
 
@@ -40,20 +40,20 @@ class udi_messana_zone(udi_interface.Node):
             ]
     '''
     BASE_DRIVERS = [
-        {'driver': 'ST', 'value': 99, 'uom': 25},
-        {'driver': 'GV0', 'value': 99, 'uom': 25},
-        {'driver': 'GV1', 'value': 99, 'uom': 25},
-        {'driver': 'GV2', 'value': 1, 'uom': 25},
-        {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
-        {'driver': 'DEWPT', 'value': 99, 'uom': 25},
-        {'driver': 'GV6', 'value': 99, 'uom': 25},
-        {'driver': 'CO2LVL', 'value': 99, 'uom': 25},
-        {'driver': 'GV7', 'value': 99, 'uom': 25},
-        {'driver': 'GV8', 'value': 99, 'uom': 25},
-        {'driver': 'GV9', 'value': 99, 'uom': 25},
-        {'driver': 'GV10', 'value': 99, 'uom': 25},
-        {'driver': 'TIME', 'value': 0, 'uom': 151},
+        {'driver': 'ST', 'value': 99, 'uom': 25, 'name': 'Room Temperature'},
+        {'driver': 'GV0', 'value': 99, 'uom': 25, 'name': 'Zone Status'},
+        {'driver': 'GV1', 'value': 99, 'uom': 25, 'name': 'Zone Thermal Operation'},
+        {'driver': 'GV2', 'value': 1, 'uom': 25, 'name': 'System Running'},
+        {'driver': 'GV3', 'value': 99, 'uom': 25, 'name': 'Zone Setpoint'},
+        {'driver': 'CLIHUM', 'value': 99, 'uom': 25, 'name': 'Zone Humidity'},
+        {'driver': 'DEWPT', 'value': 99, 'uom': 25, 'name': 'Zone Dew Point'},
+        {'driver': 'GV6', 'value': 99, 'uom': 25, 'name': 'Zone Air Quality'},
+        {'driver': 'CO2LVL', 'value': 99, 'uom': 25, 'name': 'Zone CO2 Level'},
+        {'driver': 'GV7', 'value': 99, 'uom': 25, 'name': 'Zone VOC Level'},
+        {'driver': 'GV8', 'value': 99, 'uom': 25, 'name': 'Zone Energy Saving'},
+        {'driver': 'GV9', 'value': 99, 'uom': 25, 'name': 'Zone Alarm'},
+        {'driver': 'GV10', 'value': 99, 'uom': 25, 'name': 'Zone System Temperature'},
+        {'driver': 'TIME', 'value': 0, 'uom': 151, 'name': 'Last Update'},
         ]
     drivers = list(BASE_DRIVERS)
 
@@ -71,6 +71,7 @@ class udi_messana_zone(udi_interface.Node):
         if supported_props is not None:
             self.id = f'ZONE{zone_nbr}'
 
+        self.apply_profile_driver_names(self.id)
         logging.info('init Messana Zone {}:'.format(zone_nbr) )
 
         self.primary = primary

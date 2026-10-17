@@ -17,7 +17,7 @@ except ImportError:
 
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_macrozone(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, convert_temp_to_messana, apply_profile_driver_names
 
     id = 'MACROZONE'
 
@@ -34,17 +34,18 @@ class udi_messana_macrozone(udi_interface.Node):
     
     
     drivers = [
-        {'driver': 'ST', 'value': 99, 'uom': 25},
-        {'driver': 'GV0', 'value': 99, 'uom': 25},
-        {'driver': 'GV2', 'value': 1, 'uom': 25},
-        {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'CLIHUM', 'value': 99, 'uom': 25},
-        {'driver': 'DEWPT', 'value': 99, 'uom': 25},
-        {'driver': 'TIME', 'value': 0, 'uom': 151},
+        {'driver': 'ST', 'value': 99, 'uom': 25, 'name': 'Macrozone Temperature'},
+        {'driver': 'GV0', 'value': 99, 'uom': 25, 'name': 'Macrozone Status'},
+        {'driver': 'GV2', 'value': 1, 'uom': 25, 'name': 'System Running'},
+        {'driver': 'GV3', 'value': 99, 'uom': 25, 'name': 'Macrozone Setpoint'},
+        {'driver': 'CLIHUM', 'value': 99, 'uom': 25, 'name': 'Macrozone Humidity'},
+        {'driver': 'DEWPT', 'value': 99, 'uom': 25, 'name': 'Macrozone Dew Point'},
+        {'driver': 'TIME', 'value': 0, 'uom': 151, 'name': 'Last Update'},
         ]
 
     def __init__(self, polyglot, primary, address, name, macrozone_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
+        self.apply_profile_driver_names(self.id)
         logging.info('init Messana MacroZone {}:'.format(macrozone_nbr) )
 
         self.primary = primary  

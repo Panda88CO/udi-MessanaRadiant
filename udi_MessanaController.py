@@ -43,32 +43,33 @@ except ImportError:
 
 
 class MessanaController(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, convert_temp_unit, send_rel_temp_to_isy, get_command_value, convert_rel_temp_to_messana
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, convert_temp_unit, send_rel_temp_to_isy, get_command_value, convert_rel_temp_to_messana, apply_profile_driver_names
   
     id = 'SYSTEM'
 
     drivers = [
-            {'driver': 'GV0', 'value':99, 'uom':25 }, # system State
-            {'driver': 'GV1', 'value':99, 'uom':25 }, # Setback diff Temp
-            {'driver': 'GV2', 'value':99, 'uom':25 }, # Setback Enabled
-            {'driver': 'GV12', 'value':99, 'uom':25 }, # Energy Saving
-            {'driver': 'GV3', 'value':99, 'uom':25 }, # Zone Count    
-            {'driver': 'GV4', 'value':99, 'uom':25 }, # Macrozone stamp
-            {'driver': 'GV5', 'value':99, 'uom':25 }, # ATU count
-            {'driver': 'GV6', 'value':99, 'uom':25 }, # HotCold count
-            {'driver': 'GV7', 'value':99, 'uom':25 }, # Fancoil count
-            {'driver': 'GV8', 'value':99, 'uom':25 }, # Hot Water count
-            {'driver': 'GV9', 'value':99, 'uom':25 }, # Buffer Tank Count
-            {'driver': 'GV10', 'value':99, 'uom':25 }, # Energy Source Count
-            {'driver': 'GV11', 'value':99, 'uom':25 }, #alarm
-            {'driver': 'ST', 'value':0, 'uom':25 }, #state
-            {'driver': 'TIME', 'value':0, 'uom':151 }, #last update
-            ]
+        {'driver': 'GV0', 'value': 99, 'uom': 25, 'name': 'System State'},
+        {'driver': 'GV1', 'value': 99, 'uom': 25, 'name': 'Setback Difference'},
+        {'driver': 'GV2', 'value': 99, 'uom': 25, 'name': 'Setback Mode'},
+        {'driver': 'GV12', 'value': 99, 'uom': 25, 'name': 'Energy Saving'},
+        {'driver': 'GV3', 'value': 99, 'uom': 25, 'name': 'Zones'},
+        {'driver': 'GV4', 'value': 99, 'uom': 25, 'name': 'Macrozones'},
+        {'driver': 'GV5', 'value': 99, 'uom': 25, 'name': 'ATUs'},
+        {'driver': 'GV6', 'value': 99, 'uom': 25, 'name': 'HC CO Controls'},
+        {'driver': 'GV7', 'value': 99, 'uom': 25, 'name': 'Fan Coils'},
+        {'driver': 'GV8', 'value': 99, 'uom': 25, 'name': 'DHWs'},
+        {'driver': 'GV9', 'value': 99, 'uom': 25, 'name': 'Buffer Tanks'},
+        {'driver': 'GV10', 'value': 99, 'uom': 25, 'name': 'Energy Sources'},
+        {'driver': 'GV11', 'value': 99, 'uom': 25, 'name': 'System Alarm'},
+        {'driver': 'ST', 'value': 0, 'uom': 25, 'name': 'System Running'},
+        {'driver': 'TIME', 'value': 0, 'uom': 151, 'name': 'Last Update'},
+    ]
     
 
     def __init__(self, polyglot, primary, address, name):
         super().__init__(polyglot, primary, address, name)
 
+        self.apply_profile_driver_names(self.id)
         logging.info(f'_init_ Messana Controller v{__version__}')
         self.messanaImportOK = 0
         self.ISYforced = False

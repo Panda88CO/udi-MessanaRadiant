@@ -16,7 +16,7 @@ except ImportError:
 import time
 #messana, controller, primary, address, name, nodeType, nodeNbr, messana
 class udi_messana_atu(udi_interface.Node):
-    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value
+    from  udiLib import node_queue, wait_for_node_done, getValidName, getValidAddress, send_temp_to_isy, isy_value, send_rel_temp_to_isy, get_command_value, apply_profile_driver_names
 
     id = 'ATU'
 
@@ -41,24 +41,25 @@ class udi_messana_atu(udi_interface.Node):
     '''
  
     drivers = [
-        {'driver': 'ST', 'value': 99, 'uom': 25},
-        {'driver': 'GV0', 'value': 1, 'uom': 25},
-        {'driver': 'CLITEMP', 'value': 99, 'uom': 25},
-        {'driver': 'GV1', 'value': 99, 'uom': 25},
-        {'driver': 'GV2', 'value': 99, 'uom': 25},
-        {'driver': 'GV3', 'value': 99, 'uom': 25},
-        {'driver': 'GV4', 'value': 99, 'uom': 25},
-        {'driver': 'GV5', 'value': 99, 'uom': 25},
-        {'driver': 'GV6', 'value': 99, 'uom': 25},
-        {'driver': 'GV7', 'value': 99, 'uom': 25},
-        {'driver': 'GV8', 'value': 99, 'uom': 25},
-        {'driver': 'GV9', 'value': 99, 'uom': 25},
-        {'driver': 'GV11', 'value': 99, 'uom': 25},
-        {'driver': 'TIME', 'value': 0, 'uom': 151},
+        {'driver': 'ST', 'value': 99, 'uom': 25, 'name': 'ATU Status'},
+        {'driver': 'GV0', 'value': 1, 'uom': 25, 'name': 'System Running'},
+        {'driver': 'CLITEMP', 'value': 99, 'uom': 25, 'name': 'Air Temperature'},
+        {'driver': 'GV1', 'value': 99, 'uom': 25, 'name': 'Flow Level'},
+        {'driver': 'GV2', 'value': 99, 'uom': 25, 'name': 'Heat Recovery Status'},
+        {'driver': 'GV3', 'value': 99, 'uom': 25, 'name': 'Heat Recovery Running'},
+        {'driver': 'GV4', 'value': 99, 'uom': 25, 'name': 'Humidification Status'},
+        {'driver': 'GV5', 'value': 99, 'uom': 25, 'name': 'Humidification Running'},
+        {'driver': 'GV6', 'value': 99, 'uom': 25, 'name': 'Dehumidification Status'},
+        {'driver': 'GV7', 'value': 99, 'uom': 25, 'name': 'Dehumidification Running'},
+        {'driver': 'GV8', 'value': 99, 'uom': 25, 'name': 'Convection Status'},
+        {'driver': 'GV9', 'value': 99, 'uom': 25, 'name': 'Convection Running'},
+        {'driver': 'GV11', 'value': 99, 'uom': 25, 'name': 'Alarm'},
+        {'driver': 'TIME', 'value': 0, 'uom': 151, 'name': 'Last Update'},
         ]
 
     def __init__(self, polyglot, primary, address, name, atu_nbr, messana_info):
         super().__init__(polyglot, primary, address, name)
+        self.apply_profile_driver_names(self.id)
         logging.info('init Messana ATU {}:'.format(atu_nbr) )
 
         self.poly = polyglot

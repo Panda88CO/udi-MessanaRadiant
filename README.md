@@ -1,6 +1,6 @@
 # Messana Radiant Integration for Universal Devices
 
-[![Version](https://img.shields.io/badge/version-0.4.0-blue.svg)](server.json)
+[![Version](https://img.shields.io/badge/version-0.4.1-blue.svg)](server.json)
 [![Platform](https://img.shields.io/badge/platform-eisy%20%7C%20Polisy%20%7C%20IoX-orange.svg)](https://www.universal-devices.com)
 [![Polyglot](https://img.shields.io/badge/polyglot-PG3%20%2F%20PG3x-purple.svg)](https://github.com/UniversalDevicesInc/udi_interface)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
